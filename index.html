@@ -3,236 +3,174 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Il Monello Pizzaria — Sistema</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <title>Il Monello Pizzeria - Sistema</title>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    :root {
-      --primary: #c0392b;
-      --primary-dark: #96281b;
-      --secondary: #f39c12;
-      --bg: #1a1a2e;
-      --bg2: #16213e;
-      --card: #0f3460;
-      --card2: #1a1a4e;
-      --text: #eaeaea;
-      --text2: #a0a0b0;
-      --success: #27ae60;
-      --danger: #e74c3c;
-      --warning: #f39c12;
-      --info: #2980b9;
-      --border: #2a2a5e;
-      --radius: 12px;
-      --shadow: 0 4px 20px rgba(0,0,0,0.4);
-    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; color: #eee; }
 
-    /* ===== LOGIN ===== */
+    /* LOGIN */
     #loginScreen {
       display: flex; align-items: center; justify-content: center;
-      min-height: 100vh; background: linear-gradient(135deg, #1a1a2e, #c0392b33);
+      height: 100vh; background: linear-gradient(135deg, #1a1a2e, #c0392b);
     }
     .login-box {
-      background: var(--card); border-radius: 20px; padding: 48px 40px;
-      width: 100%; max-width: 400px; box-shadow: var(--shadow); text-align: center;
+      background: #fff; color: #333; padding: 40px; border-radius: 16px;
+      width: 340px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
     }
-    .login-box .logo { font-size: 3rem; margin-bottom: 8px; }
-    .login-box h1 { font-size: 1.6rem; color: var(--secondary); margin-bottom: 4px; }
-    .login-box p { color: var(--text2); margin-bottom: 32px; font-size: 0.9rem; }
-    .form-group { margin-bottom: 16px; text-align: left; }
-    .form-group label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--text2); }
-    .form-group input {
-      width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border);
-      background: var(--bg2); color: var(--text); font-size: 1rem; outline: none; transition: border 0.2s;
+    .login-box h1 { color: #c0392b; font-size: 1.6rem; margin-bottom: 6px; }
+    .login-box p { font-size: 0.85rem; color: #888; margin-bottom: 24px; }
+    .login-box input {
+      width: 100%; padding: 12px; margin-bottom: 14px; border: 1px solid #ddd;
+      border-radius: 8px; font-size: 1rem;
     }
-    .form-group input:focus { border-color: var(--primary); }
-    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border: none;
-      border-radius: 8px; cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: all 0.2s; }
-    .btn-primary { background: var(--primary); color: #fff; }
-    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
-    .btn-success { background: var(--success); color: #fff; }
-    .btn-success:hover { background: #219a52; }
-    .btn-danger { background: var(--danger); color: #fff; }
-    .btn-danger:hover { background: #c0392b; }
-    .btn-warning { background: var(--warning); color: #fff; }
-    .btn-secondary { background: var(--border); color: var(--text); }
-    .btn-info { background: var(--info); color: #fff; }
-    .btn-full { width: 100%; justify-content: center; }
-    .btn-sm { padding: 7px 14px; font-size: 0.82rem; }
-    #loginError { color: var(--danger); font-size: 0.85rem; margin-top: 12px; min-height: 20px; }
+    .login-box button {
+      width: 100%; padding: 12px; background: #c0392b; color: #fff;
+      border: none; border-radius: 8px; font-size: 1rem; cursor: pointer;
+    }
+    .login-box button:hover { background: #a93226; }
+    #loginError { color: red; font-size: 0.85rem; margin-top: 10px; }
 
-    /* ===== LAYOUT ===== */
+    /* LAYOUT */
     #app { display: none; }
     .sidebar {
-      position: fixed; top: 0; left: 0; height: 100vh; width: 240px;
-      background: var(--bg2); border-right: 1px solid var(--border);
-      display: flex; flex-direction: column; z-index: 100; transition: transform 0.3s;
+      position: fixed; top: 0; left: 0; width: 220px; height: 100vh;
+      background: #16213e; padding: 20px 0; display: flex; flex-direction: column;
+      z-index: 100; transition: transform 0.3s;
     }
-    .sidebar-logo { padding: 24px 20px; border-bottom: 1px solid var(--border); }
-    .sidebar-logo .emoji { font-size: 1.8rem; }
-    .sidebar-logo h2 { font-size: 1rem; color: var(--secondary); margin-top: 4px; }
-    .sidebar-logo p { font-size: 0.75rem; color: var(--text2); }
-    nav { flex: 1; padding: 16px 0; overflow-y: auto; }
-    .nav-item {
-      display: flex; align-items: center; gap: 12px; padding: 12px 20px;
-      cursor: pointer; color: var(--text2); transition: all 0.2s; border-left: 3px solid transparent;
-      font-size: 0.92rem;
+    .sidebar .logo {
+      text-align: center; padding: 0 20px 20px; border-bottom: 1px solid #2a2a5e;
     }
-    .nav-item:hover { background: var(--card); color: var(--text); border-left-color: var(--primary); }
-    .nav-item.active { background: var(--card); color: var(--secondary); border-left-color: var(--secondary); font-weight: 600; }
-    .nav-item i { width: 18px; text-align: center; }
-    .sidebar-footer { padding: 16px 20px; border-top: 1px solid var(--border); }
-    .user-info { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-    .user-avatar { width: 36px; height: 36px; background: var(--primary); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; }
-    .user-name { font-size: 0.85rem; font-weight: 600; }
-    .user-email { font-size: 0.72rem; color: var(--text2); }
+    .sidebar .logo h2 { color: #e74c3c; font-size: 1rem; }
+    .sidebar .logo p { font-size: 0.7rem; color: #aaa; }
+    .sidebar nav { flex: 1; padding-top: 10px; }
+    .sidebar nav a {
+      display: flex; align-items: center; gap: 10px; padding: 12px 20px;
+      color: #ccc; text-decoration: none; font-size: 0.9rem; transition: 0.2s;
+    }
+    .sidebar nav a:hover, .sidebar nav a.active {
+      background: #c0392b; color: #fff; border-radius: 0 8px 8px 0;
+    }
+    .sidebar nav a span.icon { font-size: 1.1rem; }
+    .sidebar .logout {
+      padding: 20px; border-top: 1px solid #2a2a5e;
+    }
+    .sidebar .logout button {
+      width: 100%; padding: 10px; background: #c0392b; color: #fff;
+      border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem;
+    }
 
-    /* TOPBAR */
+    .main { margin-left: 220px; padding: 24px; min-height: 100vh; }
     .topbar {
-      position: fixed; top: 0; left: 240px; right: 0; height: 60px;
-      background: var(--bg2); border-bottom: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 24px; z-index: 99;
+      margin-bottom: 24px;
     }
-    .topbar-title { font-size: 1.1rem; font-weight: 700; color: var(--text); }
-    .topbar-right { display: flex; align-items: center; gap: 16px; }
-    .hamburger { display: none; background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; }
-    .badge { background: var(--danger); color: #fff; border-radius: 50%; width: 20px; height: 20px;
-      display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; }
-
-    /* MAIN CONTENT */
-    .main { margin-left: 240px; margin-top: 60px; padding: 24px; min-height: calc(100vh - 60px); }
-    .page { display: none; }
-    .page.active { display: block; }
+    .topbar h1 { font-size: 1.4rem; color: #e74c3c; }
+    .topbar .menu-btn { display: none; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
 
     /* CARDS */
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
     .card {
-      background: var(--card); border-radius: var(--radius); padding: 24px;
-      box-shadow: var(--shadow); border: 1px solid var(--border); margin-bottom: 20px;
+      background: #16213e; border-radius: 12px; padding: 20px;
+      border-left: 4px solid #c0392b;
     }
-    .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
-    .card-title { font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .card h3 { font-size: 0.8rem; color: #aaa; margin-bottom: 8px; text-transform: uppercase; }
+    .card .value { font-size: 1.6rem; font-weight: bold; color: #fff; }
+    .card .sub { font-size: 0.75rem; color: #888; margin-top: 4px; }
 
-    /* KPI CARDS */
-    .kpi { background: var(--card); border-radius: var(--radius); padding: 20px;
-      border: 1px solid var(--border); display: flex; align-items: center; gap: 16px; }
-    .kpi-icon { width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center;
-      justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
-    .kpi-icon.red { background: #c0392b22; color: var(--primary); }
-    .kpi-icon.green { background: #27ae6022; color: var(--success); }
-    .kpi-icon.yellow { background: #f39c1222; color: var(--warning); }
-    .kpi-icon.blue { background: #2980b922; color: var(--info); }
-    .kpi-label { font-size: 0.78rem; color: var(--text2); margin-bottom: 4px; }
-    .kpi-value { font-size: 1.5rem; font-weight: 700; }
-    .kpi-sub { font-size: 0.75rem; color: var(--text2); margin-top: 2px; }
+    /* TABLES */
+    .section { background: #16213e; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+    .section-header h2 { font-size: 1rem; color: #e74c3c; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th { background: #1a1a2e; color: #aaa; padding: 10px 8px; text-align: left; }
+    td { padding: 10px 8px; border-bottom: 1px solid #2a2a5e; }
+    tr:hover td { background: #1f2a4a; }
 
-    /* TABLE */
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
-    thead th { background: var(--bg2); color: var(--text2); padding: 10px 14px; text-align: left;
-      font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
-    tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
-    tbody tr:hover { background: var(--card2); }
-    tbody td { padding: 11px 14px; vertical-align: middle; }
-    .tag { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
-    .tag-green { background: #27ae6022; color: var(--success); }
-    .tag-red { background: #e74c3c22; color: var(--danger); }
-    .tag-yellow { background: #f39c1222; color: var(--warning); }
-    .tag-blue { background: #2980b922; color: var(--info); }
-
-    /* FORM */
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-    .field { margin-bottom: 16px; }
-    .field label { display: block; margin-bottom: 6px; font-size: 0.83rem; color: var(--text2); font-weight: 500; }
-    .field input, .field select, .field textarea {
-      width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border);
-      background: var(--bg2); color: var(--text); font-size: 0.92rem; outline: none; transition: border 0.2s;
-    }
-    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--primary); }
-    .field textarea { resize: vertical; min-height: 80px; }
-    .field select option { background: var(--bg2); }
+    /* BUTTONS */
+    .btn { padding: 9px 18px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem; }
+    .btn-red { background: #c0392b; color: #fff; }
+    .btn-red:hover { background: #a93226; }
+    .btn-green { background: #27ae60; color: #fff; }
+    .btn-green:hover { background: #219150; }
+    .btn-sm { padding: 5px 10px; font-size: 0.75rem; }
+    .btn-danger { background: #922b21; color: #fff; }
 
     /* MODAL */
     .modal-overlay {
       display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-      z-index: 200; align-items: center; justify-content: center; padding: 16px;
+      z-index: 200; align-items: center; justify-content: center;
     }
     .modal-overlay.open { display: flex; }
     .modal {
-      background: var(--card); border-radius: 16px; width: 100%; max-width: 560px;
-      max-height: 90vh; overflow-y: auto; box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+      background: #16213e; border-radius: 16px; padding: 28px;
+      width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto;
     }
-    .modal-header {
-      padding: 20px 24px; border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
+    .modal h2 { color: #e74c3c; margin-bottom: 20px; font-size: 1.1rem; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 0.8rem; color: #aaa; margin-bottom: 5px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 10px; background: #1a1a2e; border: 1px solid #2a2a5e;
+      border-radius: 8px; color: #fff; font-size: 0.9rem;
     }
-    .modal-title { font-size: 1rem; font-weight: 700; }
-    .modal-close { background: none; border: none; color: var(--text2); font-size: 1.3rem; cursor: pointer; }
-    .modal-body { padding: 24px; }
-    .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
 
-    /* ALERT */
-    .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 0.88rem; display: flex; align-items: center; gap: 10px; }
-    .alert-success { background: #27ae6022; border: 1px solid var(--success); color: var(--success); }
-    .alert-danger { background: #e74c3c22; border: 1px solid var(--danger); color: var(--danger); }
-    .alert-warning { background: #f39c1222; border: 1px solid var(--warning); color: var(--warning); }
-
-    /* TOAST */
-    #toast {
-      position: fixed; bottom: 24px; right: 24px; z-index: 999;
-      display: flex; flex-direction: column; gap: 8px;
+    /* BADGES */
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem;
     }
-    .toast-msg {
-      background: var(--card); border-left: 4px solid var(--success);
-      padding: 14px 18px; border-radius: 8px; box-shadow: var(--shadow);
-      font-size: 0.88rem; min-width: 240px; animation: slideIn 0.3s ease;
+    .badge-green { background: #1e8449; color: #fff; }
+    .badge-red { background: #922b21; color: #fff; }
+    .badge-yellow { background: #d4ac0d; color: #000; }
+
+    /* CHARTS */
+    .charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .chart-box { background: #16213e; border-radius: 12px; padding: 20px; }
+    .chart-box h3 { font-size: 0.9rem; color: #e74c3c; margin-bottom: 14px; }
+
+    /* PAGES */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* SEARCH */
+    .search-bar { display: flex; gap: 10px; flex-wrap: wrap; }
+    .search-bar input, .search-bar select {
+      padding: 8px 12px; background: #1a1a2e; border: 1px solid #2a2a5e;
+      border-radius: 8px; color: #fff; font-size: 0.85rem;
     }
-    .toast-msg.error { border-left-color: var(--danger); }
-    .toast-msg.warning { border-left-color: var(--warning); }
-    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-    /* LOADING */
-    .loading { text-align: center; padding: 40px; color: var(--text2); }
-    .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--primary);
-      border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* PROGRESS BAR */
-    .progress-bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin-top: 6px; }
-    .progress-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
-
-    /* DIVIDER */
-    .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
-
-    /* ESTOQUE COLORS */
-    .estoque-critico { color: var(--danger); }
-    .estoque-alerta { color: var(--warning); }
-    .estoque-ok { color: var(--success); }
+    /* FICHA TECNICA */
+    .ingredientes-list { margin-top: 10px; }
+    .ingrediente-item {
+      display: flex; gap: 8px; align-items: center; margin-bottom: 8px;
+    }
+    .ingrediente-item select, .ingrediente-item input {
+      flex: 1; padding: 8px; background: #1a1a2e; border: 1px solid #2a2a5e;
+      border-radius: 6px; color: #fff; font-size: 0.85rem;
+    }
+    .ingrediente-item button { flex-shrink: 0; }
 
     /* RESPONSIVE */
     @media (max-width: 768px) {
       .sidebar { transform: translateX(-100%); }
       .sidebar.open { transform: translateX(0); }
       .main { margin-left: 0; padding: 16px; }
-      .topbar { left: 0; }
-      .hamburger { display: block; }
-      .grid-4 { grid-template-columns: 1fr 1fr; }
-      .grid-3 { grid-template-columns: 1fr 1fr; }
-      .grid-2 { grid-template-columns: 1fr; }
-      .form-row { grid-template-columns: 1fr; }
-      .form-row-3 { grid-template-columns: 1fr; }
+      .topbar .menu-btn { display: block; }
+      .cards { grid-template-columns: repeat(2, 1fr); }
+      table { font-size: 0.75rem; }
+      td, th { padding: 7px 5px; }
     }
-    @media (max-width: 480px) {
-      .grid-4 { grid-template-columns: 1fr; }
-      .grid-3 { grid-template-columns: 1fr; }
-    }
-    .overlay-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
-    .overlay-bg.open { display: block; }
+
+    /* ESTOQUE CORES */
+    .estoque-ok td:first-child { border-left: 3px solid #27ae60; }
+    .estoque-baixo td:first-child { border-left: 3px solid #f39c12; }
+    .estoque-critico td:first-child { border-left: 3px solid #e74c3c; }
+
+    .empty-state { text-align: center; color: #555; padding: 40px; font-size: 0.9rem; }
   </style>
 </head>
 <body>
@@ -240,929 +178,1152 @@
 <!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-box">
-    <div class="logo">🍕</div>
-    <h1>Il Monello Pizzaria</h1>
-    <p>Sistema de Gestão</p>
-    <div class="form-group">
-      <label>E-mail</label>
-      <input type="email" id="loginEmail" placeholder="seu@email.com" />
-    </div>
-    <div class="form-group">
-      <label>Senha</label>
-      <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()" />
-    </div>
-    <button class="btn btn-primary btn-full" onclick="doLogin()">
-      <i class="fa fa-sign-in-alt"></i> Entrar
-    </button>
+    <h1>🍕 Il Monello</h1>
+    <p>Pizzeria Management System</p>
+    <input type="email" id="loginEmail" placeholder="E-mail" />
+    <input type="password" id="loginPassword" placeholder="Senha" />
+    <button onclick="fazerLogin()">Entrar</button>
     <div id="loginError"></div>
   </div>
 </div>
 
 <!-- APP -->
 <div id="app">
-  <div class="overlay-bg" id="overlayBg" onclick="closeSidebar()"></div>
 
   <!-- SIDEBAR -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-logo">
-      <div class="emoji">🍕</div>
-      <h2>Il Monello</h2>
-      <p>Sistema de Gestão</p>
+  <div class="sidebar" id="sidebar">
+    <div class="logo">
+      <h2>🍕 Il Monello</h2>
+      <p>Pizzeria System</p>
     </div>
     <nav>
-      <div class="nav-item active" onclick="goTo('dashboard')"><i class="fa fa-chart-pie"></i> Dashboard</div>
-      <div class="nav-item" onclick="goTo('vendas')"><i class="fa fa-cash-register"></i> Vendas</div>
-      <div class="nav-item" onclick="goTo('estoque')"><i class="fa fa-boxes"></i> Estoque Diário</div>
-      <div class="nav-item" onclick="goTo('insumos')"><i class="fa fa-database"></i> Insumos</div>
-      <div class="nav-item" onclick="goTo('precos')"><i class="fa fa-tags"></i> Histórico de Preços</div>
-      <div class="nav-item" onclick="goTo('fichas')"><i class="fa fa-clipboard-list"></i> Fichas Técnicas</div>
-      <div class="nav-item" onclick="goTo('historico')"><i class="fa fa-history"></i> Histórico de Vendas</div>
+      <a href="#" class="active" onclick="showPage('dashboard')" data-page="dashboard">
+        <span class="icon">📊</span> Dashboard
+      </a>
+      <a href="#" onclick="showPage('vendas')" data-page="vendas">
+        <span class="icon">💰</span> Vendas
+      </a>
+      <a href="#" onclick="showPage('estoque')" data-page="estoque">
+        <span class="icon">📦</span> Estoque Diário
+      </a>
+      <a href="#" onclick="showPage('insumos')" data-page="insumos">
+        <span class="icon">🧂</span> Insumos
+      </a>
+      <a href="#" onclick="showPage('precos')" data-page="precos">
+        <span class="icon">🏷️</span> Histórico de Preços
+      </a>
+      <a href="#" onclick="showPage('fichas')" data-page="fichas">
+        <span class="icon">📋</span> Fichas Técnicas
+      </a>
     </nav>
-    <div class="sidebar-footer">
-      <div class="user-info">
-        <div class="user-avatar" id="userAvatar">?</div>
-        <div>
-          <div class="user-name" id="userName">Usuário</div>
-          <div class="user-email" id="userEmail">—</div>
-        </div>
-      </div>
-      <button class="btn btn-secondary btn-full btn-sm" onclick="doLogout()">
-        <i class="fa fa-sign-out-alt"></i> Sair
-      </button>
-    </div>
-  </aside>
-
-  <!-- TOPBAR -->
-  <div class="topbar">
-    <div style="display:flex;align-items:center;gap:12px">
-      <button class="hamburger" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
-      <span class="topbar-title" id="pageTitle">Dashboard</span>
-    </div>
-    <div class="topbar-right">
-      <span style="font-size:0.8rem;color:var(--text2)" id="topDate"></span>
+    <div class="logout">
+      <button onclick="fazerLogout()">🚪 Sair</button>
     </div>
   </div>
 
   <!-- MAIN -->
-  <main class="main">
+  <div class="main">
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <h1 id="pageTitle">Dashboard</h1>
+      <span id="dataAtual" style="font-size:0.8rem;color:#aaa;"></span>
+    </div>
 
-    <!-- ===== DASHBOARD ===== -->
+    <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
-      <div class="grid-4" style="margin-bottom:20px" id="kpiGrid">
-        <div class="kpi"><div class="kpi-icon red"><i class="fa fa-dollar-sign"></i></div>
-          <div><div class="kpi-label">Faturamento Hoje</div><div class="kpi-value" id="kpi-hoje">R$ 0</div><div class="kpi-sub" id="kpi-hoje-qtd">0 vendas</div></div></div>
-        <div class="kpi"><div class="kpi-icon green"><i class="fa fa-calendar-week"></i></div>
-          <div><div class="kpi-label">Faturamento Semana</div><div class="kpi-value" id="kpi-semana">R$ 0</div><div class="kpi-sub" id="kpi-semana-qtd">0 vendas</div></div></div>
-        <div class="kpi"><div class="kpi-icon yellow"><i class="fa fa-calendar-alt"></i></div>
-          <div><div class="kpi-label">Faturamento Mês</div><div class="kpi-value" id="kpi-mes">R$ 0</div><div class="kpi-sub" id="kpi-mes-qtd">0 vendas</div></div></div>
-        <div class="kpi"><div class="kpi-icon blue"><i class="fa fa-pizza-slice"></i></div>
-          <div><div class="kpi-label">Ticket Médio</div><div class="kpi-value" id="kpi-ticket">R$ 0</div><div class="kpi-sub">no mês</div></div></div>
-      </div>
-      <div class="grid-2">
+      <div class="cards">
         <div class="card">
-          <div class="card-header"><span class="card-title"><i class="fa fa-fire"></i> Top Produtos (Mês)</span></div>
-          <div id="topProdutos"><div class="loading"><div class="spinner"></div>Carregando...</div></div>
+          <h3>💰 Vendas Hoje</h3>
+          <div class="value" id="d-vendas-hoje">R$ 0,00</div>
+          <div class="sub" id="d-vendas-hoje-qtd">0 pedidos</div>
         </div>
         <div class="card">
-          <div class="card-header"><span class="card-title"><i class="fa fa-exclamation-triangle"></i> Estoque Crítico</span></div>
-          <div id="estoqueCritico"><div class="loading"><div class="spinner"></div>Carregando...</div></div>
+          <h3>📅 Vendas do Mês</h3>
+          <div class="value" id="d-vendas-mes">R$ 0,00</div>
+          <div class="sub" id="d-vendas-mes-qtd">0 pedidos</div>
+        </div>
+        <div class="card">
+          <h3>📦 Itens em Estoque</h3>
+          <div class="value" id="d-estoque-total">0</div>
+          <div class="sub" id="d-estoque-baixo">0 com estoque baixo</div>
+        </div>
+        <div class="card">
+          <h3>🧂 Insumos Cadastrados</h3>
+          <div class="value" id="d-insumos-total">0</div>
+          <div class="sub">cadastrados</div>
+        </div>
+        <div class="card">
+          <h3>📋 Fichas Técnicas</h3>
+          <div class="value" id="d-fichas-total">0</div>
+          <div class="sub">produtos mapeados</div>
+        </div>
+        <div class="card">
+          <h3>🎯 Ticket Médio</h3>
+          <div class="value" id="d-ticket-medio">R$ 0,00</div>
+          <div class="sub">este mês</div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fa fa-list"></i> Últimas Vendas</span></div>
-        <div class="table-wrap" id="ultimasVendas"><div class="loading"><div class="spinner"></div>Carregando...</div></div>
+      <div class="charts">
+        <div class="chart-box">
+          <h3>📈 Vendas - Últimos 7 dias</h3>
+          <canvas id="chartVendas"></canvas>
+        </div>
+        <div class="chart-box">
+          <h3>🍕 Top 5 Produtos Mais Vendidos</h3>
+          <canvas id="chartProdutos"></canvas>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-header"><h2>⚠️ Alertas de Estoque</h2></div>
+        <div id="alertasEstoque"><div class="empty-state">Carregando...</div></div>
       </div>
     </div>
 
-    <!-- ===== VENDAS ===== -->
+    <!-- VENDAS -->
     <div class="page" id="page-vendas">
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title"><i class="fa fa-plus-circle"></i> Registrar Venda</span>
+      <div class="section">
+        <div class="section-header">
+          <h2>💰 Registro de Vendas</h2>
+          <button class="btn btn-red" onclick="abrirModalVenda()">+ Nova Venda</button>
         </div>
-        <div class="form-row">
-          <div class="field"><label>Data</label><input type="date" id="v-data" /></div>
-          <div class="field"><label>Produto / Descrição</label><input type="text" id="v-produto" placeholder="Ex: Pizza Margherita G" /></div>
-        </div>
-        <div class="form-row-3">
-          <div class="field"><label>Categoria</label>
-            <select id="v-categoria">
-              <option value="Pizza">Pizza</option>
-              <option value="Bebida">Bebida</option>
-              <option value="Sobremesa">Sobremesa</option>
-              <option value="Entrada">Entrada</option>
-              <option value="Outro">Outro</option>
-            </select>
-          </div>
-          <div class="field"><label>Qtd</label><input type="number" id="v-qtd" placeholder="1" min="1" value="1" /></div>
-          <div class="field"><label>Valor Unitário (R$)</label><input type="number" id="v-valor" placeholder="0,00" step="0.01" min="0" /></div>
-        </div>
-        <div class="form-row">
-          <div class="field"><label>Canal de Venda</label>
-            <select id="v-canal">
-              <option value="Salão">Salão</option>
-              <option value="iFood">iFood</option>
-              <option value="WhatsApp">WhatsApp</option>
-              <option value="Telefone">Telefone</option>
-              <option value="Retirada">Retirada</option>
-            </select>
-          </div>
-          <div class="field"><label>Forma de Pagamento</label>
-            <select id="v-pagamento">
-              <option value="Dinheiro">Dinheiro</option>
-              <option value="Cartão Débito">Cartão Débito</option>
-              <option value="Cartão Crédito">Cartão Crédito</option>
-              <option value="PIX">PIX</option>
-            </select>
-          </div>
-        </div>
-        <div class="field"><label>Observação</label><input type="text" id="v-obs" placeholder="Opcional..." /></div>
-        <button class="btn btn-primary" onclick="salvarVenda()"><i class="fa fa-save"></i> Salvar Venda</button>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title"><i class="fa fa-list"></i> Vendas de Hoje</span>
-          <div style="display:flex;gap:8px;align-items:center">
-            <input type="date" id="filtroDataVenda" style="padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:0.85rem" onchange="filtrarVendas()" />
-          </div>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Data</th><th>Produto</th><th>Cat.</th><th>Qtd</th><th>Unit.</th><th>Total</th><th>Canal</th><th>Pgto</th><th>Ações</th></tr></thead>
-            <tbody id="tabelaVendas"><tr><td colspan="9" class="loading"><div class="spinner"></div></td></tr></tbody>
-          </table>
-        </div>
-        <div style="margin-top:12px;display:flex;gap:16px;flex-wrap:wrap" id="resumoVendas"></div>
-      </div>
-    </div>
-
-    <!-- ===== ESTOQUE ===== -->
-    <div class="page" id="page-estoque">
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title"><i class="fa fa-calendar-day"></i> Registro de Estoque Diário</span>
-          <input type="date" id="estoqueData" style="padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:0.85rem" />
-        </div>
-        <div id="estoqueForm">
-          <div class="loading"><div class="spinner"></div>Carregando insumos...</div>
-        </div>
-        <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-primary" onclick="salvarEstoque()"><i class="fa fa-save"></i> Salvar Estoque</button>
-          <button class="btn btn-info" onclick="carregarEstoqueData()"><i class="fa fa-sync"></i> Carregar Data</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fa fa-table"></i> Resumo de Estoque</span></div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Insumo</th><th>Unidade</th><th>Estoque Mín.</th><th>Último Registro</th><th>Qtd</th><th>Status</th></tr></thead>
-            <tbody id="tabelaEstoque"><tr><td colspan="6" class="loading"><div class="spinner"></div></td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== INSUMOS ===== -->
-    <div class="page" id="page-insumos">
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title"><i class="fa fa-plus"></i> Cadastrar Insumo</span>
-        </div>
-        <div class="form-row">
-          <div class="field"><label>Nome do Insumo</label><input type="text" id="i-nome" placeholder="Ex: Farinha de Trigo" /></div>
-          <div class="field"><label>Categoria</label>
-            <select id="i-categoria">
-              <option>Farinha/Massa</option><option>Queijo</option><option>Molho</option>
-              <option>Carne</option><option>Vegetal</option><option>Bebida</option>
-              <option>Embalagem</option><option>Limpeza</option><option>Outro</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row-3">
-          <div class="field"><label>Unidade de Medida</label>
-            <select id="i-unidade"><option>kg</option><option>g</option><option>L</option><option>ml</option><option>un</option><option>cx</option><option>pct</option></select>
-          </div>
-          <div class="field"><label>Estoque Mínimo</label><input type="number" id="i-minimo" placeholder="0" step="0.01" /></div>
-          <div class="field"><label>Preço Atual (R$/unidade)</label><input type="number" id="i-preco" placeholder="0,00" step="0.01" /></div>
-        </div>
-        <div class="field"><label>Fornecedor</label><input type="text" id="i-fornecedor" placeholder="Nome do fornecedor (opcional)" /></div>
-        <button class="btn btn-success" onclick="salvarInsumo()"><i class="fa fa-plus"></i> Cadastrar Insumo</button>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title"><i class="fa fa-database"></i> Insumos Cadastrados</span>
-          <input type="text" id="buscaInsumo" placeholder="🔍 Buscar..." onkeyup="filtrarInsumos()" style="padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:0.85rem;width:180px" />
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Nome</th><th>Categoria</th><th>Unidade</th><th>Estoque Mín.</th><th>Preço Atual</th><th>Fornecedor</th><th>Ações</th></tr></thead>
-            <tbody id="tabelaInsumos"><tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== HISTÓRICO PREÇOS ===== -->
-    <div class="page" id="page-precos">
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fa fa-tags"></i> Registrar Atualização de Preço</span></div>
-        <div class="form-row">
-          <div class="field"><label>Insumo</label>
-            <select id="p-insumo"><option value="">-- Selecione --</option></select>
-          </div>
-          <div class="field"><label>Novo Preço (R$)</label><input type="number" id="p-preco" placeholder="0,00" step="0.01" /></div>
-        </div>
-        <div class="form-row">
-          <div class="field"><label>Data</label><input type="date" id="p-data" /></div>
-          <div class="field"><label>Fornecedor</label><input type="text" id="p-fornecedor" placeholder="Opcional" /></div>
-        </div>
-        <div class="field"><label>Observação</label><input type="text" id="p-obs" placeholder="Ex: reajuste, troca de fornecedor..." /></div>
-        <button class="btn btn-warning" onclick="salvarPreco()"><i class="fa fa-save"></i> Registrar Preço</button>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fa fa-history"></i> Histórico de Preços</span>
-          <select id="filtroInsumoPreco" onchange="carregarHistoricoPrecos()" style="padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:0.85rem">
-            <option value="">Todos os insumos</option>
+        <div class="search-bar" style="margin-bottom:16px;">
+          <input type="date" id="filtroVendaData" onchange="carregarVendas()" />
+          <select id="filtroVendaMes" onchange="carregarVendas()">
+            <option value="">Todos os meses</option>
+            <option value="01">Janeiro</option><option value="02">Fevereiro</option>
+            <option value="03">Março</option><option value="04">Abril</option>
+            <option value="05">Maio</option><option value="06">Junho</option>
+            <option value="07">Julho</option><option value="08">Agosto</option>
+            <option value="09">Setembro</option><option value="10">Outubro</option>
+            <option value="11">Novembro</option><option value="12">Dezembro</option>
           </select>
         </div>
-        <div class="table-wrap">
+        <div style="overflow-x:auto;">
           <table>
-            <thead><tr><th>Data</th><th>Insumo</th><th>Preço Ant.</th><th>Novo Preço</th><th>Variação</th><th>Fornecedor</th><th>Obs.</th></tr></thead>
-            <tbody id="tabelaPrecos"><tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr></tbody>
+            <thead>
+              <tr>
+                <th>Data</th><th>Produto</th><th>Qtd</th>
+                <th>Valor Unit.</th><th>Total</th><th>Observação</th><th>Ação</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaVendas">
+              <tr><td colspan="7" class="empty-state">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:16px;text-align:right;">
+          <strong>Total Filtrado: <span id="totalVendas" style="color:#e74c3c;">R$ 0,00</span></strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTOQUE -->
+    <div class="page" id="page-estoque">
+      <div class="section">
+        <div class="section-header">
+          <h2>📦 Estoque Diário</h2>
+          <button class="btn btn-red" onclick="abrirModalEstoque()">+ Registrar Estoque</button>
+        </div>
+        <div class="search-bar" style="margin-bottom:16px;">
+          <input type="date" id="filtroEstoqueData" onchange="carregarEstoque()" />
+          <input type="text" id="filtroEstoqueNome" placeholder="Buscar insumo..." onkeyup="carregarEstoque()" />
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Insumo</th><th>Data</th><th>Qtd Inicial</th>
+                <th>Qtd Usada</th><th>Qtd Final</th><th>Unidade</th><th>Status</th><th>Ação</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaEstoque">
+              <tr><td colspan="8" class="empty-state">Carregando...</td></tr>
+            </tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- ===== FICHAS TÉCNICAS ===== -->
+    <!-- INSUMOS -->
+    <div class="page" id="page-insumos">
+      <div class="section">
+        <div class="section-header">
+          <h2>🧂 Cadastro de Insumos</h2>
+          <button class="btn btn-red" onclick="abrirModalInsumo()">+ Novo Insumo</button>
+        </div>
+        <div class="search-bar" style="margin-bottom:16px;">
+          <input type="text" id="filtroInsumoNome" placeholder="Buscar insumo..." onkeyup="carregarInsumos()" />
+          <select id="filtroInsumoCategoria" onchange="carregarInsumos()">
+            <option value="">Todas as categorias</option>
+            <option>Farinha</option><option>Laticínio</option><option>Carne</option>
+            <option>Vegetal</option><option>Tempero</option><option>Bebida</option><option>Outro</option>
+          </select>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th><th>Categoria</th><th>Unidade</th>
+                <th>Estoque Mín.</th><th>Preço Atual</th><th>Fornecedor</th><th>Ação</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaInsumos">
+              <tr><td colspan="7" class="empty-state">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREÇOS -->
+    <div class="page" id="page-precos">
+      <div class="section">
+        <div class="section-header">
+          <h2>🏷️ Histórico de Preços</h2>
+          <button class="btn btn-red" onclick="abrirModalPreco()">+ Registrar Preço</button>
+        </div>
+        <div class="search-bar" style="margin-bottom:16px;">
+          <select id="filtroPrecoInsumo" onchange="carregarPrecos()">
+            <option value="">Todos os insumos</option>
+          </select>
+          <input type="month" id="filtroPrecoMes" onchange="carregarPrecos()" />
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Insumo</th><th>Data</th><th>Preço Anterior</th>
+                <th>Preço Novo</th><th>Variação</th><th>Fornecedor</th><th>Ação</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaPrecos">
+              <tr><td colspan="7" class="empty-state">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- FICHAS TECNICAS -->
     <div class="page" id="page-fichas">
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title"><i class="fa fa-plus"></i> Nova Ficha Técnica</span>
-          <button class="btn btn-primary btn-sm" onclick="abrirModalFicha()"><i class="fa fa-plus"></i> Criar Ficha</button>
+      <div class="section">
+        <div class="section-header">
+          <h2>📋 Fichas Técnicas</h2>
+          <button class="btn btn-red" onclick="abrirModalFicha()">+ Nova Ficha</button>
         </div>
-        <div class="table-wrap">
+        <div style="overflow-x:auto;">
           <table>
-            <thead><tr><th>Produto</th><th>Categoria</th><th>Rendimento</th><th>Custo Total</th><th>Preço Venda</th><th>Margem</th><th>Ações</th></tr></thead>
-            <tbody id="tabelaFichas"><tr><td colspan="7" class="loading"><div class="spinner"></div></td></tr></tbody>
+            <thead>
+              <tr>
+                <th>Produto</th><th>Categoria</th><th>Rendimento</th>
+                <th>Custo Total</th><th>Preço Venda</th><th>Margem</th><th>Ação</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaFichas">
+              <tr><td colspan="7" class="empty-state">Carregando...</td></tr>
+            </tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- ===== HISTÓRICO VENDAS ===== -->
-    <div class="page" id="page-historico">
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title"><i class="fa fa-filter"></i> Filtros</span>
-          <button class="btn btn-success btn-sm" onclick="exportarCSV()"><i class="fa fa-download"></i> Exportar CSV</button>
-        </div>
-        <div class="form-row-3">
-          <div class="field"><label>Data Início</label><input type="date" id="h-inicio" /></div>
-          <div class="field"><label>Data Fim</label><input type="date" id="h-fim" /></div>
-          <div class="field"><label>Canal</label>
-            <select id="h-canal">
-              <option value="">Todos</option>
-              <option>Salão</option><option>iFood</option><option>WhatsApp</option><option>Telefone</option><option>Retirada</option>
-            </select>
-          </div>
-        </div>
-        <button class="btn btn-info" onclick="filtrarHistorico()"><i class="fa fa-search"></i> Filtrar</button>
-      </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title"><i class="fa fa-table"></i> Resultado</span>
-          <span id="historicoTotal" style="font-weight:700;color:var(--success)"></span>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Data</th><th>Produto</th><th>Cat.</th><th>Qtd</th><th>Unit.</th><th>Total</th><th>Canal</th><th>Pgto</th><th>Obs.</th></tr></thead>
-            <tbody id="tabelaHistorico"><tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text2)">Use os filtros acima</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+  </div><!-- /main -->
+</div><!-- /app -->
 
-  </main>
-</div>
+<!-- ===== MODAIS ===== -->
 
-<!-- MODAL FICHA TÉCNICA -->
-<div class="modal-overlay" id="modalFicha">
+<!-- MODAL VENDA -->
+<div class="modal-overlay" id="modalVenda">
   <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title">📋 Ficha Técnica</span>
-      <button class="modal-close" onclick="fecharModalFicha()">✕</button>
+    <h2>💰 Nova Venda</h2>
+    <div class="form-group">
+      <label>Data *</label>
+      <input type="date" id="v-data" />
     </div>
-    <div class="modal-body">
-      <div class="form-row">
-        <div class="field"><label>Nome do Produto</label><input type="text" id="f-nome" placeholder="Ex: Pizza Margherita G" /></div>
-        <div class="field"><label>Categoria</label>
-          <select id="f-categoria"><option>Pizza</option><option>Bebida</option><option>Sobremesa</option><option>Entrada</option><option>Outro</option></select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="field"><label>Rendimento (porções)</label><input type="number" id="f-rendimento" placeholder="Ex: 8" min="1" /></div>
-        <div class="field"><label>Preço de Venda (R$)</label><input type="number" id="f-preco-venda" placeholder="0,00" step="0.01" /></div>
-      </div>
-      <div class="field"><label>Modo de Preparo</label><textarea id="f-preparo" placeholder="Descreva o modo de preparo..."></textarea></div>
-      <hr class="divider"/>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <strong style="font-size:0.9rem">Ingredientes</strong>
-        <button class="btn btn-success btn-sm" onclick="addIngrediente()"><i class="fa fa-plus"></i> Adicionar</button>
-      </div>
-      <div id="ingredientesList"></div>
-      <div style="margin-top:12px;padding:12px;background:var(--bg2);border-radius:8px;font-size:0.88rem">
-        Custo Total: <strong id="f-custo-total" style="color:var(--warning)">R$ 0,00</strong> &nbsp;|&nbsp;
-        Margem: <strong id="f-margem" style="color:var(--success)">0%</strong>
-      </div>
+    <div class="form-group">
+      <label>Produto *</label>
+      <input type="text" id="v-produto" placeholder="Ex: Pizza Margherita" />
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" onclick="fecharModalFicha()">Cancelar</button>
-      <button class="btn btn-primary" onclick="salvarFicha()"><i class="fa fa-save"></i> Salvar Ficha</button>
+    <div class="form-group">
+      <label>Quantidade *</label>
+      <input type="number" id="v-qtd" min="1" value="1" />
+    </div>
+    <div class="form-group">
+      <label>Valor Unitário (R$) *</label>
+      <input type="number" id="v-valor" step="0.01" placeholder="0,00" />
+    </div>
+    <div class="form-group">
+      <label>Observação</label>
+      <input type="text" id="v-obs" placeholder="Opcional" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="fecharModal('modalVenda')" style="background:#333;color:#fff;">Cancelar</button>
+      <button class="btn btn-red" onclick="salvarVenda()">Salvar</button>
     </div>
   </div>
 </div>
 
-<!-- TOAST -->
-<div id="toast"></div>
+<!-- MODAL ESTOQUE -->
+<div class="modal-overlay" id="modalEstoque">
+  <div class="modal">
+    <h2>📦 Registrar Estoque</h2>
+    <div class="form-group">
+      <label>Data *</label>
+      <input type="date" id="e-data" />
+    </div>
+    <div class="form-group">
+      <label>Insumo *</label>
+      <select id="e-insumo"></select>
+    </div>
+    <div class="form-group">
+      <label>Quantidade Inicial *</label>
+      <input type="number" id="e-inicial" step="0.01" placeholder="0" />
+    </div>
+    <div class="form-group">
+      <label>Quantidade Usada *</label>
+      <input type="number" id="e-usada" step="0.01" placeholder="0" />
+    </div>
+    <div class="form-group">
+      <label>Quantidade Final</label>
+      <input type="number" id="e-final" step="0.01" placeholder="Calculado automaticamente" readonly style="opacity:0.7" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="fecharModal('modalEstoque')" style="background:#333;color:#fff;">Cancelar</button>
+      <button class="btn btn-red" onclick="salvarEstoque()">Salvar</button>
+    </div>
+  </div>
+</div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
-    from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, getDoc, doc,
-    updateDoc, deleteDoc, query, where, orderBy, serverTimestamp, Timestamp }
-    from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+<!-- MODAL INSUMO -->
+<div class="modal-overlay" id="modalInsumo">
+  <div class="modal">
+    <h2>🧂 Cadastro de Insumo</h2>
+    <input type="hidden" id="i-id" />
+    <div class="form-group">
+      <label>Nome *</label>
+      <input type="text" id="i-nome" placeholder="Ex: Farinha de Trigo" />
+    </div>
+    <div class="form-group">
+      <label>Categoria *</label>
+      <select id="i-categoria">
+        <option>Farinha</option><option>Laticínio</option><option>Carne</option>
+        <option>Vegetal</option><option>Tempero</option><option>Bebida</option><option>Outro</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Unidade de Medida *</label>
+      <select id="i-unidade">
+        <option>kg</option><option>g</option><option>L</option><option>ml</option>
+        <option>un</option><option>cx</option><option>pct</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Estoque Mínimo *</label>
+      <input type="number" id="i-estoque-min" step="0.01" placeholder="0" />
+    </div>
+    <div class="form-group">
+      <label>Preço Atual (R$) *</label>
+      <input type="number" id="i-preco" step="0.01" placeholder="0,00" />
+    </div>
+    <div class="form-group">
+      <label>Fornecedor</label>
+      <input type="text" id="i-fornecedor" placeholder="Nome do fornecedor" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="fecharModal('modalInsumo')" style="background:#333;color:#fff;">Cancelar</button>
+      <button class="btn btn-red" onclick="salvarInsumo()">Salvar</button>
+    </div>
+  </div>
+</div>
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAM8DJcX7sQoMDZP5LiAEz91Z5ivgSKX_I",
-    authDomain: "ilmonello-pizzaria-f757c.firebaseapp.com",
-    projectId: "ilmonello-pizzaria-f757c",
-    storageBucket: "ilmonello-pizzaria-f757c.firebasestorage.app",
-    messagingSenderId: "991199105962",
-    appId: "1:991199105962:web:21cae5d962512a0c7751d3"
-  };
+<!-- MODAL PRECO -->
+<div class="modal-overlay" id="modalPreco">
+  <div class="modal">
+    <h2>🏷️ Registrar Preço</h2>
+    <div class="form-group">
+      <label>Insumo *</label>
+      <select id="p-insumo"></select>
+    </div>
+    <div class="form-group">
+      <label>Data *</label>
+      <input type="date" id="p-data" />
+    </div>
+    <div class="form-group">
+      <label>Preço Anterior (R$)</label>
+      <input type="number" id="p-anterior" step="0.01" placeholder="0,00" readonly style="opacity:0.7" />
+    </div>
+    <div class="form-group">
+      <label>Preço Novo (R$) *</label>
+      <input type="number" id="p-novo" step="0.01" placeholder="0,00" />
+    </div>
+    <div class="form-group">
+      <label>Fornecedor</label>
+      <input type="text" id="p-fornecedor" placeholder="Nome do fornecedor" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="fecharModal('modalPreco')" style="background:#333;color:#fff;">Cancelar</button>
+      <button class="btn btn-red" onclick="salvarPreco()">Salvar</button>
+    </div>
+  </div>
+</div>
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+<!-- MODAL FICHA -->
+<div class="modal-overlay" id="modalFicha">
+  <div class="modal">
+    <h2>📋 Ficha Técnica</h2>
+    <input type="hidden" id="f-id" />
+    <div class="form-group">
+      <label>Nome do Produto *</label>
+      <input type="text" id="f-nome" placeholder="Ex: Pizza Margherita" />
+    </div>
+    <div class="form-group">
+      <label>Categoria *</label>
+      <select id="f-categoria">
+        <option>Pizza</option><option>Calzone</option><option>Massa</option>
+        <option>Bebida</option><option>Sobremesa</option><option>Outro</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Rendimento (porções) *</label>
+      <input type="number" id="f-rendimento" placeholder="Ex: 8" />
+    </div>
+    <div class="form-group">
+      <label>Preço de Venda (R$) *</label>
+      <input type="number" id="f-preco-venda" step="0.01" placeholder="0,00" />
+    </div>
+    <div class="form-group">
+      <label>Modo de Preparo</label>
+      <textarea id="f-preparo" placeholder="Descreva o modo de preparo..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Ingredientes</label>
+      <div class="ingredientes-list" id="ingredientesList"></div>
+      <button class="btn btn-green btn-sm" style="margin-top:8px;" onclick="adicionarIngrediente()">+ Ingrediente</button>
+    </div>
+    <div style="background:#1a1a2e;padding:12px;border-radius:8px;margin-top:10px;">
+      <strong>Custo Total: <span id="custoTotal" style="color:#e74c3c;">R$ 0,00</span></strong>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="fecharModal('modalFicha')" style="background:#333;color:#fff;">Cancelar</button>
+      <button class="btn btn-red" onclick="salvarFicha()">Salvar</button>
+    </div>
+  </div>
+</div>
 
-  // ========== UTILS ==========
-  const fmt = v => 'R$ ' + Number(v||0).toFixed(2).replace('.',',');
-  const fmtDate = s => s ? s.split('-').reverse().join('/') : '—';
-  const today = () => new Date().toISOString().split('T')[0];
-  const toast = (msg, type='success') => {
-    const t = document.getElementById('toast');
-    const d = document.createElement('div');
-    d.className = 'toast-msg' + (type==='error'?' error':type==='warning'?' warning':'');
-    d.textContent = (type==='success'?'✅ ':type==='error'?'❌ ':'⚠️ ') + msg;
-    t.appendChild(d);
-    setTimeout(()=>d.remove(), 3500);
-  };
-  window.toast = toast;
+<!-- MODAL DETALHE FICHA -->
+<div class="modal-overlay" id="modalFichaDetalhe">
+  <div class="modal" style="max-width:600px;">
+    <h2>📋 <span id="fd-nome"></span></h2>
+    <div id="fd-conteudo"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="fecharModal('modalFichaDetalhe')" style="background:#333;color:#fff;">Fechar</button>
+    </div>
+  </div>
+</div>
 
-  // ========== AUTH ==========
-  onAuthStateChanged(auth, user => {
-    if (user) {
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('app').style.display = 'block';
-      document.getElementById('userName').textContent = user.displayName || user.email.split('@')[0];
-      document.getElementById('userEmail').textContent = user.email;
-      document.getElementById('userAvatar').textContent = (user.displayName||user.email)[0].toUpperCase();
-      initApp();
-    } else {
-      document.getElementById('loginScreen').style.display = 'flex';
-      document.getElementById('app').style.display = 'none';
-    }
-  });
+<script>
+// ===== FIREBASE =====
+const firebaseConfig = {
+  apiKey: "AIzaSyAM8DJcX7sQoMDZP5LiAEz91Z5ivgSKX_I",
+  authDomain: "ilmonello-pizzaria-f757c.firebaseapp.com",
+  projectId: "ilmonello-pizzaria-f757c",
+  storageBucket: "ilmonello-pizzaria-f757c.firebasestorage.app",
+  messagingSenderId: "991199105962",
+  appId: "1:991199105962:web:21cae5d962512a0c7751d3"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-  window.doLogin = async () => {
-    const email = document.getElementById('loginEmail').value.trim();
-    const pass = document.getElementById('loginPass').value;
-    const err = document.getElementById('loginError');
-    err.textContent = '';
-    try {
-      await signInWithEmailAndPassword(auth, email, pass);
-    } catch(e) {
-      err.textContent = 'E-mail ou senha inválidos.';
-    }
-  };
-
-  window.doLogout = async () => { await signOut(auth); };
-
-  // ========== NAVIGATION ==========
-  let currentPage = 'dashboard';
-  const pageTitles = {
-    dashboard:'Dashboard', vendas:'Registrar Vendas', estoque:'Estoque Diário',
-    insumos:'Cadastro de Insumos', precos:'Histórico de Preços',
-    fichas:'Fichas Técnicas', historico:'Histórico de Vendas'
-  };
-
-  window.goTo = page => {
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-    document.getElementById('page-'+page).classList.add('active');
-    document.querySelectorAll('.nav-item').forEach(n=>{ if(n.textContent.trim().includes(pageTitles[page]?.split(' ')[0]||'')) n.classList.add('active'); });
-    document.getElementById('pageTitle').textContent = pageTitles[page]||page;
-    currentPage = page;
-    closeSidebar();
-    if(page==='dashboard') loadDashboard();
-    if(page==='vendas') { loadVendas(); document.getElementById('filtroDataVenda').value=today(); filtrarVendas(); }
-    if(page==='estoque') { loadEstoqueForm(); loadEstoqueTabela(); }
-    if(page==='insumos') loadInsumos();
-    if(page==='precos') { loadInsumosSelect(); carregarHistoricoPrecos(); }
-    if(page==='fichas') loadFichas();
-    if(page==='historico') {};
-  };
-
-  window.toggleSidebar = () => {
-    document.getElementById('sidebar').classList.toggle('open');
-    document.getElementById('overlayBg').classList.toggle('open');
-  };
-  window.closeSidebar = () => {
-    document.getElementById('sidebar').classList.remove('open');
-    document.getElementById('overlayBg').classList.remove('open');
-  };
-
-  // ========== INIT ==========
-  function initApp() {
-    document.getElementById('topDate').textContent = new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
-    document.getElementById('v-data').value = today();
-    document.getElementById('estoqueData').value = today();
-    document.getElementById('p-data').value = today();
-    const m = new Date(); const y=m.getFullYear(), mo=String(m.getMonth()+1).padStart(2,'0');
-    document.getElementById('h-inicio').value = `${y}-${mo}-01`;
-    document.getElementById('h-fim').value = today();
-    loadDashboard();
+// ===== AUTH =====
+auth.onAuthStateChanged(user => {
+  if (user) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    iniciarApp();
+  } else {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
   }
+});
 
-  // ===========================
-  // ========= VENDAS ==========
-  // ===========================
-  window.salvarVenda = async () => {
-    const data=document.getElementById('v-data').value;
-    const produto=document.getElementById('v-produto').value.trim();
-    const categoria=document.getElementById('v-categoria').value;
-    const qtd=Number(document.getElementById('v-qtd').value)||1;
-    const valor=Number(document.getElementById('v-valor').value)||0;
-    const canal=document.getElementById('v-canal').value;
-    const pagamento=document.getElementById('v-pagamento').value;
-    const obs=document.getElementById('v-obs').value.trim();
-    if(!data||!produto||!valor){ toast('Preencha data, produto e valor.','error'); return; }
-    try {
-      await addDoc(collection(db,'vendas'),{
-        data, produto, categoria, qtd, valor, total:qtd*valor,
-        canal, pagamento, obs, criadoEm: serverTimestamp()
-      });
-      toast('Venda salva com sucesso!');
-      document.getElementById('v-produto').value='';
-      document.getElementById('v-qtd').value='1';
-      document.getElementById('v-valor').value='';
-      document.getElementById('v-obs').value='';
-      filtrarVendas();
-      if(currentPage==='dashboard') loadDashboard();
-    } catch(e){ toast('Erro ao salvar venda.','error'); }
+function fazerLogin() {
+  const email = document.getElementById('loginEmail').value;
+  const senha = document.getElementById('loginPassword').value;
+  document.getElementById('loginError').textContent = '';
+  auth.signInWithEmailAndPassword(email, senha).catch(e => {
+    document.getElementById('loginError').textContent = 'E-mail ou senha inválidos.';
+  });
+}
+
+function fazerLogout() {
+  auth.signOut();
+}
+
+// ===== INIT =====
+let insumosCache = [];
+let chartVendas = null;
+let chartProdutos = null;
+
+function iniciarApp() {
+  const hoje = new Date();
+  document.getElementById('dataAtual').textContent =
+    hoje.toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'long', year:'numeric' });
+
+  document.getElementById('filtroVendaData').value = hoje.toISOString().split('T')[0];
+  document.getElementById('filtroEstoqueData').value = hoje.toISOString().split('T')[0];
+
+  carregarInsumos();
+  carregarDashboard();
+}
+
+// ===== NAVEGAÇÃO =====
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelector(`nav a[data-page="${page}"]`).classList.add('active');
+
+  const titles = {
+    dashboard: 'Dashboard', vendas: 'Vendas', estoque: 'Estoque Diário',
+    insumos: 'Insumos', precos: 'Histórico de Preços', fichas: 'Fichas Técnicas'
   };
+  document.getElementById('pageTitle').textContent = titles[page];
 
-  window.filtrarVendas = async () => {
-    const data = document.getElementById('filtroDataVenda').value || today();
-    const q = query(collection(db,'vendas'), where('data','==',data), orderBy('criadoEm','desc'));
-    const snap = await getDocs(q);
-    const rows = []; let totalVal=0, totalQtd=0;
-    snap.forEach(d=>{ const v={id:d.id,...d.data()}; rows.push(v); totalVal+=v.total||0; totalQtd+=v.qtd||0; });
-    const tb = document.getElementById('tabelaVendas');
-    if(!rows.length){ tb.innerHTML='<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text2)">Nenhuma venda nesta data.</td></tr>'; }
-    else {
-      tb.innerHTML = rows.map(v=>`
-        <tr>
-          <td>${fmtDate(v.data)}</td>
-          <td><strong>${v.produto}</strong></td>
-          <td><span class="tag tag-blue">${v.categoria}</span></td>
-          <td>${v.qtd}</td>
-          <td>${fmt(v.valor)}</td>
-          <td><strong style="color:var(--success)">${fmt(v.total)}</strong></td>
-          <td>${v.canal}</td>
-          <td>${v.pagamento}</td>
-          <td><button class="btn btn-danger btn-sm" onclick="deletarVenda('${v.id}')"><i class="fa fa-trash"></i></button></td>
-        </tr>`).join('');
+  if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+
+  if (page === 'dashboard') carregarDashboard();
+  if (page === 'vendas') carregarVendas();
+  if (page === 'estoque') carregarEstoque();
+  if (page === 'insumos') carregarInsumos();
+  if (page === 'precos') { carregarSelectInsumos(); carregarPrecos(); }
+  if (page === 'fichas') carregarFichas();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ===== HELPERS =====
+function moeda(v) {
+  return 'R$ ' + Number(v || 0).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+function hoje() { return new Date().toISOString().split('T')[0]; }
+function abrirModal(id) { document.getElementById(id).classList.add('open'); }
+function fecharModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ===== DASHBOARD =====
+async function carregarDashboard() {
+  const agora = new Date();
+  const anoMes = `${agora.getFullYear()}-${String(agora.getMonth()+1).padStart(2,'0')}`;
+  const dataHoje = agora.toISOString().split('T')[0];
+
+  try {
+    // Vendas
+    const vendasSnap = await db.collection('vendas').get();
+    const vendas = vendasSnap.docs.map(d => ({id:d.id,...d.data()}));
+
+    const vendasHoje = vendas.filter(v => v.data === dataHoje);
+    const vendasMes = vendas.filter(v => v.data && v.data.startsWith(anoMes));
+
+    const totalHoje = vendasHoje.reduce((s,v) => s + (v.total||0), 0);
+    const totalMes = vendasMes.reduce((s,v) => s + (v.total||0), 0);
+    const ticketMedio = vendasMes.length > 0 ? totalMes / vendasMes.length : 0;
+
+    document.getElementById('d-vendas-hoje').textContent = moeda(totalHoje);
+    document.getElementById('d-vendas-hoje-qtd').textContent = `${vendasHoje.length} pedidos`;
+    document.getElementById('d-vendas-mes').textContent = moeda(totalMes);
+    document.getElementById('d-vendas-mes-qtd').textContent = `${vendasMes.length} pedidos`;
+    document.getElementById('d-ticket-medio').textContent = moeda(ticketMedio);
+
+    // Gráfico vendas 7 dias
+    const labels = [], dados = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const ds = d.toISOString().split('T')[0];
+      labels.push(d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}));
+      dados.push(vendas.filter(v=>v.data===ds).reduce((s,v)=>s+(v.total||0),0));
     }
-    document.getElementById('resumoVendas').innerHTML =
-      `<span class="tag tag-green">💰 Total: ${fmt(totalVal)}</span>
-       <span class="tag tag-blue">🧾 Itens: ${rows.length}</span>
-       <span class="tag tag-yellow">📦 Qtd Total: ${totalQtd}</span>`;
-  };
-
-  window.loadVendas = () => { document.getElementById('filtroDataVenda').value = today(); filtrarVendas(); };
-
-  window.deletarVenda = async id => {
-    if(!confirm('Excluir esta venda?')) return;
-    await deleteDoc(doc(db,'vendas',id));
-    toast('Venda excluída.','warning');
-    filtrarVendas();
-    if(currentPage==='dashboard') loadDashboard();
-  };
-
-  // ===========================
-  // ======= DASHBOARD =========
-  // ===========================
-  async function loadDashboard() {
-    const now = new Date();
-    const todayStr = today();
-    const weekAgo = new Date(now); weekAgo.setDate(weekAgo.getDate()-7);
-    const weekStr = weekAgo.toISOString().split('T')[0];
-    const mesStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-
-    const snap = await getDocs(collection(db,'vendas'));
-    let hj=0,hjQ=0,sem=0,semQ=0,mes=0,mesQ=0;
-    const prodMap = {};
-    const ultimas = [];
-
-    snap.forEach(d=>{
-      const v={id:d.id,...d.data()};
-      ultimas.push(v);
-      if(v.data===todayStr){ hj+=v.total||0; hjQ++; }
-      if(v.data>=weekStr){ sem+=v.total||0; semQ++; }
-      if(v.data&&v.data.startsWith(mesStr)){ mes+=v.total||0; mesQ++; }
-      if(v.data&&v.data.startsWith(mesStr)){
-        prodMap[v.produto]=(prodMap[v.produto]||0)+(v.total||0);
-      }
-    });
-
-    document.getElementById('kpi-hoje').textContent=fmt(hj);
-    document.getElementById('kpi-hoje-qtd').textContent=hjQ+' vendas';
-    document.getElementById('kpi-semana').textContent=fmt(sem);
-    document.getElementById('kpi-semana-qtd').textContent=semQ+' vendas';
-    document.getElementById('kpi-mes').textContent=fmt(mes);
-    document.getElementById('kpi-mes-qtd').textContent=mesQ+' vendas';
-    document.getElementById('kpi-ticket').textContent=mesQ?fmt(mes/mesQ):fmt(0);
+    renderChartVendas(labels, dados);
 
     // Top produtos
-    const top = Object.entries(prodMap).sort((a,b)=>b[1]-a[1]).slice(0,5);
-    const maxVal = top[0]?.[1]||1;
-    document.getElementById('topProdutos').innerHTML = top.length ? top.map(([nome,val])=>`
-      <div style="margin-bottom:14px">
-        <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:4px">
-          <span>${nome}</span><strong style="color:var(--success)">${fmt(val)}</strong>
-        </div>
-        <div class="progress-bar"><div class="progress-fill" style="width:${(val/maxVal*100).toFixed(0)}%;background:var(--primary)"></div></div>
-      </div>`).join('') : '<p style="color:var(--text2);font-size:0.85rem">Sem dados este mês.</p>';
+    const prodMap = {};
+    vendas.filter(v => v.data && v.data.startsWith(anoMes)).forEach(v => {
+      prodMap[v.produto] = (prodMap[v.produto]||0) + (v.quantidade||1);
+    });
+    const top5 = Object.entries(prodMap).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    renderChartProdutos(top5.map(x=>x[0]), top5.map(x=>x[1]));
 
-    // Últimas 5 vendas
-    ultimas.sort((a,b)=>(b.data>a.data?1:-1));
-    const ult5 = ultimas.slice(0,5);
-    document.getElementById('ultimasVendas').innerHTML = ult5.length ? `
-      <table><thead><tr><th>Data</th><th>Produto</th><th>Total</th><th>Canal</th></tr></thead>
-      <tbody>${ult5.map(v=>`<tr>
-        <td>${fmtDate(v.data)}</td><td>${v.produto}</td>
-        <td><strong style="color:var(--success)">${fmt(v.total)}</strong></td>
-        <td>${v.canal||'—'}</td></tr>`).join('')}
-      </tbody></table>` : '<p style="color:var(--text2);font-size:0.85rem">Nenhuma venda registrada.</p>';
+    // Insumos
+    const insumosSnap = await db.collection('insumos').get();
+    document.getElementById('d-insumos-total').textContent = insumosSnap.size;
 
-    // Estoque crítico
-    await loadEstoqueCriticoDash();
+    // Fichas
+    const fichasSnap = await db.collection('fichas').get();
+    document.getElementById('d-fichas-total').textContent = fichasSnap.size;
+
+    // Estoque alertas
+    const estoqueSnap = await db.collection('estoque').orderBy('data','desc').get();
+    const ultimoEstoque = {};
+    estoqueSnap.docs.forEach(d => {
+      const dado = d.data();
+      if (!ultimoEstoque[dado.insumoId]) ultimoEstoque[dado.insumoId] = dado;
+    });
+
+    const insumos = insumosSnap.docs.map(d=>({id:d.id,...d.data()}));
+    document.getElementById('d-estoque-total').textContent = insumos.length;
+
+    let baixoCount = 0;
+    const alertasHtml = insumos.map(ins => {
+      const ult = ultimoEstoque[ins.id];
+      const qtdFinal = ult ? (ult.final || 0) : null;
+      const min = ins.estoqueMin || 0;
+      if (qtdFinal !== null && qtdFinal <= min) {
+        baixoCount++;
+        const classe = qtdFinal === 0 ? 'badge-red' : 'badge-yellow';
+        const texto = qtdFinal === 0 ? 'Zerado' : 'Baixo';
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #2a2a5e;">
+          <span>${ins.nome}</span>
+          <span>${qtdFinal} ${ins.unidade} <span class="badge ${classe}">${texto}</span></span>
+        </div>`;
+      }
+      return '';
+    }).filter(Boolean).join('');
+
+    document.getElementById('d-estoque-baixo').textContent = `${baixoCount} com estoque baixo`;
+    document.getElementById('alertasEstoque').innerHTML =
+      alertasHtml || '<div class="empty-state">✅ Nenhum alerta de estoque</div>';
+
+  } catch(e) {
+    console.error(e);
   }
+}
 
-  async function loadEstoqueCriticoDash() {
-    const insnap = await getDocs(collection(db,'insumos'));
-    const estnap = await getDocs(collection(db,'estoqueRegistros'));
-    const ultimoEst = {};
-    estnap.forEach(d=>{ const v=d.data(); if(!ultimoEst[v.insumoId]||v.data>ultimoEst[v.insumoId].data) ultimoEst[v.insumoId]=v; });
-    const criticos = [];
-    insnap.forEach(d=>{ const v={id:d.id,...d.data()}; const ult=ultimoEst[d.id]; const qtd=ult?ult.quantidade:null;
-      if(qtd!==null && qtd<=v.estoqueMinimo) criticos.push({...v,qtd}); });
-    document.getElementById('estoqueCritico').innerHTML = criticos.length ?
-      criticos.map(i=>`<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:0.85rem">
-        <span>⚠️ ${i.nome}</span>
-        <span class="estoque-critico"><strong>${i.qtd} ${i.unidade}</strong> / mín ${i.estoqueMinimo}</span></div>`).join('') :
-      '<p style="color:var(--success);font-size:0.85rem">✅ Estoque sem alertas críticos.</p>';
-  }
-
-  // ===========================
-  // ======== INSUMOS ==========
-  // ===========================
-  window.salvarInsumo = async () => {
-    const nome=document.getElementById('i-nome').value.trim();
-    const categoria=document.getElementById('i-categoria').value;
-    const unidade=document.getElementById('i-unidade').value;
-    const estoqueMinimo=Number(document.getElementById('i-minimo').value)||0;
-    const precoAtual=Number(document.getElementById('i-preco').value)||0;
-    const fornecedor=document.getElementById('i-fornecedor').value.trim();
-    if(!nome){ toast('Digite o nome do insumo.','error'); return; }
-    await addDoc(collection(db,'insumos'),{ nome, categoria, unidade, estoqueMinimo, precoAtual, fornecedor, criadoEm:serverTimestamp() });
-    toast('Insumo cadastrado!');
-    document.getElementById('i-nome').value=''; document.getElementById('i-preco').value='';
-    document.getElementById('i-minimo').value=''; document.getElementById('i-fornecedor').value='';
-    loadInsumos();
-  };
-
-  let todosInsumos = [];
-  window.loadInsumos = async () => {
-    const snap = await getDocs(query(collection(db,'insumos'), orderBy('nome')));
-    todosInsumos = [];
-    snap.forEach(d=>todosInsumos.push({id:d.id,...d.data()}));
-    renderInsumos(todosInsumos);
-  };
-
-  window.filtrarInsumos = () => {
-    const q = document.getElementById('buscaInsumo').value.toLowerCase();
-    renderInsumos(todosInsumos.filter(i=>i.nome.toLowerCase().includes(q)));
-  };
-
-  function renderInsumos(list) {
-    document.getElementById('tabelaInsumos').innerHTML = list.length ? list.map(i=>`
-      <tr>
-        <td><strong>${i.nome}</strong></td>
-        <td>${i.categoria}</td><td>${i.unidade}</td><td>${i.estoqueMinimo}</td>
-        <td><strong style="color:var(--success)">${fmt(i.precoAtual)}</strong></td>
-        <td>${i.fornecedor||'—'}</td>
-        <td style="display:flex;gap:6px">
-          <button class="btn btn-warning btn-sm" onclick="editarInsumo('${i.id}')"><i class="fa fa-edit"></i></button>
-          <button class="btn btn-danger btn-sm" onclick="deletarInsumo('${i.id}')"><i class="fa fa-trash"></i></button>
-        </td>
-      </tr>`).join('') : '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text2)">Nenhum insumo cadastrado.</td></tr>';
-  }
-
-  window.editarInsumo = async id => {
-    const d = await getDoc(doc(db,'insumos',id));
-    const v = d.data();
-    const novoPreco = prompt(`Novo preço para "${v.nome}" (atual: ${fmt(v.precoAtual)}):`, v.precoAtual);
-    if(novoPreco===null) return;
-    const novoMin = prompt(`Novo estoque mínimo (atual: ${v.estoqueMinimo}):`, v.estoqueMinimo);
-    if(novoMin===null) return;
-    await updateDoc(doc(db,'insumos',id),{ precoAtual:Number(novoPreco)||0, estoqueMinimo:Number(novoMin)||0 });
-    toast('Insumo atualizado!'); loadInsumos();
-  };
-
-  window.deletarInsumo = async id => {
-    if(!confirm('Excluir este insumo?')) return;
-    await deleteDoc(doc(db,'insumos',id));
-    toast('Insumo excluído.','warning'); loadInsumos();
-  };
-
-  // ===========================
-  // ====== HIST. PREÇOS =======
-  // ===========================
-  window.loadInsumosSelect = async () => {
-    const snap = await getDocs(query(collection(db,'insumos'),orderBy('nome')));
-    const opts = ['<option value="">-- Selecione --</option>'];
-    const opts2 = ['<option value="">Todos os insumos</option>'];
-    snap.forEach(d=>{ const v=d.data(); opts.push(`<option value="${d.id}">${v.nome}</option>`); opts2.push(`<option value="${d.id}">${v.nome}</option>`); });
-    document.getElementById('p-insumo').innerHTML = opts.join('');
-    document.getElementById('filtroInsumoPreco').innerHTML = opts2.join('');
-    carregarHistoricoPrecos();
-  };
-
-  window.salvarPreco = async () => {
-    const insumoId=document.getElementById('p-insumo').value;
-    const preco=Number(document.getElementById('p-preco').value)||0;
-    const data=document.getElementById('p-data').value;
-    const fornecedor=document.getElementById('p-fornecedor').value.trim();
-    const obs=document.getElementById('p-obs').value.trim();
-    if(!insumoId||!preco||!data){ toast('Selecione insumo, preço e data.','error'); return; }
-    const inDoc = await getDoc(doc(db,'insumos',insumoId));
-    const precoAnterior = inDoc.data()?.precoAtual||0;
-    const insumoNome = inDoc.data()?.nome||'';
-    await addDoc(collection(db,'historicoPrecos'),{ insumoId, insumoNome, precoAnterior, novoPreco:preco, data, fornecedor, obs, criadoEm:serverTimestamp() });
-    await updateDoc(doc(db,'insumos',insumoId),{ precoAtual:preco });
-    toast('Preço atualizado!');
-    document.getElementById('p-preco').value=''; document.getElementById('p-obs').value='';
-    carregarHistoricoPrecos();
-  };
-
-  window.carregarHistoricoPrecos = async () => {
-    const filtro = document.getElementById('filtroInsumoPreco')?.value||'';
-    let q;
-    if(filtro) q = query(collection(db,'historicoPrecos'), where('insumoId','==',filtro), orderBy('data','desc'));
-    else q = query(collection(db,'historicoPrecos'), orderBy('data','desc'));
-    const snap = await getDocs(q);
-    const rows = []; snap.forEach(d=>rows.push(d.data()));
-    document.getElementById('tabelaPrecos').innerHTML = rows.length ? rows.map(v=>{
-      const var_ = v.precoAnterior ? ((v.novoPreco-v.precoAnterior)/v.precoAnterior*100).toFixed(1) : 0;
-      const cor = var_>0?'var(--danger)':var_<0?'var(--success)':'var(--text2)';
-      return `<tr>
-        <td>${fmtDate(v.data)}</td><td>${v.insumoNome}</td>
-        <td>${fmt(v.precoAnterior)}</td><td><strong style="color:var(--success)">${fmt(v.novoPreco)}</strong></td>
-        <td style="color:${cor};font-weight:700">${var_>0?'+':''}${var_}%</td>
-        <td>${v.fornecedor||'—'}</td><td>${v.obs||'—'}</td></tr>`;
-    }).join('') : '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text2)">Nenhum registro.</td></tr>';
-  };
-
-  // ===========================
-  // ======== ESTOQUE ==========
-  // ===========================
-  window.loadEstoqueForm = async () => {
-    const snap = await getDocs(query(collection(db,'insumos'),orderBy('nome')));
-    const insumos = []; snap.forEach(d=>insumos.push({id:d.id,...d.data()}));
-    if(!insumos.length){ document.getElementById('estoqueForm').innerHTML='<p style="color:var(--text2)">Cadastre insumos primeiro.</p>'; return; }
-    document.getElementById('estoqueForm').innerHTML = `
-      <div class="form-row">${insumos.map(i=>`
-        <div class="field">
-          <label>${i.nome} <span style="color:var(--text2);font-size:0.78rem">(${i.unidade}) — mín: ${i.estoqueMinimo}</span></label>
-          <input type="number" id="est-${i.id}" placeholder="0" step="0.01" data-id="${i.id}" data-nome="${i.nome}" data-unidade="${i.unidade}" data-min="${i.estoqueMinimo}" />
-        </div>`).join('')}
-      </div>`;
-  };
-
-  window.carregarEstoqueData = async () => {
-    const data = document.getElementById('estoqueData').value;
-    if(!data){ toast('Selecione uma data.','warning'); return; }
-    const q = query(collection(db,'estoqueRegistros'), where('data','==',data));
-    const snap = await getDocs(q);
-    snap.forEach(d=>{ const v=d.data(); const el=document.getElementById('est-'+v.insumoId); if(el) el.value=v.quantidade; });
-    toast('Estoque carregado para '+fmtDate(data));
-  };
-
-  window.salvarEstoque = async () => {
-    const data = document.getElementById('estoqueData').value;
-    if(!data){ toast('Selecione uma data.','warning'); return; }
-    const inputs = document.querySelectorAll('#estoqueForm input[data-id]');
-    let count=0;
-    for(const inp of inputs){
-      const val = Number(inp.value);
-      if(inp.value==='') continue;
-      const q2 = query(collection(db,'estoqueRegistros'), where('data','==',data), where('insumoId','==',inp.dataset.id));
-      const snap2 = await getDocs(q2);
-      if(!snap2.empty){ await updateDoc(doc(db,'estoqueRegistros',snap2.docs[0].id),{ quantidade:val, atualizadoEm:serverTimestamp() }); }
-      else { await addDoc(collection(db,'estoqueRegistros'),{ data, insumoId:inp.dataset.id, insumoNome:inp.dataset.nome, unidade:inp.dataset.unidade, quantidade:val, criadoEm:serverTimestamp() }); }
-      count++;
+function renderChartVendas(labels, dados) {
+  const ctx = document.getElementById('chartVendas').getContext('2d');
+  if (chartVendas) chartVendas.destroy();
+  chartVendas = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Vendas (R$)', data: dados,
+        borderColor: '#e74c3c', backgroundColor: 'rgba(231,76,60,0.1)',
+        fill: true, tension: 0.4, pointBackgroundColor: '#e74c3c'
+      }]
+    },
+    options: {
+      plugins: { legend: { labels: { color: '#ccc' } } },
+      scales: {
+        x: { ticks: { color: '#aaa' }, grid: { color: '#2a2a5e' } },
+        y: { ticks: { color: '#aaa', callback: v => 'R$'+v }, grid: { color: '#2a2a5e' } }
+      }
     }
-    toast(`${count} registros de estoque salvos!`);
-    loadEstoqueTabela();
-  };
+  });
+}
 
-  window.loadEstoqueTabela = async () => {
-    const insnap = await getDocs(query(collection(db,'insumos'),orderBy('nome')));
-    const estnap = await getDocs(collection(db,'estoqueRegistros'));
-    const ultimoEst = {};
-    estnap.forEach(d=>{ const v=d.data(); if(!ultimoEst[v.insumoId]||v.data>ultimoEst[v.insumoId].data) ultimoEst[v.insumoId]=v; });
-    const rows = [];
-    insnap.forEach(d=>{ const v={id:d.id,...d.data()}; const ult=ultimoEst[d.id]; rows.push({...v,ult}); });
-    document.getElementById('tabelaEstoque').innerHTML = rows.length ? rows.map(r=>{
-      const qtd = r.ult?.quantidade??'—';
-      const data = r.ult?.data||'—';
-      let status='<span class="tag tag-blue">Sem dados</span>';
-      if(qtd!=='—'){ if(qtd<=r.estoqueMinimo) status='<span class="tag tag-red">🔴 Crítico</span>';
-        else if(qtd<=r.estoqueMinimo*1.5) status='<span class="tag tag-yellow">🟡 Alerta</span>';
-        else status='<span class="tag tag-green">🟢 OK</span>'; }
-      return `<tr><td><strong>${r.nome}</strong></td><td>${r.unidade}</td><td>${r.estoqueMinimo}</td>
-        <td>${fmtDate(data)}</td>
-        <td><strong ${qtd!=='—'&&qtd<=r.estoqueMinimo?'class="estoque-critico"':''}>${qtd} ${qtd!=='—'?r.unidade:''}</strong></td>
-        <td>${status}</td></tr>`;
-    }).join('') : '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--text2)">Nenhum dado.</td></tr>';
-  };
+function renderChartProdutos(labels, dados) {
+  const ctx = document.getElementById('chartProdutos').getContext('2d');
+  if (chartProdutos) chartProdutos.destroy();
+  chartProdutos = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{
+        data: dados,
+        backgroundColor: ['#e74c3c','#c0392b','#e67e22','#f39c12','#8e44ad']
+      }]
+    },
+    options: {
+      plugins: { legend: { labels: { color: '#ccc' }, position: 'bottom' } }
+    }
+  });
+}
 
-  // ===========================
-  // ====== FICHAS TÉCNICAS ====
-  // ===========================
-  let ingredientes = [];
-  let fichaEditId = null;
+// ===== VENDAS =====
+function abrirModalVenda() {
+  document.getElementById('v-data').value = hoje();
+  document.getElementById('v-produto').value = '';
+  document.getElementById('v-qtd').value = 1;
+  document.getElementById('v-valor').value = '';
+  document.getElementById('v-obs').value = '';
+  abrirModal('modalVenda');
+}
 
-  window.abrirModalFicha = () => {
-    fichaEditId = null; ingredientes = [];
-    document.getElementById('f-nome').value=''; document.getElementById('f-rendimento').value='';
-    document.getElementById('f-preco-venda').value=''; document.getElementById('f-preparo').value='';
-    document.getElementById('ingredientesList').innerHTML='';
-    document.getElementById('f-custo-total').textContent='R$ 0,00';
-    document.getElementById('f-margem').textContent='0%';
-    document.getElementById('modalFicha').classList.add('open');
-  };
-  window.fecharModalFicha = () => document.getElementById('modalFicha').classList.remove('open');
+async function salvarVenda() {
+  const data = document.getElementById('v-data').value;
+  const produto = document.getElementById('v-produto').value.trim();
+  const qtd = parseFloat(document.getElementById('v-qtd').value) || 0;
+  const valor = parseFloat(document.getElementById('v-valor').value) || 0;
+  const obs = document.getElementById('v-obs').value.trim();
 
-  window.addIngrediente = async () => {
-    const snap = await getDocs(query(collection(db,'insumos'),orderBy('nome')));
-    const opts = snap.docs.map(d=>`<option value="${d.id}" data-preco="${d.data().precoAtual}" data-unidade="${d.data().unidade}">${d.data().nome}</option>`).join('');
-    const idx = ingredientes.length;
-    ingredientes.push({insumoId:'',nome:'',quantidade:0,unidade:'',custoUnit:0,custo:0});
-    const div = document.createElement('div');
-    div.id='ing-row-'+idx;
-    div.style.cssText='display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:end';
-    div.innerHTML=`
-      <div class="field" style="margin:0"><label style="font-size:0.75rem">Insumo</label>
-        <select onchange="updateIngrediente(${idx},this)" style="padding:8px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--text);width:100%">
-          <option value="">Selecione</option>${opts}</select></div>
-      <div class="field" style="margin:0"><label style="font-size:0.75rem">Qtd</label>
-        <input type="number" placeholder="0" step="0.001" onchange="calcIngrediente(${idx},this.value)" style="padding:8px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--text);width:100%" /></div>
-      <div class="field" style="margin:0"><label style="font-size:0.75rem">Custo</label>
-        <input type="text" id="ing-custo-${idx}" readonly placeholder="R$ 0,00" style="padding:8px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--success);width:100%" /></div>
-      <button class="btn btn-danger btn-sm" onclick="remIngrediente(${idx})" style="margin-bottom:0"><i class="fa fa-trash"></i></button>`;
-    document.getElementById('ingredientesList').appendChild(div);
-  };
-
-  window.updateIngrediente = (idx, sel) => {
-    const opt = sel.options[sel.selectedIndex];
-    ingredientes[idx].insumoId = sel.value;
-    ingredientes[idx].nome = opt.text;
-    ingredientes[idx].custoUnit = Number(opt.dataset.preco)||0;
-    ingredientes[idx].unidade = opt.dataset.unidade||'';
-    calcIngrediente(idx, ingredientes[idx].quantidade);
-  };
-
-  window.calcIngrediente = (idx, qtd) => {
-    ingredientes[idx].quantidade = Number(qtd)||0;
-    ingredientes[idx].custo = ingredientes[idx].custoUnit * ingredientes[idx].quantidade;
-    const el = document.getElementById('ing-custo-'+idx);
-    if(el) el.value = fmt(ingredientes[idx].custo);
-    atualizarCustoTotal();
-  };
-
-  window.remIngrediente = idx => {
-    ingredientes[idx] = null;
-    const el = document.getElementById('ing-row-'+idx);
-    if(el) el.remove();
-    atualizarCustoTotal();
-  };
-
-  function atualizarCustoTotal() {
-    const total = ingredientes.filter(Boolean).reduce((s,i)=>s+(i.custo||0),0);
-    const venda = Number(document.getElementById('f-preco-venda').value)||0;
-    const margem = venda ? ((venda-total)/venda*100).toFixed(1) : 0;
-    document.getElementById('f-custo-total').textContent = fmt(total);
-    document.getElementById('f-margem').textContent = margem+'%';
-    document.getElementById('f-margem').style.color = margem>=0?'var(--success)':'var(--danger)';
+  if (!data || !produto || !qtd || !valor) {
+    alert('Preencha todos os campos obrigatórios!'); return;
   }
-  document.getElementById('f-preco-venda').addEventListener('input', atualizarCustoTotal);
 
-  window.salvarFicha = async () => {
-    const nome=document.getElementById('f-nome').value.trim();
-    const categoria=document.getElementById('f-categoria').value;
-    const rendimento=Number(document.getElementById('f-rendimento').value)||1;
-    const precoVenda=Number(document.getElementById('f-preco-venda').value)||0;
-    const preparo=document.getElementById('f-preparo').value.trim();
-    if(!nome){ toast('Digite o nome do produto.','error'); return; }
-    const ings = ingredientes.filter(Boolean).filter(i=>i.insumoId);
-    const custoTotal = ings.reduce((s,i)=>s+i.custo,0);
-    const margem = precoVenda ? ((precoVenda-custoTotal)/precoVenda*100).toFixed(1) : 0;
-    const data = { nome, categoria, rendimento, precoVenda, preparo, ingredientes:ings, custoTotal, margem:Number(margem), atualizadoEm:serverTimestamp() };
-    if(fichaEditId) await updateDoc(doc(db,'fichas',fichaEditId), data);
-    else await addDoc(collection(db,'fichas'),{...data, criadoEm:serverTimestamp()});
-    toast('Ficha salva!'); fecharModalFicha(); loadFichas();
-  };
+  await db.collection('vendas').add({
+    data, produto, quantidade: qtd,
+    valorUnitario: valor, total: qtd * valor,
+    observacao: obs, criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+  });
 
-  window.loadFichas = async () => {
-    const snap = await getDocs(query(collection(db,'fichas'),orderBy('nome')));
-    const rows=[]; snap.forEach(d=>rows.push({id:d.id,...d.data()}));
-    document.getElementById('tabelaFichas').innerHTML = rows.length ? rows.map(f=>`
-      <tr>
-        <td><strong>${f.nome}</strong></td>
-        <td>${f.categoria}</td>
-        <td>${f.rendimento} porção(ões)</td>
-        <td><strong style="color:var(--warning)">${fmt(f.custoTotal)}</strong></td>
-        <td><strong style="color:var(--success)">${fmt(f.precoVenda)}</strong></td>
-        <td><span class="tag ${f.margem>=60?'tag-green':f.margem>=30?'tag-yellow':'tag-red'}">${f.margem}%</span></td>
-        <td style="display:flex;gap:6px">
-          <button class="btn btn-info btn-sm" onclick="verFicha('${f.id}')"><i class="fa fa-eye"></i></button>
-          <button class="btn btn-danger btn-sm" onclick="deletarFicha('${f.id}')"><i class="fa fa-trash"></i></button>
-        </td>
-      </tr>`).join('') : '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text2)">Nenhuma ficha cadastrada.</td></tr>';
-  };
+  fecharModal('modalVenda');
+  carregarVendas();
+}
 
-  window.verFicha = async id => {
-    const d = await getDoc(doc(db,'fichas',id));
-    const f = d.data();
-    alert(`📋 ${f.nome}\n\nIngredientes:\n${(f.ingredientes||[]).map(i=>`• ${i.nome}: ${i.quantidade} ${i.unidade} = ${fmt(i.custo)}`).join('\n')}\n\nCusto Total: ${fmt(f.custoTotal)}\nPreço Venda: ${fmt(f.precoVenda)}\nMargem: ${f.margem}%\n\nPreparo:\n${f.preparo||'—'}`);
-  };
+async function carregarVendas() {
+  const tbody = document.getElementById('tabelaVendas');
+  tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Carregando...</td></tr>';
 
-  window.deletarFicha = async id => {
-    if(!confirm('Excluir ficha?')) return;
-    await deleteDoc(doc(db,'fichas',id)); toast('Ficha excluída.','warning'); loadFichas();
-  };
+  const filtroData = document.getElementById('filtroVendaData').value;
+  const filtroMes = document.getElementById('filtroVendaMes').value;
 
-  // ===========================
-  // ====== HISTÓRICO ==========
-  // ===========================
-  window.filtrarHistorico = async () => {
-    const ini=document.getElementById('h-inicio').value;
-    const fim=document.getElementById('h-fim').value;
-    const canal=document.getElementById('h-canal').value;
-    if(!ini||!fim){ toast('Selecione período.','warning'); return; }
-    let q = query(collection(db,'vendas'), where('data','>=',ini), where('data','<=',fim), orderBy('data','desc'));
-    const snap = await getDocs(q);
-    let rows=[]; let total=0;
-    snap.forEach(d=>{ const v={id:d.id,...d.data()}; if(!canal||v.canal===canal){ rows.push(v); total+=v.total||0; } });
-    document.getElementById('historicoTotal').textContent = `${rows.length} vendas — Total: ${fmt(total)}`;
-    document.getElementById('tabelaHistorico').innerHTML = rows.length ? rows.map(v=>`
-      <tr>
-        <td>${fmtDate(v.data)}</td><td>${v.produto}</td>
-        <td><span class="tag tag-blue">${v.categoria}</span></td>
-        <td>${v.qtd}</td><td>${fmt(v.valor)}</td>
-        <td><strong style="color:var(--success)">${fmt(v.total)}</strong></td>
-        <td>${v.canal}</td><td>${v.pagamento}</td><td>${v.obs||'—'}</td>
-      </tr>`).join('') : '<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text2)">Nenhuma venda no período.</td></tr>';
-  };
+  let query = db.collection('vendas').orderBy('data','desc');
+  const snap = await query.get();
+  let vendas = snap.docs.map(d => ({id:d.id,...d.data()}));
 
-  window.exportarCSV = () => {
-    const rows = document.querySelectorAll('#tabelaHistorico tr');
-    if(!rows.length){ toast('Filtre o histórico primeiro.','warning'); return; }
-    let csv = 'Data,Produto,Categoria,Qtd,Unit.,Total,Canal,Pagamento,Obs\n';
-    rows.forEach(r=>{ const cells=[...r.querySelectorAll('td')].map(c=>'"'+c.textContent.trim()+'"'); if(cells.length) csv+=cells.join(',')+'\n'; });
-    const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
-    a.download='vendas_ilmonello.csv'; a.click();
-    toast('CSV exportado!');
-  };
+  if (filtroData) vendas = vendas.filter(v => v.data === filtroData);
+  else if (filtroMes) vendas = vendas.filter(v => v.data && v.data.split('-')[1] === filtroMes);
 
+  const total = vendas.reduce((s,v) => s+(v.total||0), 0);
+  document.getElementById('totalVendas').textContent = moeda(total);
+
+  if (!vendas.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhuma venda encontrada</td></tr>'; return;
+  }
+
+  tbody.innerHTML = vendas.map(v => `
+    <tr>
+      <td>${formatarData(v.data)}</td>
+      <td><strong>${v.produto}</strong></td>
+      <td>${v.quantidade}</td>
+      <td>${moeda(v.valorUnitario)}</td>
+      <td><strong style="color:#27ae60;">${moeda(v.total)}</strong></td>
+      <td>${v.observacao||'-'}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="excluir('vendas','${v.id}',carregarVendas)">🗑️</button></td>
+    </tr>
+  `).join('');
+}
+
+// ===== ESTOQUE =====
+function abrirModalEstoque() {
+  document.getElementById('e-data').value = hoje();
+  document.getElementById('e-inicial').value = '';
+  document.getElementById('e-usada').value = '';
+  document.getElementById('e-final').value = '';
+  preencherSelectInsumos('e-insumo');
+  abrirModal('modalEstoque');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  ['e-inicial','e-usada'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', () => {
+      const ini = parseFloat(document.getElementById('e-inicial').value) || 0;
+      const usa = parseFloat(document.getElementById('e-usada').value) || 0;
+      document.getElementById('e-final').value = Math.max(0, ini - usa).toFixed(2);
+    });
+  });
+});
+
+async function salvarEstoque() {
+  const data = document.getElementById('e-data').value;
+  const insumoId = document.getElementById('e-insumo').value;
+  const insumoNome = document.getElementById('e-insumo').options[document.getElementById('e-insumo').selectedIndex]?.text;
+  const inicial = parseFloat(document.getElementById('e-inicial').value) || 0;
+  const usada = parseFloat(document.getElementById('e-usada').value) || 0;
+  const final = parseFloat(document.getElementById('e-final').value) || 0;
+
+  if (!data || !insumoId) { alert('Preencha todos os campos!'); return; }
+
+  const ins = insumosCache.find(i => i.id === insumoId);
+
+  await db.collection('estoque').add({
+    data, insumoId, insumoNome, inicial, usada, final,
+    unidade: ins?.unidade || '',
+    estoqueMin: ins?.estoqueMin || 0,
+    criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  fecharModal('modalEstoque');
+  carregarEstoque();
+}
+
+async function carregarEstoque() {
+  const tbody = document.getElementById('tabelaEstoque');
+  tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Carregando...</td></tr>';
+
+  const filtroData = document.getElementById('filtroEstoqueData').value;
+  const filtroNome = document.getElementById('filtroEstoqueNome').value.toLowerCase();
+
+  const snap = await db.collection('estoque').orderBy('data','desc').get();
+  let registros = snap.docs.map(d => ({id:d.id,...d.data()}));
+
+  if (filtroData) registros = registros.filter(r => r.data === filtroData);
+  if (filtroNome) registros = registros.filter(r => r.insumoNome?.toLowerCase().includes(filtroNome));
+
+  if (!registros.length) {
+    tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Nenhum registro encontrado</td></tr>'; return;
+  }
+
+  tbody.innerHTML = registros.map(r => {
+    const min = r.estoqueMin || 0;
+    const classe = r.final <= 0 ? 'estoque-critico' : r.final <= min ? 'estoque-baixo' : 'estoque-ok';
+    const badge = r.final <= 0
+      ? '<span class="badge badge-red">Zerado</span>'
+      : r.final <= min
+        ? '<span class="badge badge-yellow">Baixo</span>'
+        : '<span class="badge badge-green">OK</span>';
+
+    return `<tr class="${classe}">
+      <td><strong>${r.insumoNome}</strong></td>
+      <td>${formatarData(r.data)}</td>
+      <td>${r.inicial} ${r.unidade}</td>
+      <td>${r.usada} ${r.unidade}</td>
+      <td><strong>${r.final} ${r.unidade}</strong></td>
+      <td>${r.unidade}</td>
+      <td>${badge}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="excluir('estoque','${r.id}',carregarEstoque)">🗑️</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ===== INSUMOS =====
+function abrirModalInsumo(insumo = null) {
+  document.getElementById('i-id').value = insumo?.id || '';
+  document.getElementById('i-nome').value = insumo?.nome || '';
+  document.getElementById('i-categoria').value = insumo?.categoria || 'Farinha';
+  document.getElementById('i-unidade').value = insumo?.unidade || 'kg';
+  document.getElementById('i-estoque-min').value = insumo?.estoqueMin || '';
+  document.getElementById('i-preco').value = insumo?.preco || '';
+  document.getElementById('i-fornecedor').value = insumo?.fornecedor || '';
+  abrirModal('modalInsumo');
+}
+
+async function salvarInsumo() {
+  const id = document.getElementById('i-id').value;
+  const nome = document.getElementById('i-nome').value.trim();
+  const categoria = document.getElementById('i-categoria').value;
+  const unidade = document.getElementById('i-unidade').value;
+  const estoqueMin = parseFloat(document.getElementById('i-estoque-min').value) || 0;
+  const preco = parseFloat(document.getElementById('i-preco').value) || 0;
+  const fornecedor = document.getElementById('i-fornecedor').value.trim();
+
+  if (!nome) { alert('Informe o nome do insumo!'); return; }
+
+  const data = { nome, categoria, unidade, estoqueMin, preco, fornecedor,
+    atualizadoEm: firebase.firestore.FieldValue.serverTimestamp() };
+
+  if (id) await db.collection('insumos').doc(id).update(data);
+  else await db.collection('insumos').add({...data, criadoEm: firebase.firestore.FieldValue.serverTimestamp()});
+
+  fecharModal('modalInsumo');
+  await carregarInsumos();
+}
+
+async function carregarInsumos() {
+  const tbody = document.getElementById('tabelaInsumos');
+  if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Carregando...</td></tr>';
+
+  const filtroNome = document.getElementById('filtroInsumoNome')?.value.toLowerCase() || '';
+  const filtroCategoria = document.getElementById('filtroInsumoCategoria')?.value || '';
+
+  const snap = await db.collection('insumos').orderBy('nome').get();
+  insumosCache = snap.docs.map(d => ({id:d.id,...d.data()}));
+
+  let lista = insumosCache;
+  if (filtroNome) lista = lista.filter(i => i.nome.toLowerCase().includes(filtroNome));
+  if (filtroCategoria) lista = lista.filter(i => i.categoria === filtroCategoria);
+
+  if (!tbody) return;
+
+  if (!lista.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhum insumo encontrado</td></tr>'; return;
+  }
+
+  tbody.innerHTML = lista.map(i => `
+    <tr>
+      <td><strong>${i.nome}</strong></td>
+      <td>${i.categoria}</td>
+      <td>${i.unidade}</td>
+      <td>${i.estoqueMin} ${i.unidade}</td>
+      <td><strong style="color:#27ae60;">${moeda(i.preco)}</strong></td>
+      <td>${i.fornecedor||'-'}</td>
+      <td>
+        <button class="btn btn-red btn-sm" onclick='editarInsumo(${JSON.stringify(i)})'>✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="excluir('insumos','${i.id}',carregarInsumos)">🗑️</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function editarInsumo(insumo) { abrirModalInsumo(insumo); }
+
+function preencherSelectInsumos(selectId) {
+  const sel = document.getElementById(selectId);
+  sel.innerHTML = insumosCache.map(i => `<option value="${i.id}">${i.nome} (${i.unidade})</option>`).join('');
+}
+
+// ===== PREÇOS =====
+function abrirModalPreco() {
+  document.getElementById('p-data').value = hoje();
+  document.getElementById('p-novo').value = '';
+  document.getElementById('p-anterior').value = '';
+  document.getElementById('p-fornecedor').value = '';
+  carregarSelectInsumos();
+  abrirModal('modalPreco');
+}
+
+async function carregarSelectInsumos() {
+  const sel1 = document.getElementById('filtroPrecoInsumo');
+  const sel2 = document.getElementById('p-insumo');
+
+  const snap = await db.collection('insumos').orderBy('nome').get();
+  const opts = snap.docs.map(d => `<option value="${d.id}">${d.data().nome}</option>`).join('');
+
+  if (sel1) sel1.innerHTML = '<option value="">Todos</option>' + opts;
+  if (sel2) {
+    sel2.innerHTML = opts;
+    sel2.onchange = async () => {
+      const insumo = insumosCache.find(i => i.id === sel2.value);
+      document.getElementById('p-anterior').value = insumo?.preco || 0;
+    };
+    sel2.dispatchEvent(new Event('change'));
+  }
+}
+
+async function salvarPreco() {
+  const insumoId = document.getElementById('p-insumo').value;
+  const data = document.getElementById('p-data').value;
+  const anterior = parseFloat(document.getElementById('p-anterior').value) || 0;
+  const novo = parseFloat(document.getElementById('p-novo').value) || 0;
+  const fornecedor = document.getElementById('p-fornecedor').value.trim();
+  const insumoNome = document.getElementById('p-insumo').options[document.getElementById('p-insumo').selectedIndex]?.text;
+
+  if (!insumoId || !data || !novo) { alert('Preencha todos os campos!'); return; }
+
+  await db.collection('historicoPrecos').add({
+    insumoId, insumoNome, data, precoAnterior: anterior, precoNovo: novo,
+    fornecedor, criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  // Atualiza preço atual no insumo
+  await db.collection('insumos').doc(insumoId).update({ preco: novo });
+  await carregarInsumos();
+
+  fecharModal('modalPreco');
+  carregarPrecos();
+}
+
+async function carregarPrecos() {
+  const tbody = document.getElementById('tabelaPrecos');
+  tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Carregando...</td></tr>';
+
+  const filtroInsumo = document.getElementById('filtroPrecoInsumo').value;
+  const filtroMes = document.getElementById('filtroPrecoMes').value;
+
+  const snap = await db.collection('historicoPrecos').orderBy('data','desc').get();
+  let registros = snap.docs.map(d => ({id:d.id,...d.data()}));
+
+  if (filtroInsumo) registros = registros.filter(r => r.insumoId === filtroInsumo);
+  if (filtroMes) registros = registros.filter(r => r.data && r.data.startsWith(filtroMes));
+
+  if (!registros.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhum registro encontrado</td></tr>'; return;
+  }
+
+  tbody.innerHTML = registros.map(r => {
+    const variacao = r.precoAnterior > 0 ? ((r.precoNovo - r.precoAnterior) / r.precoAnterior * 100) : 0;
+    const varBadge = variacao > 0
+      ? `<span class="badge badge-red">▲ ${variacao.toFixed(1)}%</span>`
+      : variacao < 0
+        ? `<span class="badge badge-green">▼ ${Math.abs(variacao).toFixed(1)}%</span>`
+        : `<span class="badge badge-yellow">= 0%</span>`;
+
+    return `<tr>
+      <td><strong>${r.insumoNome}</strong></td>
+      <td>${formatarData(r.data)}</td>
+      <td>${moeda(r.precoAnterior)}</td>
+      <td><strong style="color:#27ae60;">${moeda(r.precoNovo)}</strong></td>
+      <td>${varBadge}</td>
+      <td>${r.fornecedor||'-'}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="excluir('historicoPrecos','${r.id}',carregarPrecos)">🗑️</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ===== FICHAS TECNICAS =====
+let ingredientes = [];
+
+function abrirModalFicha(ficha = null) {
+  document.getElementById('f-id').value = ficha?.id || '';
+  document.getElementById('f-nome').value = ficha?.nome || '';
+  document.getElementById('f-categoria').value = ficha?.categoria || 'Pizza';
+  document.getElementById('f-rendimento').value = ficha?.rendimento || '';
+  document.getElementById('f-preco-venda').value = ficha?.precoVenda || '';
+  document.getElementById('f-preparo').value = ficha?.preparo || '';
+  ingredientes = ficha?.ingredientes ? [...ficha.ingredientes] : [];
+  renderIngredientes();
+  calcularCusto();
+  abrirModal('modalFicha');
+}
+
+function adicionarIngrediente() {
+  ingredientes.push({ insumoId: '', nome: '', quantidade: 0, unidade: '', custoUnit: 0 });
+  renderIngredientes();
+}
+
+function renderIngredientes() {
+  const lista = document.getElementById('ingredientesList');
+  lista.innerHTML = ingredientes.map((ing, idx) => `
+    <div class="ingrediente-item">
+      <select onchange="selecionarIngrediente(${idx}, this.value)" style="flex:2;">
+        <option value="">Selecione...</option>
+        ${insumosCache.map(i => `<option value="${i.id}" ${i.id===ing.insumoId?'selected':''}>${i.nome} (${i.unidade})</option>`).join('')}
+      </select>
+      <input type="number" placeholder="Qtd" value="${ing.quantidade||''}" step="0.01"
+        onchange="atualizarQtdIngrediente(${idx}, this.value)" style="flex:1;max-width:80px;" />
+      <span style="color:#aaa;font-size:0.75rem;">${ing.unidade||''}</span>
+      <button class="btn btn-danger btn-sm" onclick="removerIngrediente(${idx})">✕</button>
+    </div>
+  `).join('');
+}
+
+function selecionarIngrediente(idx, insumoId) {
+  const ins = insumosCache.find(i => i.id === insumoId);
+  if (ins) {
+    ingredientes[idx] = { ...ingredientes[idx], insumoId: ins.id, nome: ins.nome, unidade: ins.unidade, custoUnit: ins.preco };
+  }
+  renderIngredientes();
+  calcularCusto();
+}
+
+function atualizarQtdIngrediente(idx, valor) {
+  ingredientes[idx].quantidade = parseFloat(valor) || 0;
+  calcularCusto();
+}
+
+function removerIngrediente(idx) {
+  ingredientes.splice(idx, 1);
+  renderIngredientes();
+  calcularCusto();
+}
+
+function calcularCusto() {
+  const total = ingredientes.reduce((s, ing) => s + ((ing.custoUnit || 0) * (ing.quantidade || 0)), 0);
+  document.getElementById('custoTotal').textContent = moeda(total);
+  return total;
+}
+
+async function salvarFicha() {
+  const id = document.getElementById('f-id').value;
+  const nome = document.getElementById('f-nome').value.trim();
+  const categoria = document.getElementById('f-categoria').value;
+  const rendimento = parseInt(document.getElementById('f-rendimento').value) || 1;
+  const precoVenda = parseFloat(document.getElementById('f-preco-venda').value) || 0;
+  const preparo = document.getElementById('f-preparo').value.trim();
+  const custoTotal = calcularCusto();
+  const margem = precoVenda > 0 ? ((precoVenda - custoTotal) / precoVenda * 100) : 0;
+
+  if (!nome) { alert('Informe o nome do produto!'); return; }
+
+  const data = { nome, categoria, rendimento, precoVenda, preparo, ingredientes, custoTotal, margem,
+    atualizadoEm: firebase.firestore.FieldValue.serverTimestamp() };
+
+  if (id) await db.collection('fichas').doc(id).update(data);
+  else await db.collection('fichas').add({...data, criadoEm: firebase.firestore.FieldValue.serverTimestamp()});
+
+  fecharModal('modalFicha');
+  carregarFichas();
+}
+
+async function carregarFichas() {
+  const tbody = document.getElementById('tabelaFichas');
+  tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Carregando...</td></tr>';
+
+  const snap = await db.collection('fichas').orderBy('nome').get();
+  const fichas = snap.docs.map(d => ({id:d.id,...d.data()}));
+
+  if (!fichas.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhuma ficha técnica cadastrada</td></tr>'; return;
+  }
+
+  tbody.innerHTML = fichas.map(f => {
+    const margem = f.margem || 0;
+    const marginBadge = margem >= 60
+      ? `<span class="badge badge-green">${margem.toFixed(1)}%</span>`
+      : margem >= 40
+        ? `<span class="badge badge-yellow">${margem.toFixed(1)}%</span>`
+        : `<span class="badge badge-red">${margem.toFixed(1)}%</span>`;
+
+    return `<tr>
+      <td><strong>${f.nome}</strong></td>
+      <td>${f.categoria}</td>
+      <td>${f.rendimento} porções</td>
+      <td>${moeda(f.custoTotal)}</td>
+      <td><strong style="color:#27ae60;">${moeda(f.precoVenda)}</strong></td>
+      <td>${marginBadge}</td>
+      <td>
+        <button class="btn btn-sm" style="background:#2980b9;color:#fff;" onclick="verFicha('${f.id}')">👁️</button>
+        <button class="btn btn-red btn-sm" onclick='editarFicha(${JSON.stringify(f)})'>✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="excluir('fichas','${f.id}',carregarFichas)">🗑️</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function editarFicha(ficha) { abrirModalFicha(ficha); }
+
+async function verFicha(id) {
+  const doc = await db.collection('fichas').doc(id).get();
+  const f = doc.data();
+  document.getElementById('fd-nome').textContent = f.nome;
+  document.getElementById('fd-conteudo').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+      <div><strong>Categoria:</strong> ${f.categoria}</div>
+      <div><strong>Rendimento:</strong> ${f.rendimento} porções</div>
+      <div><strong>Custo Total:</strong> ${moeda(f.custoTotal)}</div>
+      <div><strong>Preço Venda:</strong> ${moeda(f.precoVenda)}</div>
+      <div><strong>Margem:</strong> ${(f.margem||0).toFixed(1)}%</div>
+    </div>
+    <h3 style="color:#e74c3c;margin-bottom:10px;font-size:0.9rem;">🧂 Ingredientes</h3>
+    <table style="margin-bottom:16px;">
+      <thead><tr><th>Ingrediente</th><th>Qtd</th><th>Un</th><th>Custo Unit.</th><th>Total</th></tr></thead>
+      <tbody>
+        ${(f.ingredientes||[]).map(i => `
+          <tr>
+            <td>${i.nome}</td>
+            <td>${i.quantidade}</td>
+            <td>${i.unidade}</td>
+            <td>${moeda(i.custoUnit)}</td>
+            <td>${moeda(i.custoUnit * i.quantidade)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    ${f.preparo ? `<h3 style="color:#e74c3c;margin-bottom:8px;font-size:0.9rem;">📝 Modo de Preparo</h3><p style="color:#ccc;font-size:0.85rem;line-height:1.6;">${f.preparo}</p>` : ''}
+  `;
+  abrirModal('modalFichaDetalhe');
+}
+
+// ===== UTILS =====
+function formatarData(ds) {
+  if (!ds) return '-';
+  const [y,m,d] = ds.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+async function excluir(colecao, id, callback) {
+  if (!confirm('Deseja excluir este registro?')) return;
+  await db.collection(colecao).doc(id).delete();
+  callback();
+}
+
+// Fechar modal clicando fora
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('open');
+  });
+});
 </script>
 </body>
 </html>
-
