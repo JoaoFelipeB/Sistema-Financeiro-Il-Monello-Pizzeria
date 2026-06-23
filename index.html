@@ -1,1328 +1,1069 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Il Monello Pizzeria - Sistema</title>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; color: #eee; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sistema Pizzaria</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',sans-serif;background:#f5f5f5;color:#222;font-size:14px}
 
-    /* LOGIN */
-    #loginScreen {
-      display: flex; align-items: center; justify-content: center;
-      height: 100vh; background: linear-gradient(135deg, #1a1a2e, #c0392b);
-    }
-    .login-box {
-      background: #fff; color: #333; padding: 40px; border-radius: 16px;
-      width: 340px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    }
-    .login-box h1 { color: #c0392b; font-size: 1.6rem; margin-bottom: 6px; }
-    .login-box p { font-size: 0.85rem; color: #888; margin-bottom: 24px; }
-    .login-box input {
-      width: 100%; padding: 12px; margin-bottom: 14px; border: 1px solid #ddd;
-      border-radius: 8px; font-size: 1rem;
-    }
-    .login-box button {
-      width: 100%; padding: 12px; background: #c0392b; color: #fff;
-      border: none; border-radius: 8px; font-size: 1rem; cursor: pointer;
-    }
-    .login-box button:hover { background: #a93226; }
-    #loginError { color: red; font-size: 0.85rem; margin-top: 10px; }
+#loginScreen{display:flex;align-items:center;justify-content:center;height:100vh;background:#fff}
+.login-box{background:#fff;padding:36px;border-radius:12px;width:320px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.1)}
+.login-box h1{color:#c0392b;font-size:1.4rem;margin-bottom:4px}
+.login-box p{color:#888;font-size:.8rem;margin-bottom:20px}
+.login-box input{width:100%;padding:10px;margin-bottom:10px;border:1px solid #ddd;border-radius:8px;font-size:.9rem}
+.login-box button{width:100%;padding:11px;background:#c0392b;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.95rem}
+.login-box button:hover{background:#a93226}
+#loginError{color:red;font-size:.78rem;margin-top:8px}
 
-    /* LAYOUT */
-    #app { display: none; }
-    .sidebar {
-      position: fixed; top: 0; left: 0; width: 220px; height: 100vh;
-      background: #16213e; padding: 20px 0; display: flex; flex-direction: column;
-      z-index: 100; transition: transform 0.3s;
-    }
-    .sidebar .logo {
-      text-align: center; padding: 0 20px 20px; border-bottom: 1px solid #2a2a5e;
-    }
-    .sidebar .logo h2 { color: #e74c3c; font-size: 1rem; }
-    .sidebar .logo p { font-size: 0.7rem; color: #aaa; }
-    .sidebar nav { flex: 1; padding-top: 10px; }
-    .sidebar nav a {
-      display: flex; align-items: center; gap: 10px; padding: 12px 20px;
-      color: #ccc; text-decoration: none; font-size: 0.9rem; transition: 0.2s;
-    }
-    .sidebar nav a:hover, .sidebar nav a.active {
-      background: #c0392b; color: #fff; border-radius: 0 8px 8px 0;
-    }
-    .sidebar nav a span.icon { font-size: 1.1rem; }
-    .sidebar .logout {
-      padding: 20px; border-top: 1px solid #2a2a5e;
-    }
-    .sidebar .logout button {
-      width: 100%; padding: 10px; background: #c0392b; color: #fff;
-      border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem;
-    }
+#app{display:none}
+.sidebar{position:fixed;top:0;left:0;width:195px;height:100vh;background:#1a6b3a;display:flex;flex-direction:column;z-index:100;transition:transform .25s}
+.sidebar .logo{padding:14px;border-bottom:1px solid rgba(255,255,255,.15);text-align:center}
+.sidebar .logo h2{color:#fff;font-size:.95rem}
+.sidebar .logo p{color:rgba(255,255,255,.55);font-size:.68rem}
+.sidebar nav{flex:1;overflow-y:auto}
+.nav-link{display:flex;align-items:center;gap:8px;padding:11px 15px;color:rgba(255,255,255,.8);text-decoration:none;font-size:.83rem;border-left:3px solid transparent;cursor:pointer;transition:background .15s}
+.nav-link:hover{background:rgba(255,255,255,.1)}
+.nav-link.active{background:rgba(255,255,255,.18);color:#fff;border-left-color:#fff}
+.sidebar .logout{padding:12px}
+.sidebar .logout button{width:100%;padding:9px;background:#c0392b;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.8rem}
 
-    .main { margin-left: 220px; padding: 24px; min-height: 100vh; }
-    .topbar {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 24px;
-    }
-    .topbar h1 { font-size: 1.4rem; color: #e74c3c; }
-    .topbar .menu-btn { display: none; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+.main{margin-left:195px;padding:18px;min-height:100vh}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.topbar h1{font-size:1.15rem;color:#c0392b;font-weight:700}
+.menu-btn{display:none;background:none;border:none;font-size:1.4rem;cursor:pointer}
 
-    /* CARDS */
-    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
-    .card {
-      background: #16213e; border-radius: 12px; padding: 20px;
-      border-left: 4px solid #c0392b;
-    }
-    .card h3 { font-size: 0.8rem; color: #aaa; margin-bottom: 8px; text-transform: uppercase; }
-    .card .value { font-size: 1.6rem; font-weight: bold; color: #fff; }
-    .card .sub { font-size: 0.75rem; color: #888; margin-top: 4px; }
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:18px}
+.card{background:#fff;border-radius:8px;padding:14px;border-top:3px solid #c0392b;box-shadow:0 1px 5px rgba(0,0,0,.07)}
+.card h3{font-size:.68rem;color:#888;text-transform:uppercase;margin-bottom:5px}
+.card .val{font-size:1.35rem;font-weight:700}
+.card .sub{font-size:.68rem;color:#aaa;margin-top:2px}
 
-    /* TABLES */
-    .section { background: #16213e; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
-    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
-    .section-header h2 { font-size: 1rem; color: #e74c3c; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    th { background: #1a1a2e; color: #aaa; padding: 10px 8px; text-align: left; }
-    td { padding: 10px 8px; border-bottom: 1px solid #2a2a5e; }
-    tr:hover td { background: #1f2a4a; }
+.section{background:#fff;border-radius:8px;padding:16px;margin-bottom:16px;box-shadow:0 1px 5px rgba(0,0,0,.07)}
+.sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.sh h2{font-size:.92rem;color:#1a6b3a;font-weight:700}
 
-    /* BUTTONS */
-    .btn { padding: 9px 18px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem; }
-    .btn-red { background: #c0392b; color: #fff; }
-    .btn-red:hover { background: #a93226; }
-    .btn-green { background: #27ae60; color: #fff; }
-    .btn-green:hover { background: #219150; }
-    .btn-sm { padding: 5px 10px; font-size: 0.75rem; }
-    .btn-danger { background: #922b21; color: #fff; }
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+th{background:#f8f8f8;color:#555;padding:8px 7px;text-align:left;border-bottom:2px solid #eee;font-size:.72rem;text-transform:uppercase}
+td{padding:8px 7px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+tr:hover td{background:#fafafa}
 
-    /* MODAL */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-      z-index: 200; align-items: center; justify-content: center;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal {
-      background: #16213e; border-radius: 16px; padding: 28px;
-      width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto;
-    }
-    .modal h2 { color: #e74c3c; margin-bottom: 20px; font-size: 1.1rem; }
-    .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; font-size: 0.8rem; color: #aaa; margin-bottom: 5px; }
-    .form-group input, .form-group select, .form-group textarea {
-      width: 100%; padding: 10px; background: #1a1a2e; border: 1px solid #2a2a5e;
-      border-radius: 8px; color: #fff; font-size: 0.9rem;
-    }
-    .form-group textarea { resize: vertical; min-height: 80px; }
-    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+.btn{padding:7px 14px;border:none;border-radius:7px;cursor:pointer;font-size:.8rem;font-weight:600}
+.btn-red{background:#c0392b;color:#fff}.btn-red:hover{background:#a93226}
+.btn-green{background:#1a6b3a;color:#fff}.btn-green:hover{background:#145c30}
+.btn-gray{background:#eee;color:#333}.btn-gray:hover{background:#ddd}
+.btn-blue{background:#2980b9;color:#fff}
+.btn-danger{background:#e74c3c;color:#fff}
+.btn-sm{padding:4px 9px;font-size:.73rem}
 
-    /* BADGES */
-    .badge {
-      display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem;
-    }
-    .badge-green { background: #1e8449; color: #fff; }
-    .badge-red { background: #922b21; color: #fff; }
-    .badge-yellow { background: #d4ac0d; color: #000; }
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:10px;padding:22px;width:92%;max-width:460px;max-height:93vh;overflow-y:auto;box-shadow:0 6px 28px rgba(0,0,0,.14)}
+.modal h2{color:#c0392b;margin-bottom:16px;font-size:.97rem}
+.fg{margin-bottom:11px}
+.fg label{display:block;font-size:.76rem;color:#555;margin-bottom:3px;font-weight:600}
+.fg input,.fg select,.fg textarea{width:100%;padding:8px 9px;border:1px solid #ddd;border-radius:7px;color:#222;font-size:.85rem;background:#fff}
+.fg input:focus,.fg select:focus{outline:none;border-color:#1a6b3a}
+.fg textarea{resize:vertical;min-height:60px}
+.ma{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
 
-    /* CHARTS */
-    .charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 24px; }
-    .chart-box { background: #16213e; border-radius: 12px; padding: 20px; }
-    .chart-box h3 { font-size: 0.9rem; color: #e74c3c; margin-bottom: 14px; }
+.badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:.7rem;font-weight:600}
+.bg-green{background:#d4efdf;color:#1a6b3a}
+.bg-red{background:#fadbd8;color:#c0392b}
+.bg-yellow{background:#fef9e7;color:#b7950b}
+.bg-blue{background:#d6eaf8;color:#1a5276}
 
-    /* PAGES */
-    .page { display: none; }
-    .page.active { display: block; }
+.page{display:none}
+.page.active{display:block}
 
-    /* SEARCH */
-    .search-bar { display: flex; gap: 10px; flex-wrap: wrap; }
-    .search-bar input, .search-bar select {
-      padding: 8px 12px; background: #1a1a2e; border: 1px solid #2a2a5e;
-      border-radius: 8px; color: #fff; font-size: 0.85rem;
-    }
+.filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.filters input,.filters select{padding:7px 9px;border:1px solid #ddd;border-radius:7px;font-size:.8rem;background:#fff}
 
-    /* FICHA TECNICA */
-    .ingredientes-list { margin-top: 10px; }
-    .ingrediente-item {
-      display: flex; gap: 8px; align-items: center; margin-bottom: 8px;
-    }
-    .ingrediente-item select, .ingrediente-item input {
-      flex: 1; padding: 8px; background: #1a1a2e; border: 1px solid #2a2a5e;
-      border-radius: 6px; color: #fff; font-size: 0.85rem;
-    }
-    .ingrediente-item button { flex-shrink: 0; }
+.toggle-grp{display:flex;border:1px solid #ddd;border-radius:7px;overflow:hidden;width:fit-content}
+.toggle-grp button{padding:7px 18px;border:none;background:#fff;cursor:pointer;font-size:.8rem;font-weight:600;transition:background .15s}
+.toggle-grp button.on{background:#c0392b;color:#fff}
 
-    /* RESPONSIVE */
-    @media (max-width: 768px) {
-      .sidebar { transform: translateX(-100%); }
-      .sidebar.open { transform: translateX(0); }
-      .main { margin-left: 0; padding: 16px; }
-      .topbar .menu-btn { display: block; }
-      .cards { grid-template-columns: repeat(2, 1fr); }
-      table { font-size: 0.75rem; }
-      td, th { padding: 7px 5px; }
-    }
+.ing-row{display:flex;gap:5px;align-items:center;margin-bottom:5px}
+.ing-row select{flex:2;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:.78rem}
+.ing-row input{flex:1;min-width:55px;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:.78rem}
+.ing-row span{min-width:22px;font-size:.72rem;color:#888}
 
-    /* ESTOQUE CORES */
-    .estoque-ok td:first-child { border-left: 3px solid #27ae60; }
-    .estoque-baixo td:first-child { border-left: 3px solid #f39c12; }
-    .estoque-critico td:first-child { border-left: 3px solid #e74c3c; }
+.empty{text-align:center;color:#bbb;padding:28px;font-size:.83rem}
+.ovl{display:none;position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:90}
+.ovl.open{display:block}
 
-    .empty-state { text-align: center; color: #555; padding: 40px; font-size: 0.9rem; }
-  </style>
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;padding:12px}
+  .menu-btn{display:block}
+  .cards{grid-template-columns:repeat(2,1fr)}
+  td,th{padding:5px 4px}
+}
+</style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-box">
-    <h1>🍕 Il Monello</h1>
-    <p>Pizzeria Management System</p>
-    <input type="email" id="loginEmail" placeholder="E-mail" />
-    <input type="password" id="loginPassword" placeholder="Senha" />
-    <button onclick="fazerLogin()">Entrar</button>
+    <h1>🍕 Pizzaria</h1>
+    <p>Sistema de Gestão</p>
+    <input type="email" id="em" placeholder="E-mail"/>
+    <input type="password" id="pw" placeholder="Senha" onkeydown="if(event.key==='Enter')login()"/>
+    <button onclick="login()">Entrar</button>
     <div id="loginError"></div>
   </div>
 </div>
 
-<!-- APP -->
 <div id="app">
-
-  <!-- SIDEBAR -->
+  <div class="ovl" id="ovl" onclick="closeSidebar()"></div>
   <div class="sidebar" id="sidebar">
-    <div class="logo">
-      <h2>🍕 Il Monello</h2>
-      <p>Pizzeria System</p>
-    </div>
+    <div class="logo"><h2>🍕 Pizzaria</h2><p>Sistema de Gestão</p></div>
     <nav>
-      <a href="#" class="active" onclick="showPage('dashboard')" data-page="dashboard">
-        <span class="icon">📊</span> Dashboard
-      </a>
-      <a href="#" onclick="showPage('vendas')" data-page="vendas">
-        <span class="icon">💰</span> Vendas
-      </a>
-      <a href="#" onclick="showPage('estoque')" data-page="estoque">
-        <span class="icon">📦</span> Estoque Diário
-      </a>
-      <a href="#" onclick="showPage('insumos')" data-page="insumos">
-        <span class="icon">🧂</span> Insumos
-      </a>
-      <a href="#" onclick="showPage('precos')" data-page="precos">
-        <span class="icon">🏷️</span> Histórico de Preços
-      </a>
-      <a href="#" onclick="showPage('fichas')" data-page="fichas">
-        <span class="icon">📋</span> Fichas Técnicas
-      </a>
+      <div class="nav-link" onclick="go('dashboard')">📊 Dashboard</div>
+      <div class="nav-link" onclick="go('vendas')">💰 Vendas</div>
+      <div class="nav-link" onclick="go('produtos')">🍕 Produtos</div>
+      <div class="nav-link" onclick="go('estoque')">📦 Estoque</div>
+      <div class="nav-link" onclick="go('insumos')">🧂 Insumos</div>
+      <div class="nav-link" onclick="go('precos')">🏷️ Preços</div>
+      <div class="nav-link" onclick="go('fichas')">📋 Fichas Técnicas</div>
+      <div class="nav-link" onclick="go('contas')">💳 Contas a Pagar</div>
     </nav>
-    <div class="logout">
-      <button onclick="fazerLogout()">🚪 Sair</button>
-    </div>
+    <div class="logout"><button onclick="logout()">🚪 Sair</button></div>
   </div>
 
-  <!-- MAIN -->
   <div class="main">
     <div class="topbar">
-      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-      <h1 id="pageTitle">Dashboard</h1>
-      <span id="dataAtual" style="font-size:0.8rem;color:#aaa;"></span>
+      <button class="menu-btn" onclick="openSidebar()">☰</button>
+      <h1 id="pgTitle">Dashboard</h1>
+      <span id="dtAtual" style="font-size:.72rem;color:#888"></span>
     </div>
 
     <!-- DASHBOARD -->
-    <div class="page active" id="page-dashboard">
+    <div class="page" id="pg-dashboard">
       <div class="cards">
-        <div class="card">
-          <h3>💰 Vendas Hoje</h3>
-          <div class="value" id="d-vendas-hoje">R$ 0,00</div>
-          <div class="sub" id="d-vendas-hoje-qtd">0 pedidos</div>
-        </div>
-        <div class="card">
-          <h3>📅 Vendas do Mês</h3>
-          <div class="value" id="d-vendas-mes">R$ 0,00</div>
-          <div class="sub" id="d-vendas-mes-qtd">0 pedidos</div>
-        </div>
-        <div class="card">
-          <h3>📦 Itens em Estoque</h3>
-          <div class="value" id="d-estoque-total">0</div>
-          <div class="sub" id="d-estoque-baixo">0 com estoque baixo</div>
-        </div>
-        <div class="card">
-          <h3>🧂 Insumos Cadastrados</h3>
-          <div class="value" id="d-insumos-total">0</div>
-          <div class="sub">cadastrados</div>
-        </div>
-        <div class="card">
-          <h3>📋 Fichas Técnicas</h3>
-          <div class="value" id="d-fichas-total">0</div>
-          <div class="sub">produtos mapeados</div>
-        </div>
-        <div class="card">
-          <h3>🎯 Ticket Médio</h3>
-          <div class="value" id="d-ticket-medio">R$ 0,00</div>
-          <div class="sub">este mês</div>
-        </div>
+        <div class="card"><h3>💰 Hoje</h3><div class="val" id="dHoje">R$ 0</div><div class="sub" id="dHojeQ">0 pedidos</div></div>
+        <div class="card"><h3>📅 Este Mês</h3><div class="val" id="dMes">R$ 0</div><div class="sub" id="dMesQ">0 pedidos</div></div>
+        <div class="card"><h3>💳 Pend.</h3><div class="val" id="dContas">R$ 0</div><div class="sub" id="dContasQ">0 contas</div></div>
+        <div class="card"><h3>🎯 Ticket Médio</h3><div class="val" id="dTicket">R$ 0</div><div class="sub">este mês</div></div>
       </div>
-      <div class="charts">
-        <div class="chart-box">
-          <h3>📈 Vendas - Últimos 7 dias</h3>
-          <canvas id="chartVendas"></canvas>
-        </div>
-        <div class="chart-box">
-          <h3>🍕 Top 5 Produtos Mais Vendidos</h3>
-          <canvas id="chartProdutos"></canvas>
-        </div>
-      </div>
-      <div class="section">
-        <div class="section-header"><h2>⚠️ Alertas de Estoque</h2></div>
-        <div id="alertasEstoque"><div class="empty-state">Carregando...</div></div>
-      </div>
+      <div class="section"><div class="sh"><h2>⚠️ Alertas de Estoque</h2></div><div id="aEst"><div class="empty">Carregando...</div></div></div>
+      <div class="section"><div class="sh"><h2>📅 Contas Vencendo (7 dias)</h2></div><div id="aCont"><div class="empty">Carregando...</div></div></div>
     </div>
 
     <!-- VENDAS -->
-    <div class="page" id="page-vendas">
+    <div class="page" id="pg-vendas">
       <div class="section">
-        <div class="section-header">
-          <h2>💰 Registro de Vendas</h2>
-          <button class="btn btn-red" onclick="abrirModalVenda()">+ Nova Venda</button>
-        </div>
-        <div class="search-bar" style="margin-bottom:16px;">
-          <input type="date" id="filtroVendaData" onchange="carregarVendas()" />
-          <select id="filtroVendaMes" onchange="carregarVendas()">
+        <div class="sh"><h2>💰 Vendas</h2><button class="btn btn-red" onclick="openVenda()">+ Nova Venda</button></div>
+        <div class="filters">
+          <input type="date" id="fvData" onchange="loadVendas()"/>
+          <select id="fvMes" onchange="loadVendas()">
             <option value="">Todos os meses</option>
-            <option value="01">Janeiro</option><option value="02">Fevereiro</option>
-            <option value="03">Março</option><option value="04">Abril</option>
-            <option value="05">Maio</option><option value="06">Junho</option>
-            <option value="07">Julho</option><option value="08">Agosto</option>
-            <option value="09">Setembro</option><option value="10">Outubro</option>
-            <option value="11">Novembro</option><option value="12">Dezembro</option>
+            <option value="01">Janeiro</option><option value="02">Fevereiro</option><option value="03">Março</option>
+            <option value="04">Abril</option><option value="05">Maio</option><option value="06">Junho</option>
+            <option value="07">Julho</option><option value="08">Agosto</option><option value="09">Setembro</option>
+            <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
           </select>
         </div>
-        <div style="overflow-x:auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>Data</th><th>Produto</th><th>Qtd</th>
-                <th>Valor Unit.</th><th>Total</th><th>Observação</th><th>Ação</th>
-              </tr>
-            </thead>
-            <tbody id="tabelaVendas">
-              <tr><td colspan="7" class="empty-state">Carregando...</td></tr>
-            </tbody>
-          </table>
+        <div style="overflow-x:auto">
+          <table><thead><tr><th>Data</th><th>Produto</th><th>Tipo</th><th>Qtd</th><th>Unit.</th><th>Total</th><th>Obs</th><th></th></tr></thead>
+          <tbody id="tbVendas"><tr><td colspan="8" class="empty">Carregando...</td></tr></tbody></table>
         </div>
-        <div style="margin-top:16px;text-align:right;">
-          <strong>Total Filtrado: <span id="totalVendas" style="color:#e74c3c;">R$ 0,00</span></strong>
+        <div style="text-align:right;margin-top:10px;font-weight:700">Total: <span id="totVendas" style="color:#c0392b">R$ 0,00</span></div>
+      </div>
+    </div>
+
+    <!-- PRODUTOS -->
+    <div class="page" id="pg-produtos">
+      <div class="section">
+        <div class="sh"><h2>🍕 Produtos</h2><button class="btn btn-red" onclick="openProduto()">+ Novo Produto</button></div>
+        <div class="filters">
+          <input type="text" id="fpNome" placeholder="Buscar..." oninput="loadProdutos()"/>
+          <select id="fpCat" onchange="loadProdutos()">
+            <option value="">Todas</option><option>Pizza</option><option>Bebida</option><option>Outro</option>
+          </select>
+        </div>
+        <div style="overflow-x:auto">
+          <table><thead><tr><th>Nome</th><th>Categoria</th><th>Tamanho</th><th>Preço</th><th>Insumos</th><th></th></tr></thead>
+          <tbody id="tbProdutos"><tr><td colspan="6" class="empty">Carregando...</td></tr></tbody></table>
         </div>
       </div>
     </div>
 
     <!-- ESTOQUE -->
-    <div class="page" id="page-estoque">
+    <div class="page" id="pg-estoque">
       <div class="section">
-        <div class="section-header">
-          <h2>📦 Estoque Diário</h2>
-          <button class="btn btn-red" onclick="abrirModalEstoque()">+ Registrar Estoque</button>
+        <div class="sh"><h2>📦 Estoque Diário</h2><button class="btn btn-red" onclick="openEstoque()">+ Registrar</button></div>
+        <div class="filters">
+          <input type="date" id="feData" onchange="loadEstoque()"/>
+          <input type="text" id="feNome" placeholder="Buscar insumo..." oninput="loadEstoque()"/>
         </div>
-        <div class="search-bar" style="margin-bottom:16px;">
-          <input type="date" id="filtroEstoqueData" onchange="carregarEstoque()" />
-          <input type="text" id="filtroEstoqueNome" placeholder="Buscar insumo..." onkeyup="carregarEstoque()" />
-        </div>
-        <div style="overflow-x:auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>Insumo</th><th>Data</th><th>Qtd Inicial</th>
-                <th>Qtd Usada</th><th>Qtd Final</th><th>Unidade</th><th>Status</th><th>Ação</th>
-              </tr>
-            </thead>
-            <tbody id="tabelaEstoque">
-              <tr><td colspan="8" class="empty-state">Carregando...</td></tr>
-            </tbody>
-          </table>
+        <div style="overflow-x:auto">
+          <table><thead><tr><th>Insumo</th><th>Data</th><th>Inicial</th><th>Usado</th><th>Final</th><th>Un</th><th>Status</th><th></th></tr></thead>
+          <tbody id="tbEstoque"><tr><td colspan="8" class="empty">Carregando...</td></tr></tbody></table>
         </div>
       </div>
     </div>
 
     <!-- INSUMOS -->
-    <div class="page" id="page-insumos">
+    <div class="page" id="pg-insumos">
       <div class="section">
-        <div class="section-header">
-          <h2>🧂 Cadastro de Insumos</h2>
-          <button class="btn btn-red" onclick="abrirModalInsumo()">+ Novo Insumo</button>
-        </div>
-        <div class="search-bar" style="margin-bottom:16px;">
-          <input type="text" id="filtroInsumoNome" placeholder="Buscar insumo..." onkeyup="carregarInsumos()" />
-          <select id="filtroInsumoCategoria" onchange="carregarInsumos()">
-            <option value="">Todas as categorias</option>
-            <option>Farinha</option><option>Laticínio</option><option>Carne</option>
+        <div class="sh"><h2>🧂 Insumos</h2><button class="btn btn-red" onclick="openInsumo()">+ Novo</button></div>
+        <div class="filters">
+          <input type="text" id="fiNome" placeholder="Buscar..." oninput="loadInsumos(false)"/>
+          <select id="fiCat" onchange="loadInsumos(false)">
+            <option value="">Todas</option><option>Farinha</option><option>Laticínio</option><option>Carne</option>
             <option>Vegetal</option><option>Tempero</option><option>Bebida</option><option>Outro</option>
           </select>
         </div>
-        <div style="overflow-x:auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>Nome</th><th>Categoria</th><th>Unidade</th>
-                <th>Estoque Mín.</th><th>Preço Atual</th><th>Fornecedor</th><th>Ação</th>
-              </tr>
-            </thead>
-            <tbody id="tabelaInsumos">
-              <tr><td colspan="7" class="empty-state">Carregando...</td></tr>
-            </tbody>
-          </table>
+        <div style="overflow-x:auto">
+          <table><thead><tr><th>Nome</th><th>Categoria</th><th>Un</th><th>Est. Mín</th><th>Preço</th><th>Fornecedor</th><th></th></tr></thead>
+          <tbody id="tbInsumos"><tr><td colspan="7" class="empty">Carregando...</td></tr></tbody></table>
         </div>
       </div>
     </div>
 
     <!-- PREÇOS -->
-    <div class="page" id="page-precos">
+    <div class="page" id="pg-precos">
       <div class="section">
-        <div class="section-header">
-          <h2>🏷️ Histórico de Preços</h2>
-          <button class="btn btn-red" onclick="abrirModalPreco()">+ Registrar Preço</button>
+        <div class="sh"><h2>🏷️ Histórico de Preços</h2><button class="btn btn-red" onclick="openPreco()">+ Registrar</button></div>
+        <div class="filters">
+          <select id="fprIns" onchange="loadPrecos()"><option value="">Todos insumos</option></select>
+          <input type="month" id="fprMes" onchange="loadPrecos()"/>
         </div>
-        <div class="search-bar" style="margin-bottom:16px;">
-          <select id="filtroPrecoInsumo" onchange="carregarPrecos()">
-            <option value="">Todos os insumos</option>
+        <div style="overflow-x:auto">
+          <table><thead><tr><th>Insumo</th><th>Data</th><th>Anterior</th><th>Novo</th><th>Var.</th><th>Fornecedor</th><th></th></tr></thead>
+          <tbody id="tbPrecos"><tr><td colspan="7" class="empty">Carregando...</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- FICHAS -->
+    <div class="page" id="pg-fichas">
+      <div class="section">
+        <div class="sh"><h2>📋 Fichas Técnicas</h2></div>
+        <div style="overflow-x:auto">
+          <table><thead><tr><th>Produto</th><th>Categoria</th><th>Ingredientes</th><th>Custo</th><th>Preço</th><th>Margem</th><th></th></tr></thead>
+          <tbody id="tbFichas"><tr><td colspan="7" class="empty">Carregando...</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTAS -->
+    <div class="page" id="pg-contas">
+      <div class="section">
+        <div class="sh"><h2>💳 Contas a Pagar</h2><button class="btn btn-red" onclick="openConta()">+ Nova Conta</button></div>
+        <div class="filters">
+          <select id="fcStatus" onchange="loadContas()">
+            <option value="">Todos</option><option>Pendente</option><option>Pago</option><option>Vencido</option>
           </select>
-          <input type="month" id="filtroPrecoMes" onchange="carregarPrecos()" />
+          <input type="month" id="fcMes" onchange="loadContas()"/>
+          <select id="fcCat" onchange="loadContas()">
+            <option value="">Todas</option><option>Energia</option><option>Água</option><option>Fornecedor</option>
+            <option>Aluguel</option><option>Internet</option><option>Funcionário</option><option>Outro</option>
+          </select>
         </div>
-        <div style="overflow-x:auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>Insumo</th><th>Data</th><th>Preço Anterior</th>
-                <th>Preço Novo</th><th>Variação</th><th>Fornecedor</th><th>Ação</th>
-              </tr>
-            </thead>
-            <tbody id="tabelaPrecos">
-              <tr><td colspan="7" class="empty-state">Carregando...</td></tr>
-            </tbody>
-          </table>
+        <div style="overflow-x:auto">
+          <table><thead><tr><th>Descrição</th><th>Categoria</th><th>Recebedor</th><th>Valor</th><th>Vencimento</th><th>Pgto</th><th>Forma</th><th>Status</th><th></th></tr></thead>
+          <tbody id="tbContas"><tr><td colspan="9" class="empty">Carregando...</td></tr></tbody></table>
         </div>
+        <div style="text-align:right;margin-top:10px;font-weight:700">Total Pendente: <span id="totContas" style="color:#c0392b">R$ 0,00</span></div>
       </div>
     </div>
 
-    <!-- FICHAS TECNICAS -->
-    <div class="page" id="page-fichas">
-      <div class="section">
-        <div class="section-header">
-          <h2>📋 Fichas Técnicas</h2>
-          <button class="btn btn-red" onclick="abrirModalFicha()">+ Nova Ficha</button>
-        </div>
-        <div style="overflow-x:auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>Produto</th><th>Categoria</th><th>Rendimento</th>
-                <th>Custo Total</th><th>Preço Venda</th><th>Margem</th><th>Ação</th>
-              </tr>
-            </thead>
-            <tbody id="tabelaFichas">
-              <tr><td colspan="7" class="empty-state">Carregando...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /main -->
-</div><!-- /app -->
-
-<!-- ===== MODAIS ===== -->
+  </div>
+</div>
 
 <!-- MODAL VENDA -->
-<div class="modal-overlay" id="modalVenda">
+<div class="modal-overlay" id="mVenda">
   <div class="modal">
     <h2>💰 Nova Venda</h2>
-    <div class="form-group">
-      <label>Data *</label>
-      <input type="date" id="v-data" />
+    <div class="fg"><label>Data *</label><input type="date" id="vData"/></div>
+    <div class="fg"><label>Produto *</label>
+      <select id="vProd" onchange="onProdChange()"><option value="">Selecione...</option></select>
     </div>
-    <div class="form-group">
-      <label>Produto *</label>
-      <input type="text" id="v-produto" placeholder="Ex: Pizza Margherita" />
+    <div class="fg" id="vTipoGrp" style="display:none">
+      <label>Tamanho</label>
+      <div class="toggle-grp">
+        <button type="button" id="btnInteira" class="on" onclick="setTipo('Inteira')">🍕 Inteira</button>
+        <button type="button" id="btnMeia" onclick="setTipo('Meia')">½ Meia</button>
+      </div>
+      <input type="hidden" id="vTipo" value="Inteira"/>
     </div>
-    <div class="form-group">
-      <label>Quantidade *</label>
-      <input type="number" id="v-qtd" min="1" value="1" />
+    <div class="fg"><label>Quantidade *</label><input type="number" id="vQtd" min="1" value="1"/></div>
+    <div class="fg"><label>Valor Unitário (R$) *</label><input type="number" id="vValor" step="0.01" placeholder="0,00"/></div>
+    <div class="fg"><label>Observação</label><input type="text" id="vObs" placeholder="Opcional"/></div>
+    <div class="ma">
+      <button class="btn btn-gray" onclick="closeModal('mVenda')">Cancelar</button>
+      <button class="btn btn-red" onclick="saveVenda()">Salvar</button>
     </div>
-    <div class="form-group">
-      <label>Valor Unitário (R$) *</label>
-      <input type="number" id="v-valor" step="0.01" placeholder="0,00" />
+  </div>
+</div>
+
+<!-- MODAL PRODUTO -->
+<div class="modal-overlay" id="mProduto">
+  <div class="modal">
+    <h2>🍕 Produto</h2>
+    <input type="hidden" id="pId"/>
+    <div class="fg"><label>Nome *</label><input type="text" id="pNome" placeholder="Ex: Pizza Calabresa"/></div>
+    <div class="fg"><label>Categoria *</label>
+      <select id="pCat" onchange="onCatChange()">
+        <option value="Pizza">Pizza</option><option value="Bebida">Bebida</option><option value="Outro">Outro</option>
+      </select>
     </div>
-    <div class="form-group">
-      <label>Observação</label>
-      <input type="text" id="v-obs" placeholder="Opcional" />
+    <div id="pPizzaOpts">
+      <div class="fg"><label>Tamanhos disponíveis</label>
+        <div style="display:flex;gap:14px;margin-top:4px">
+          <label style="font-weight:normal"><input type="checkbox" id="pTemInteira" checked/> Inteira</label>
+          <label style="font-weight:normal"><input type="checkbox" id="pTemMeia"/> Meia</label>
+        </div>
+      </div>
+      <div class="fg"><label>Preço Inteira (R$)</label><input type="number" id="pPrecoInt" step="0.01" placeholder="0,00"/></div>
+      <div class="fg"><label>Preço Meia (R$)</label><input type="number" id="pPrecoMeia" step="0.01" placeholder="0,00"/></div>
     </div>
-    <div class="modal-actions">
-      <button class="btn" onclick="fecharModal('modalVenda')" style="background:#333;color:#fff;">Cancelar</button>
-      <button class="btn btn-red" onclick="salvarVenda()">Salvar</button>
+    <div id="pOutroOpts" style="display:none">
+      <div class="fg"><label>Preço (R$)</label><input type="number" id="pPreco" step="0.01" placeholder="0,00"/></div>
+    </div>
+    <div class="fg">
+      <label>Ingredientes (Ficha Técnica)</label>
+      <div id="pIngs"></div>
+      <button type="button" class="btn btn-green btn-sm" style="margin-top:5px" onclick="addIng()">+ Adicionar</button>
+    </div>
+    <div class="ma">
+      <button class="btn btn-gray" onclick="closeModal('mProduto')">Cancelar</button>
+      <button class="btn btn-red" onclick="saveProduto()">Salvar</button>
     </div>
   </div>
 </div>
 
 <!-- MODAL ESTOQUE -->
-<div class="modal-overlay" id="modalEstoque">
+<div class="modal-overlay" id="mEstoque">
   <div class="modal">
     <h2>📦 Registrar Estoque</h2>
-    <div class="form-group">
-      <label>Data *</label>
-      <input type="date" id="e-data" />
-    </div>
-    <div class="form-group">
-      <label>Insumo *</label>
-      <select id="e-insumo"></select>
-    </div>
-    <div class="form-group">
-      <label>Quantidade Inicial *</label>
-      <input type="number" id="e-inicial" step="0.01" placeholder="0" />
-    </div>
-    <div class="form-group">
-      <label>Quantidade Usada *</label>
-      <input type="number" id="e-usada" step="0.01" placeholder="0" />
-    </div>
-    <div class="form-group">
-      <label>Quantidade Final</label>
-      <input type="number" id="e-final" step="0.01" placeholder="Calculado automaticamente" readonly style="opacity:0.7" />
-    </div>
-    <div class="modal-actions">
-      <button class="btn" onclick="fecharModal('modalEstoque')" style="background:#333;color:#fff;">Cancelar</button>
-      <button class="btn btn-red" onclick="salvarEstoque()">Salvar</button>
+    <div class="fg"><label>Data *</label><input type="date" id="eData"/></div>
+    <div class="fg"><label>Insumo *</label><select id="eIns"></select></div>
+    <div class="fg"><label>Inicial *</label><input type="number" id="eIni" step="0.01" oninput="calcFin()"/></div>
+    <div class="fg"><label>Usado *</label><input type="number" id="eUsa" step="0.01" oninput="calcFin()"/></div>
+    <div class="fg"><label>Final</label><input type="number" id="eFin" step="0.01" readonly style="background:#f8f8f8"/></div>
+    <div class="ma">
+      <button class="btn btn-gray" onclick="closeModal('mEstoque')">Cancelar</button>
+      <button class="btn btn-red" onclick="saveEstoque()">Salvar</button>
     </div>
   </div>
 </div>
 
 <!-- MODAL INSUMO -->
-<div class="modal-overlay" id="modalInsumo">
+<div class="modal-overlay" id="mInsumo">
   <div class="modal">
-    <h2>🧂 Cadastro de Insumo</h2>
-    <input type="hidden" id="i-id" />
-    <div class="form-group">
-      <label>Nome *</label>
-      <input type="text" id="i-nome" placeholder="Ex: Farinha de Trigo" />
+    <h2>🧂 Insumo</h2>
+    <input type="hidden" id="iId"/>
+    <div class="fg"><label>Nome *</label><input type="text" id="iNome" placeholder="Ex: Mussarela"/></div>
+    <div class="fg"><label>Categoria *</label>
+      <select id="iCat"><option>Farinha</option><option>Laticínio</option><option>Carne</option>
+      <option>Vegetal</option><option>Tempero</option><option>Bebida</option><option>Outro</option></select>
     </div>
-    <div class="form-group">
-      <label>Categoria *</label>
-      <select id="i-categoria">
-        <option>Farinha</option><option>Laticínio</option><option>Carne</option>
-        <option>Vegetal</option><option>Tempero</option><option>Bebida</option><option>Outro</option>
-      </select>
+    <div class="fg"><label>Unidade *</label>
+      <select id="iUn"><option>kg</option><option>g</option><option>L</option><option>ml</option><option>un</option><option>cx</option><option>pct</option></select>
     </div>
-    <div class="form-group">
-      <label>Unidade de Medida *</label>
-      <select id="i-unidade">
-        <option>kg</option><option>g</option><option>L</option><option>ml</option>
-        <option>un</option><option>cx</option><option>pct</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Estoque Mínimo *</label>
-      <input type="number" id="i-estoque-min" step="0.01" placeholder="0" />
-    </div>
-    <div class="form-group">
-      <label>Preço Atual (R$) *</label>
-      <input type="number" id="i-preco" step="0.01" placeholder="0,00" />
-    </div>
-    <div class="form-group">
-      <label>Fornecedor</label>
-      <input type="text" id="i-fornecedor" placeholder="Nome do fornecedor" />
-    </div>
-    <div class="modal-actions">
-      <button class="btn" onclick="fecharModal('modalInsumo')" style="background:#333;color:#fff;">Cancelar</button>
-      <button class="btn btn-red" onclick="salvarInsumo()">Salvar</button>
+    <div class="fg"><label>Estoque Mínimo</label><input type="number" id="iMin" step="0.01" placeholder="0"/></div>
+    <div class="fg"><label>Preço Atual (R$) *</label><input type="number" id="iPreco" step="0.01" placeholder="0,00"/></div>
+    <div class="fg"><label>Fornecedor</label><input type="text" id="iForn" placeholder="Nome do fornecedor"/></div>
+    <div class="ma">
+      <button class="btn btn-gray" onclick="closeModal('mInsumo')">Cancelar</button>
+      <button class="btn btn-red" onclick="saveInsumo()">Salvar</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL PRECO -->
-<div class="modal-overlay" id="modalPreco">
+<!-- MODAL PREÇO -->
+<div class="modal-overlay" id="mPreco">
   <div class="modal">
     <h2>🏷️ Registrar Preço</h2>
-    <div class="form-group">
-      <label>Insumo *</label>
-      <select id="p-insumo"></select>
-    </div>
-    <div class="form-group">
-      <label>Data *</label>
-      <input type="date" id="p-data" />
-    </div>
-    <div class="form-group">
-      <label>Preço Anterior (R$)</label>
-      <input type="number" id="p-anterior" step="0.01" placeholder="0,00" readonly style="opacity:0.7" />
-    </div>
-    <div class="form-group">
-      <label>Preço Novo (R$) *</label>
-      <input type="number" id="p-novo" step="0.01" placeholder="0,00" />
-    </div>
-    <div class="form-group">
-      <label>Fornecedor</label>
-      <input type="text" id="p-fornecedor" placeholder="Nome do fornecedor" />
-    </div>
-    <div class="modal-actions">
-      <button class="btn" onclick="fecharModal('modalPreco')" style="background:#333;color:#fff;">Cancelar</button>
-      <button class="btn btn-red" onclick="salvarPreco()">Salvar</button>
+    <div class="fg"><label>Insumo *</label><select id="prIns" onchange="onInsPrecoChange()"></select></div>
+    <div class="fg"><label>Data *</label><input type="date" id="prData"/></div>
+    <div class="fg"><label>Preço Anterior (R$)</label><input type="number" id="prAnt" readonly style="background:#f8f8f8"/></div>
+    <div class="fg"><label>Preço Novo (R$) *</label><input type="number" id="prNovo" step="0.01" placeholder="0,00"/></div>
+    <div class="fg"><label>Fornecedor</label><input type="text" id="prForn" placeholder="Opcional"/></div>
+    <div class="ma">
+      <button class="btn btn-gray" onclick="closeModal('mPreco')">Cancelar</button>
+      <button class="btn btn-red" onclick="savePreco()">Salvar</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL FICHA -->
-<div class="modal-overlay" id="modalFicha">
+<!-- MODAL FICHA DETALHE -->
+<div class="modal-overlay" id="mFicha">
+  <div class="modal" style="max-width:520px">
+    <h2>📋 <span id="fdNome"></span></h2>
+    <div id="fdBody"></div>
+    <div class="ma"><button class="btn btn-gray" onclick="closeModal('mFicha')">Fechar</button></div>
+  </div>
+</div>
+
+<!-- MODAL CONTA -->
+<div class="modal-overlay" id="mConta">
   <div class="modal">
-    <h2>📋 Ficha Técnica</h2>
-    <input type="hidden" id="f-id" />
-    <div class="form-group">
-      <label>Nome do Produto *</label>
-      <input type="text" id="f-nome" placeholder="Ex: Pizza Margherita" />
+    <h2>💳 Conta a Pagar</h2>
+    <input type="hidden" id="cId"/>
+    <div class="fg"><label>Descrição *</label><input type="text" id="cDesc" placeholder="Ex: Conta de Energia Maio"/></div>
+    <div class="fg"><label>Categoria *</label>
+      <select id="cCat"><option>Energia</option><option>Água</option><option>Fornecedor</option>
+      <option>Aluguel</option><option>Internet</option><option>Funcionário</option><option>Outro</option></select>
     </div>
-    <div class="form-group">
-      <label>Categoria *</label>
-      <select id="f-categoria">
-        <option>Pizza</option><option>Calzone</option><option>Massa</option>
-        <option>Bebida</option><option>Sobremesa</option><option>Outro</option>
-      </select>
+    <div class="fg"><label>Recebedor *</label><input type="text" id="cReceb" placeholder="Ex: Equatorial Energia"/></div>
+    <div class="fg"><label>Valor (R$) *</label><input type="number" id="cValor" step="0.01" placeholder="0,00"/></div>
+    <div class="fg"><label>Vencimento *</label><input type="date" id="cVenc"/></div>
+    <div class="fg"><label>Data de Agendamento</label><input type="date" id="cAgend"/></div>
+    <div class="fg"><label>Data de Pagamento</label><input type="date" id="cPag"/></div>
+    <div class="fg"><label>Forma de Pagamento</label>
+      <select id="cForma"><option value="">Selecione</option><option>Dinheiro</option><option>PIX</option>
+      <option>Débito</option><option>Crédito</option><option>Boleto</option><option>Transferência</option></select>
     </div>
-    <div class="form-group">
-      <label>Rendimento (porções) *</label>
-      <input type="number" id="f-rendimento" placeholder="Ex: 8" />
-    </div>
-    <div class="form-group">
-      <label>Preço de Venda (R$) *</label>
-      <input type="number" id="f-preco-venda" step="0.01" placeholder="0,00" />
-    </div>
-    <div class="form-group">
-      <label>Modo de Preparo</label>
-      <textarea id="f-preparo" placeholder="Descreva o modo de preparo..."></textarea>
-    </div>
-    <div class="form-group">
-      <label>Ingredientes</label>
-      <div class="ingredientes-list" id="ingredientesList"></div>
-      <button class="btn btn-green btn-sm" style="margin-top:8px;" onclick="adicionarIngrediente()">+ Ingrediente</button>
-    </div>
-    <div style="background:#1a1a2e;padding:12px;border-radius:8px;margin-top:10px;">
-      <strong>Custo Total: <span id="custoTotal" style="color:#e74c3c;">R$ 0,00</span></strong>
-    </div>
-    <div class="modal-actions">
-      <button class="btn" onclick="fecharModal('modalFicha')" style="background:#333;color:#fff;">Cancelar</button>
-      <button class="btn btn-red" onclick="salvarFicha()">Salvar</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL DETALHE FICHA -->
-<div class="modal-overlay" id="modalFichaDetalhe">
-  <div class="modal" style="max-width:600px;">
-    <h2>📋 <span id="fd-nome"></span></h2>
-    <div id="fd-conteudo"></div>
-    <div class="modal-actions">
-      <button class="btn" onclick="fecharModal('modalFichaDetalhe')" style="background:#333;color:#fff;">Fechar</button>
+    <div class="fg"><label>Observação</label><input type="text" id="cObs" placeholder="Opcional"/></div>
+    <div class="ma">
+      <button class="btn btn-gray" onclick="closeModal('mConta')">Cancelar</button>
+      <button class="btn btn-red" onclick="saveConta()">Salvar</button>
     </div>
   </div>
 </div>
 
 <script>
-// ===== FIREBASE =====
-const firebaseConfig = {
-  apiKey: "AIzaSyAM8DJcX7sQoMDZP5LiAEz91Z5ivgSKX_I",
-  authDomain: "ilmonello-pizzaria-f757c.firebaseapp.com",
-  projectId: "ilmonello-pizzaria-f757c",
-  storageBucket: "ilmonello-pizzaria-f757c.firebasestorage.app",
-  messagingSenderId: "991199105962",
-  appId: "1:991199105962:web:21cae5d962512a0c7751d3"
+const fbConfig = {
+  apiKey:"AIzaSyAM8DJcX7sQoMDZP5LiAEz91Z5ivgSKX_I",
+  authDomain:"ilmonello-pizzaria-f757c.firebaseapp.com",
+  projectId:"ilmonello-pizzaria-f757c",
+  storageBucket:"ilmonello-pizzaria-f757c.firebasestorage.app",
+  messagingSenderId:"991199105962",
+  appId:"1:991199105962:web:21cae5d962512a0c7751d3"
 };
-firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(fbConfig);
 const auth = firebase.auth();
-const db = firebase.firestore();
+const db   = firebase.firestore();
 
-// ===== AUTH =====
-auth.onAuthStateChanged(user => {
-  if (user) {
+// ── CACHE ──────────────────────────────────────────
+let insCache  = [];
+let prodCache = [];
+let ingsTemp  = [];
+
+// ── AUTH ───────────────────────────────────────────
+auth.onAuthStateChanged(u => {
+  if (u) {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('app').style.display = 'block';
-    iniciarApp();
+    boot();
   } else {
     document.getElementById('loginScreen').style.display = 'flex';
     document.getElementById('app').style.display = 'none';
   }
 });
-
-function fazerLogin() {
-  const email = document.getElementById('loginEmail').value;
-  const senha = document.getElementById('loginPassword').value;
+function login() {
+  const e = document.getElementById('em').value;
+  const s = document.getElementById('pw').value;
   document.getElementById('loginError').textContent = '';
-  auth.signInWithEmailAndPassword(email, senha).catch(e => {
-    document.getElementById('loginError').textContent = 'E-mail ou senha inválidos.';
-  });
+  auth.signInWithEmailAndPassword(e, s)
+    .catch(() => document.getElementById('loginError').textContent = 'E-mail ou senha inválidos.');
+}
+function logout() { auth.signOut(); }
+
+// ── BOOT ───────────────────────────────────────────
+async function boot() {
+  const d = new Date();
+  document.getElementById('dtAtual').textContent =
+    d.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});
+  document.getElementById('fvData').value = ymd(d);
+  document.getElementById('feData').value = ymd(d);
+
+  await Promise.all([ loadInsCache(), loadProdCache() ]);
+  go('dashboard');
 }
 
-function fazerLogout() {
-  auth.signOut();
-}
-
-// ===== INIT =====
-let insumosCache = [];
-let chartVendas = null;
-let chartProdutos = null;
-
-function iniciarApp() {
-  const hoje = new Date();
-  document.getElementById('dataAtual').textContent =
-    hoje.toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'long', year:'numeric' });
-
-  document.getElementById('filtroVendaData').value = hoje.toISOString().split('T')[0];
-  document.getElementById('filtroEstoqueData').value = hoje.toISOString().split('T')[0];
-
-  carregarInsumos();
-  carregarDashboard();
-}
-
-// ===== NAVEGAÇÃO =====
-function showPage(page) {
+// ── NAVEGAÇÃO ──────────────────────────────────────
+function go(page) {
+  // remove active de todos
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  document.querySelector(`nav a[data-page="${page}"]`).classList.add('active');
 
-  const titles = {
-    dashboard: 'Dashboard', vendas: 'Vendas', estoque: 'Estoque Diário',
-    insumos: 'Insumos', precos: 'Histórico de Preços', fichas: 'Fichas Técnicas'
-  };
-  document.getElementById('pageTitle').textContent = titles[page];
+  // ativa o link correto
+  const links = document.querySelectorAll('.nav-link');
+  const pages = ['dashboard','vendas','produtos','estoque','insumos','precos','fichas','contas'];
+  const idx   = pages.indexOf(page);
+  if (idx >= 0) links[idx].classList.add('active');
 
-  if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+  const pg = document.getElementById('pg-' + page);
+  if (pg) pg.classList.add('active');
 
-  if (page === 'dashboard') carregarDashboard();
-  if (page === 'vendas') carregarVendas();
-  if (page === 'estoque') carregarEstoque();
-  if (page === 'insumos') carregarInsumos();
-  if (page === 'precos') { carregarSelectInsumos(); carregarPrecos(); }
-  if (page === 'fichas') carregarFichas();
+  const titles = {dashboard:'Dashboard',vendas:'Vendas',produtos:'Produtos',
+    estoque:'Estoque',insumos:'Insumos',precos:'Histórico de Preços',
+    fichas:'Fichas Técnicas',contas:'Contas a Pagar'};
+  document.getElementById('pgTitle').textContent = titles[page] || page;
+
+  closeSidebar();
+
+  ({
+    dashboard: loadDashboard,
+    vendas:    loadVendas,
+    produtos:  loadProdutos,
+    estoque:   loadEstoque,
+    insumos:   () => loadInsumos(false),
+    precos:    () => { fillSelectPrecos(); loadPrecos(); },
+    fichas:    loadFichas,
+    contas:    loadContas
+  })[page]?.();
 }
 
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
+function openSidebar()  { document.getElementById('sidebar').classList.add('open');  document.getElementById('ovl').classList.add('open'); }
+function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('ovl').classList.remove('open'); }
+
+// ── HELPERS ────────────────────────────────────────
+const R   = v => 'R$\u00a0' + Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+function ymd(d) { return d instanceof Date ? d.toISOString().split('T')[0] : d; }
+function br(s)  { if (!s) return '-'; const [y,m,dd]=s.split('-'); return `${dd}/${m}/${y}`; }
+function today(){ return ymd(new Date()); }
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+async function del(col, id, cb) {
+  if (!confirm('Excluir este registro?')) return;
+  await db.collection(col).doc(id).delete();
+  cb();
 }
 
-// ===== HELPERS =====
-function moeda(v) {
-  return 'R$ ' + Number(v || 0).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+// ── CACHE ──────────────────────────────────────────
+async function loadInsCache() {
+  const s = await db.collection('insumos').orderBy('nome').get();
+  insCache = s.docs.map(d => ({id:d.id,...d.data()}));
 }
-function hoje() { return new Date().toISOString().split('T')[0]; }
-function abrirModal(id) { document.getElementById(id).classList.add('open'); }
-function fecharModal(id) { document.getElementById(id).classList.remove('open'); }
-
-// ===== DASHBOARD =====
-async function carregarDashboard() {
-  const agora = new Date();
-  const anoMes = `${agora.getFullYear()}-${String(agora.getMonth()+1).padStart(2,'0')}`;
-  const dataHoje = agora.toISOString().split('T')[0];
-
-  try {
-    // Vendas
-    const vendasSnap = await db.collection('vendas').get();
-    const vendas = vendasSnap.docs.map(d => ({id:d.id,...d.data()}));
-
-    const vendasHoje = vendas.filter(v => v.data === dataHoje);
-    const vendasMes = vendas.filter(v => v.data && v.data.startsWith(anoMes));
-
-    const totalHoje = vendasHoje.reduce((s,v) => s + (v.total||0), 0);
-    const totalMes = vendasMes.reduce((s,v) => s + (v.total||0), 0);
-    const ticketMedio = vendasMes.length > 0 ? totalMes / vendasMes.length : 0;
-
-    document.getElementById('d-vendas-hoje').textContent = moeda(totalHoje);
-    document.getElementById('d-vendas-hoje-qtd').textContent = `${vendasHoje.length} pedidos`;
-    document.getElementById('d-vendas-mes').textContent = moeda(totalMes);
-    document.getElementById('d-vendas-mes-qtd').textContent = `${vendasMes.length} pedidos`;
-    document.getElementById('d-ticket-medio').textContent = moeda(ticketMedio);
-
-    // Gráfico vendas 7 dias
-    const labels = [], dados = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(); d.setDate(d.getDate() - i);
-      const ds = d.toISOString().split('T')[0];
-      labels.push(d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}));
-      dados.push(vendas.filter(v=>v.data===ds).reduce((s,v)=>s+(v.total||0),0));
-    }
-    renderChartVendas(labels, dados);
-
-    // Top produtos
-    const prodMap = {};
-    vendas.filter(v => v.data && v.data.startsWith(anoMes)).forEach(v => {
-      prodMap[v.produto] = (prodMap[v.produto]||0) + (v.quantidade||1);
-    });
-    const top5 = Object.entries(prodMap).sort((a,b)=>b[1]-a[1]).slice(0,5);
-    renderChartProdutos(top5.map(x=>x[0]), top5.map(x=>x[1]));
-
-    // Insumos
-    const insumosSnap = await db.collection('insumos').get();
-    document.getElementById('d-insumos-total').textContent = insumosSnap.size;
-
-    // Fichas
-    const fichasSnap = await db.collection('fichas').get();
-    document.getElementById('d-fichas-total').textContent = fichasSnap.size;
-
-    // Estoque alertas
-    const estoqueSnap = await db.collection('estoque').orderBy('data','desc').get();
-    const ultimoEstoque = {};
-    estoqueSnap.docs.forEach(d => {
-      const dado = d.data();
-      if (!ultimoEstoque[dado.insumoId]) ultimoEstoque[dado.insumoId] = dado;
-    });
-
-    const insumos = insumosSnap.docs.map(d=>({id:d.id,...d.data()}));
-    document.getElementById('d-estoque-total').textContent = insumos.length;
-
-    let baixoCount = 0;
-    const alertasHtml = insumos.map(ins => {
-      const ult = ultimoEstoque[ins.id];
-      const qtdFinal = ult ? (ult.final || 0) : null;
-      const min = ins.estoqueMin || 0;
-      if (qtdFinal !== null && qtdFinal <= min) {
-        baixoCount++;
-        const classe = qtdFinal === 0 ? 'badge-red' : 'badge-yellow';
-        const texto = qtdFinal === 0 ? 'Zerado' : 'Baixo';
-        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #2a2a5e;">
-          <span>${ins.nome}</span>
-          <span>${qtdFinal} ${ins.unidade} <span class="badge ${classe}">${texto}</span></span>
-        </div>`;
-      }
-      return '';
-    }).filter(Boolean).join('');
-
-    document.getElementById('d-estoque-baixo').textContent = `${baixoCount} com estoque baixo`;
-    document.getElementById('alertasEstoque').innerHTML =
-      alertasHtml || '<div class="empty-state">✅ Nenhum alerta de estoque</div>';
-
-  } catch(e) {
-    console.error(e);
-  }
+async function loadProdCache() {
+  const s = await db.collection('produtos').orderBy('nome').get();
+  prodCache = s.docs.map(d => ({id:d.id,...d.data()}));
 }
 
-function renderChartVendas(labels, dados) {
-  const ctx = document.getElementById('chartVendas').getContext('2d');
-  if (chartVendas) chartVendas.destroy();
-  chartVendas = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        label: 'Vendas (R$)', data: dados,
-        borderColor: '#e74c3c', backgroundColor: 'rgba(231,76,60,0.1)',
-        fill: true, tension: 0.4, pointBackgroundColor: '#e74c3c'
-      }]
-    },
-    options: {
-      plugins: { legend: { labels: { color: '#ccc' } } },
-      scales: {
-        x: { ticks: { color: '#aaa' }, grid: { color: '#2a2a5e' } },
-        y: { ticks: { color: '#aaa', callback: v => 'R$'+v }, grid: { color: '#2a2a5e' } }
-      }
-    }
-  });
+// ── DASHBOARD ──────────────────────────────────────
+async function loadDashboard() {
+  const now    = new Date();
+  const mes    = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const dHoje  = ymd(now);
+
+  const [vs, is, es, cs] = await Promise.all([
+    db.collection('vendas').get(),
+    db.collection('insumos').get(),
+    db.collection('estoque').orderBy('data','desc').get(),
+    db.collection('contas').get()
+  ]);
+
+  const vd   = vs.docs.map(d=>({id:d.id,...d.data()}));
+  const vh   = vd.filter(v=>v.data===dHoje);
+  const vm   = vd.filter(v=>v.data?.startsWith(mes));
+  const tH   = vh.reduce((a,v)=>a+(v.total||0),0);
+  const tM   = vm.reduce((a,v)=>a+(v.total||0),0);
+
+  document.getElementById('dHoje').textContent   = R(tH);
+  document.getElementById('dHojeQ').textContent  = `${vh.length} pedidos`;
+  document.getElementById('dMes').textContent    = R(tM);
+  document.getElementById('dMesQ').textContent   = `${vm.length} pedidos`;
+  document.getElementById('dTicket').textContent = R(vm.length ? tM/vm.length : 0);
+
+  // Estoque alertas
+  const ins  = is.docs.map(d=>({id:d.id,...d.data()}));
+  const ultE = {};
+  es.docs.forEach(d=>{ const x=d.data(); if(!ultE[x.insumoId]) ultE[x.insumoId]=x; });
+  const alEst = ins.filter(i=>{ const u=ultE[i.id]; return u && u.final<=(i.estoqueMin||0); });
+  document.getElementById('aEst').innerHTML = alEst.length
+    ? alEst.map(i=>{ const u=ultE[i.id]; const low=u.final<=0;
+        return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0f0">
+          <span>${i.nome}</span>
+          <span>${u.final} ${i.unidade} <span class="badge ${low?'bg-red':'bg-yellow'}">${low?'Zerado':'Baixo'}</span></span>
+        </div>`; }).join('')
+    : '<div class="empty">✅ Sem alertas</div>';
+
+  // Contas
+  const contas = cs.docs.map(d=>({id:d.id,...d.data()}));
+  const pend   = contas.filter(c=>statusConta(c.vencimento,c.dataPagamento)!=='Pago');
+  const tPend  = pend.reduce((a,c)=>a+(c.valor||0),0);
+  document.getElementById('dContas').textContent  = R(tPend);
+  document.getElementById('dContasQ').textContent = `${pend.length} contas`;
+
+  const d7   = new Date(); d7.setDate(d7.getDate()+7);
+  const prox = pend.filter(c=>c.vencimento&&c.vencimento<=ymd(d7)).sort((a,b)=>a.vencimento>b.vencimento?1:-1);
+  document.getElementById('aCont').innerHTML = prox.length
+    ? prox.map(c=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0f0">
+        <span>${c.descricao} — <small style="color:#888">${c.recebedor}</small></span>
+        <span>${R(c.valor)} <span class="badge bg-yellow">Vence ${br(c.vencimento)}</span></span>
+      </div>`).join('')
+    : '<div class="empty">✅ Nenhuma conta vencendo em breve</div>';
 }
 
-function renderChartProdutos(labels, dados) {
-  const ctx = document.getElementById('chartProdutos').getContext('2d');
-  if (chartProdutos) chartProdutos.destroy();
-  chartProdutos = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels,
-      datasets: [{
-        data: dados,
-        backgroundColor: ['#e74c3c','#c0392b','#e67e22','#f39c12','#8e44ad']
-      }]
-    },
-    options: {
-      plugins: { legend: { labels: { color: '#ccc' }, position: 'bottom' } }
-    }
-  });
+// ── VENDAS ─────────────────────────────────────────
+function openVenda() {
+  document.getElementById('vData').value  = today();
+  document.getElementById('vQtd').value   = 1;
+  document.getElementById('vValor').value = '';
+  document.getElementById('vObs').value   = '';
+  document.getElementById('vTipo').value  = 'Inteira';
+  document.getElementById('btnInteira').classList.add('on');
+  document.getElementById('btnMeia').classList.remove('on');
+
+  const sel = document.getElementById('vProd');
+  sel.innerHTML = '<option value="">Selecione...</option>' +
+    prodCache.map(p=>`<option value="${p.id}">${p.nome}${p.categoria==='Pizza'?' 🍕':p.categoria==='Bebida'?' 🥤':''}</option>`).join('');
+  document.getElementById('vTipoGrp').style.display = 'none';
+  openModal('mVenda');
 }
-
-// ===== VENDAS =====
-function abrirModalVenda() {
-  document.getElementById('v-data').value = hoje();
-  document.getElementById('v-produto').value = '';
-  document.getElementById('v-qtd').value = 1;
-  document.getElementById('v-valor').value = '';
-  document.getElementById('v-obs').value = '';
-  abrirModal('modalVenda');
+function setTipo(t) {
+  document.getElementById('vTipo').value = t;
+  document.getElementById('btnInteira').classList.toggle('on', t==='Inteira');
+  document.getElementById('btnMeia').classList.toggle('on',    t==='Meia');
+  onProdChange();
 }
-
-async function salvarVenda() {
-  const data = document.getElementById('v-data').value;
-  const produto = document.getElementById('v-produto').value.trim();
-  const qtd = parseFloat(document.getElementById('v-qtd').value) || 0;
-  const valor = parseFloat(document.getElementById('v-valor').value) || 0;
-  const obs = document.getElementById('v-obs').value.trim();
-
-  if (!data || !produto || !qtd || !valor) {
-    alert('Preencha todos os campos obrigatórios!'); return;
-  }
-
+function onProdChange() {
+  const pid  = document.getElementById('vProd').value;
+  const prod = prodCache.find(p=>p.id===pid);
+  if (!prod) return;
+  const pizza = prod.categoria === 'Pizza';
+  document.getElementById('vTipoGrp').style.display = pizza ? 'block' : 'none';
+  const tipo = document.getElementById('vTipo').value;
+  document.getElementById('vValor').value = pizza
+    ? (tipo==='Meia' ? (prod.precoMeia||'') : (prod.precoInteira||''))
+    : (prod.preco||'');
+}
+async function saveVenda() {
+  const data  = document.getElementById('vData').value;
+  const pid   = document.getElementById('vProd').value;
+  const pNome = document.getElementById('vProd').options[document.getElementById('vProd').selectedIndex]?.text || '';
+  const tipo  = document.getElementById('vTipo').value;
+  const qtd   = parseFloat(document.getElementById('vQtd').value)||0;
+  const val   = parseFloat(document.getElementById('vValor').value)||0;
+  const obs   = document.getElementById('vObs').value.trim();
+  if (!data||!pid||!qtd||!val) { alert('Preencha todos os campos obrigatórios!'); return; }
+  const prod = prodCache.find(p=>p.id===pid);
   await db.collection('vendas').add({
-    data, produto, quantidade: qtd,
-    valorUnitario: valor, total: qtd * valor,
-    observacao: obs, criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-  });
-
-  fecharModal('modalVenda');
-  carregarVendas();
-}
-
-async function carregarVendas() {
-  const tbody = document.getElementById('tabelaVendas');
-  tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Carregando...</td></tr>';
-
-  const filtroData = document.getElementById('filtroVendaData').value;
-  const filtroMes = document.getElementById('filtroVendaMes').value;
-
-  let query = db.collection('vendas').orderBy('data','desc');
-  const snap = await query.get();
-  let vendas = snap.docs.map(d => ({id:d.id,...d.data()}));
-
-  if (filtroData) vendas = vendas.filter(v => v.data === filtroData);
-  else if (filtroMes) vendas = vendas.filter(v => v.data && v.data.split('-')[1] === filtroMes);
-
-  const total = vendas.reduce((s,v) => s+(v.total||0), 0);
-  document.getElementById('totalVendas').textContent = moeda(total);
-
-  if (!vendas.length) {
-    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhuma venda encontrada</td></tr>'; return;
-  }
-
-  tbody.innerHTML = vendas.map(v => `
-    <tr>
-      <td>${formatarData(v.data)}</td>
-      <td><strong>${v.produto}</strong></td>
-      <td>${v.quantidade}</td>
-      <td>${moeda(v.valorUnitario)}</td>
-      <td><strong style="color:#27ae60;">${moeda(v.total)}</strong></td>
-      <td>${v.observacao||'-'}</td>
-      <td><button class="btn btn-danger btn-sm" onclick="excluir('vendas','${v.id}',carregarVendas)">🗑️</button></td>
-    </tr>
-  `).join('');
-}
-
-// ===== ESTOQUE =====
-function abrirModalEstoque() {
-  document.getElementById('e-data').value = hoje();
-  document.getElementById('e-inicial').value = '';
-  document.getElementById('e-usada').value = '';
-  document.getElementById('e-final').value = '';
-  preencherSelectInsumos('e-insumo');
-  abrirModal('modalEstoque');
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  ['e-inicial','e-usada'].forEach(id => {
-    document.getElementById(id)?.addEventListener('input', () => {
-      const ini = parseFloat(document.getElementById('e-inicial').value) || 0;
-      const usa = parseFloat(document.getElementById('e-usada').value) || 0;
-      document.getElementById('e-final').value = Math.max(0, ini - usa).toFixed(2);
-    });
-  });
-});
-
-async function salvarEstoque() {
-  const data = document.getElementById('e-data').value;
-  const insumoId = document.getElementById('e-insumo').value;
-  const insumoNome = document.getElementById('e-insumo').options[document.getElementById('e-insumo').selectedIndex]?.text;
-  const inicial = parseFloat(document.getElementById('e-inicial').value) || 0;
-  const usada = parseFloat(document.getElementById('e-usada').value) || 0;
-  const final = parseFloat(document.getElementById('e-final').value) || 0;
-
-  if (!data || !insumoId) { alert('Preencha todos os campos!'); return; }
-
-  const ins = insumosCache.find(i => i.id === insumoId);
-
-  await db.collection('estoque').add({
-    data, insumoId, insumoNome, inicial, usada, final,
-    unidade: ins?.unidade || '',
-    estoqueMin: ins?.estoqueMin || 0,
+    data, produtoId:pid, produto:pNome.replace(/ 🍕| 🥤/g,''),
+    tipo: prod?.categoria==='Pizza' ? tipo : '-',
+    quantidade:qtd, valorUnitario:val, total:qtd*val, observacao:obs,
     criadoEm: firebase.firestore.FieldValue.serverTimestamp()
   });
-
-  fecharModal('modalEstoque');
-  carregarEstoque();
+  closeModal('mVenda');
+  loadVendas();
+}
+async function loadVendas() {
+  const tb = document.getElementById('tbVendas');
+  tb.innerHTML = '<tr><td colspan="8" class="empty">Carregando...</td></tr>';
+  const fd = document.getElementById('fvData').value;
+  const fm = document.getElementById('fvMes').value;
+  const s  = await db.collection('vendas').orderBy('data','desc').get();
+  let rows = s.docs.map(d=>({id:d.id,...d.data()}));
+  if (fd)      rows = rows.filter(r=>r.data===fd);
+  else if (fm) rows = rows.filter(r=>r.data?.split('-')[1]===fm);
+  const tot = rows.reduce((a,r)=>a+(r.total||0),0);
+  document.getElementById('totVendas').textContent = R(tot);
+  if (!rows.length) { tb.innerHTML='<tr><td colspan="8" class="empty">Nenhuma venda</td></tr>'; return; }
+  tb.innerHTML = rows.map(r=>`<tr>
+    <td>${br(r.data)}</td><td><b>${r.produto}</b></td><td>${r.tipo||'-'}</td>
+    <td>${r.quantidade}</td><td>${R(r.valorUnitario)}</td>
+    <td style="color:#1a6b3a;font-weight:700">${R(r.total)}</td>
+    <td>${r.observacao||'-'}</td>
+    <td><button class="btn btn-danger btn-sm" onclick="del('vendas','${r.id}',loadVendas)">🗑</button></td>
+  </tr>`).join('');
 }
 
-async function carregarEstoque() {
-  const tbody = document.getElementById('tabelaEstoque');
-  tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Carregando...</td></tr>';
-
-  const filtroData = document.getElementById('filtroEstoqueData').value;
-  const filtroNome = document.getElementById('filtroEstoqueNome').value.toLowerCase();
-
-  const snap = await db.collection('estoque').orderBy('data','desc').get();
-  let registros = snap.docs.map(d => ({id:d.id,...d.data()}));
-
-  if (filtroData) registros = registros.filter(r => r.data === filtroData);
-  if (filtroNome) registros = registros.filter(r => r.insumoNome?.toLowerCase().includes(filtroNome));
-
-  if (!registros.length) {
-    tbody.innerHTML = '<tr><td colspan="8" class="empty-state">Nenhum registro encontrado</td></tr>'; return;
-  }
-
-  tbody.innerHTML = registros.map(r => {
-    const min = r.estoqueMin || 0;
-    const classe = r.final <= 0 ? 'estoque-critico' : r.final <= min ? 'estoque-baixo' : 'estoque-ok';
-    const badge = r.final <= 0
-      ? '<span class="badge badge-red">Zerado</span>'
-      : r.final <= min
-        ? '<span class="badge badge-yellow">Baixo</span>'
-        : '<span class="badge badge-green">OK</span>';
-
-    return `<tr class="${classe}">
-      <td><strong>${r.insumoNome}</strong></td>
-      <td>${formatarData(r.data)}</td>
-      <td>${r.inicial} ${r.unidade}</td>
-      <td>${r.usada} ${r.unidade}</td>
-      <td><strong>${r.final} ${r.unidade}</strong></td>
-      <td>${r.unidade}</td>
-      <td>${badge}</td>
-      <td><button class="btn btn-danger btn-sm" onclick="excluir('estoque','${r.id}',carregarEstoque)">🗑️</button></td>
-    </tr>`;
-  }).join('');
+// ── PRODUTOS ───────────────────────────────────────
+function onCatChange() {
+  const c = document.getElementById('pCat').value;
+  document.getElementById('pPizzaOpts').style.display  = c==='Pizza'  ? 'block' : 'none';
+  document.getElementById('pOutroOpts').style.display  = c!=='Pizza'  ? 'block' : 'none';
 }
-
-// ===== INSUMOS =====
-function abrirModalInsumo(insumo = null) {
-  document.getElementById('i-id').value = insumo?.id || '';
-  document.getElementById('i-nome').value = insumo?.nome || '';
-  document.getElementById('i-categoria').value = insumo?.categoria || 'Farinha';
-  document.getElementById('i-unidade').value = insumo?.unidade || 'kg';
-  document.getElementById('i-estoque-min').value = insumo?.estoqueMin || '';
-  document.getElementById('i-preco').value = insumo?.preco || '';
-  document.getElementById('i-fornecedor').value = insumo?.fornecedor || '';
-  abrirModal('modalInsumo');
+function addIng() {
+  ingsTemp.push({insumoId:'',nome:'',quantidade:0,unidade:'',custoUnit:0});
+  renderIngs();
 }
-
-async function salvarInsumo() {
-  const id = document.getElementById('i-id').value;
-  const nome = document.getElementById('i-nome').value.trim();
-  const categoria = document.getElementById('i-categoria').value;
-  const unidade = document.getElementById('i-unidade').value;
-  const estoqueMin = parseFloat(document.getElementById('i-estoque-min').value) || 0;
-  const preco = parseFloat(document.getElementById('i-preco').value) || 0;
-  const fornecedor = document.getElementById('i-fornecedor').value.trim();
-
-  if (!nome) { alert('Informe o nome do insumo!'); return; }
-
-  const data = { nome, categoria, unidade, estoqueMin, preco, fornecedor,
-    atualizadoEm: firebase.firestore.FieldValue.serverTimestamp() };
-
-  if (id) await db.collection('insumos').doc(id).update(data);
-  else await db.collection('insumos').add({...data, criadoEm: firebase.firestore.FieldValue.serverTimestamp()});
-
-  fecharModal('modalInsumo');
-  await carregarInsumos();
-}
-
-async function carregarInsumos() {
-  const tbody = document.getElementById('tabelaInsumos');
-  if (tbody) tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Carregando...</td></tr>';
-
-  const filtroNome = document.getElementById('filtroInsumoNome')?.value.toLowerCase() || '';
-  const filtroCategoria = document.getElementById('filtroInsumoCategoria')?.value || '';
-
-  const snap = await db.collection('insumos').orderBy('nome').get();
-  insumosCache = snap.docs.map(d => ({id:d.id,...d.data()}));
-
-  let lista = insumosCache;
-  if (filtroNome) lista = lista.filter(i => i.nome.toLowerCase().includes(filtroNome));
-  if (filtroCategoria) lista = lista.filter(i => i.categoria === filtroCategoria);
-
-  if (!tbody) return;
-
-  if (!lista.length) {
-    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhum insumo encontrado</td></tr>'; return;
-  }
-
-  tbody.innerHTML = lista.map(i => `
-    <tr>
-      <td><strong>${i.nome}</strong></td>
-      <td>${i.categoria}</td>
-      <td>${i.unidade}</td>
-      <td>${i.estoqueMin} ${i.unidade}</td>
-      <td><strong style="color:#27ae60;">${moeda(i.preco)}</strong></td>
-      <td>${i.fornecedor||'-'}</td>
-      <td>
-        <button class="btn btn-red btn-sm" onclick='editarInsumo(${JSON.stringify(i)})'>✏️</button>
-        <button class="btn btn-danger btn-sm" onclick="excluir('insumos','${i.id}',carregarInsumos)">🗑️</button>
-      </td>
-    </tr>
-  `).join('');
-}
-
-function editarInsumo(insumo) { abrirModalInsumo(insumo); }
-
-function preencherSelectInsumos(selectId) {
-  const sel = document.getElementById(selectId);
-  sel.innerHTML = insumosCache.map(i => `<option value="${i.id}">${i.nome} (${i.unidade})</option>`).join('');
-}
-
-// ===== PREÇOS =====
-function abrirModalPreco() {
-  document.getElementById('p-data').value = hoje();
-  document.getElementById('p-novo').value = '';
-  document.getElementById('p-anterior').value = '';
-  document.getElementById('p-fornecedor').value = '';
-  carregarSelectInsumos();
-  abrirModal('modalPreco');
-}
-
-async function carregarSelectInsumos() {
-  const sel1 = document.getElementById('filtroPrecoInsumo');
-  const sel2 = document.getElementById('p-insumo');
-
-  const snap = await db.collection('insumos').orderBy('nome').get();
-  const opts = snap.docs.map(d => `<option value="${d.id}">${d.data().nome}</option>`).join('');
-
-  if (sel1) sel1.innerHTML = '<option value="">Todos</option>' + opts;
-  if (sel2) {
-    sel2.innerHTML = opts;
-    sel2.onchange = async () => {
-      const insumo = insumosCache.find(i => i.id === sel2.value);
-      document.getElementById('p-anterior').value = insumo?.preco || 0;
-    };
-    sel2.dispatchEvent(new Event('change'));
-  }
-}
-
-async function salvarPreco() {
-  const insumoId = document.getElementById('p-insumo').value;
-  const data = document.getElementById('p-data').value;
-  const anterior = parseFloat(document.getElementById('p-anterior').value) || 0;
-  const novo = parseFloat(document.getElementById('p-novo').value) || 0;
-  const fornecedor = document.getElementById('p-fornecedor').value.trim();
-  const insumoNome = document.getElementById('p-insumo').options[document.getElementById('p-insumo').selectedIndex]?.text;
-
-  if (!insumoId || !data || !novo) { alert('Preencha todos os campos!'); return; }
-
-  await db.collection('historicoPrecos').add({
-    insumoId, insumoNome, data, precoAnterior: anterior, precoNovo: novo,
-    fornecedor, criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-  });
-
-  // Atualiza preço atual no insumo
-  await db.collection('insumos').doc(insumoId).update({ preco: novo });
-  await carregarInsumos();
-
-  fecharModal('modalPreco');
-  carregarPrecos();
-}
-
-async function carregarPrecos() {
-  const tbody = document.getElementById('tabelaPrecos');
-  tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Carregando...</td></tr>';
-
-  const filtroInsumo = document.getElementById('filtroPrecoInsumo').value;
-  const filtroMes = document.getElementById('filtroPrecoMes').value;
-
-  const snap = await db.collection('historicoPrecos').orderBy('data','desc').get();
-  let registros = snap.docs.map(d => ({id:d.id,...d.data()}));
-
-  if (filtroInsumo) registros = registros.filter(r => r.insumoId === filtroInsumo);
-  if (filtroMes) registros = registros.filter(r => r.data && r.data.startsWith(filtroMes));
-
-  if (!registros.length) {
-    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhum registro encontrado</td></tr>'; return;
-  }
-
-  tbody.innerHTML = registros.map(r => {
-    const variacao = r.precoAnterior > 0 ? ((r.precoNovo - r.precoAnterior) / r.precoAnterior * 100) : 0;
-    const varBadge = variacao > 0
-      ? `<span class="badge badge-red">▲ ${variacao.toFixed(1)}%</span>`
-      : variacao < 0
-        ? `<span class="badge badge-green">▼ ${Math.abs(variacao).toFixed(1)}%</span>`
-        : `<span class="badge badge-yellow">= 0%</span>`;
-
-    return `<tr>
-      <td><strong>${r.insumoNome}</strong></td>
-      <td>${formatarData(r.data)}</td>
-      <td>${moeda(r.precoAnterior)}</td>
-      <td><strong style="color:#27ae60;">${moeda(r.precoNovo)}</strong></td>
-      <td>${varBadge}</td>
-      <td>${r.fornecedor||'-'}</td>
-      <td><button class="btn btn-danger btn-sm" onclick="excluir('historicoPrecos','${r.id}',carregarPrecos)">🗑️</button></td>
-    </tr>`;
-  }).join('');
-}
-
-// ===== FICHAS TECNICAS =====
-let ingredientes = [];
-
-function abrirModalFicha(ficha = null) {
-  document.getElementById('f-id').value = ficha?.id || '';
-  document.getElementById('f-nome').value = ficha?.nome || '';
-  document.getElementById('f-categoria').value = ficha?.categoria || 'Pizza';
-  document.getElementById('f-rendimento').value = ficha?.rendimento || '';
-  document.getElementById('f-preco-venda').value = ficha?.precoVenda || '';
-  document.getElementById('f-preparo').value = ficha?.preparo || '';
-  ingredientes = ficha?.ingredientes ? [...ficha.ingredientes] : [];
-  renderIngredientes();
-  calcularCusto();
-  abrirModal('modalFicha');
-}
-
-function adicionarIngrediente() {
-  ingredientes.push({ insumoId: '', nome: '', quantidade: 0, unidade: '', custoUnit: 0 });
-  renderIngredientes();
-}
-
-function renderIngredientes() {
-  const lista = document.getElementById('ingredientesList');
-  lista.innerHTML = ingredientes.map((ing, idx) => `
-    <div class="ingrediente-item">
-      <select onchange="selecionarIngrediente(${idx}, this.value)" style="flex:2;">
-        <option value="">Selecione...</option>
-        ${insumosCache.map(i => `<option value="${i.id}" ${i.id===ing.insumoId?'selected':''}>${i.nome} (${i.unidade})</option>`).join('')}
+function renderIngs() {
+  document.getElementById('pIngs').innerHTML = ingsTemp.map((g,i)=>`
+    <div class="ing-row">
+      <select onchange="selIng(${i},this.value)">
+        <option value="">Selecione insumo...</option>
+        ${insCache.map(x=>`<option value="${x.id}" ${x.id===g.insumoId?'selected':''}>${x.nome} (${x.unidade})</option>`).join('')}
       </select>
-      <input type="number" placeholder="Qtd" value="${ing.quantidade||''}" step="0.01"
-        onchange="atualizarQtdIngrediente(${idx}, this.value)" style="flex:1;max-width:80px;" />
-      <span style="color:#aaa;font-size:0.75rem;">${ing.unidade||''}</span>
-      <button class="btn btn-danger btn-sm" onclick="removerIngrediente(${idx})">✕</button>
-    </div>
-  `).join('');
+      <input type="number" placeholder="Qtd" value="${g.quantidade||''}" step="0.01"
+        onchange="ingsTemp[${i}].quantidade=parseFloat(this.value)||0"/>
+      <span>${g.unidade}</span>
+      <button class="btn btn-danger btn-sm" onclick="ingsTemp.splice(${i},1);renderIngs()">✕</button>
+    </div>`).join('');
 }
-
-function selecionarIngrediente(idx, insumoId) {
-  const ins = insumosCache.find(i => i.id === insumoId);
-  if (ins) {
-    ingredientes[idx] = { ...ingredientes[idx], insumoId: ins.id, nome: ins.nome, unidade: ins.unidade, custoUnit: ins.preco };
+function selIng(i, id) {
+  const ins = insCache.find(x=>x.id===id);
+  if (ins) ingsTemp[i] = {...ingsTemp[i], insumoId:ins.id, nome:ins.nome, unidade:ins.unidade, custoUnit:ins.preco||0};
+  renderIngs();
+}
+function openProduto(p=null) {
+  document.getElementById('pId').value       = p?.id||'';
+  document.getElementById('pNome').value     = p?.nome||'';
+  document.getElementById('pCat').value      = p?.categoria||'Pizza';
+  document.getElementById('pPrecoInt').value = p?.precoInteira||'';
+  document.getElementById('pPrecoMeia').value= p?.precoMeia||'';
+  document.getElementById('pPreco').value    = p?.preco||'';
+  document.getElementById('pTemInteira').checked = p?.temInteira!==false;
+  document.getElementById('pTemMeia').checked    = p?.temMeia||false;
+  ingsTemp = p?.ingredientes ? JSON.parse(JSON.stringify(p.ingredientes)) : [];
+  onCatChange();
+  renderIngs();
+  openModal('mProduto');
+}
+async function saveProduto() {
+  const id   = document.getElementById('pId').value;
+  const nome = document.getElementById('pNome').value.trim();
+  const cat  = document.getElementById('pCat').value;
+  if (!nome) { alert('Informe o nome!'); return; }
+  const data = {
+    nome, categoria:cat, ingredientes:ingsTemp,
+    atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+  };
+  if (cat==='Pizza') {
+    data.temInteira  = document.getElementById('pTemInteira').checked;
+    data.temMeia     = document.getElementById('pTemMeia').checked;
+    data.precoInteira= parseFloat(document.getElementById('pPrecoInt').value)||0;
+    data.precoMeia   = parseFloat(document.getElementById('pPrecoMeia').value)||0;
+  } else {
+    data.preco = parseFloat(document.getElementById('pPreco').value)||0;
   }
-  renderIngredientes();
-  calcularCusto();
+  if (id) await db.collection('produtos').doc(id).update(data);
+  else    await db.collection('produtos').add({...data, criadoEm:firebase.firestore.FieldValue.serverTimestamp()});
+  closeModal('mProduto');
+  await loadProdCache();
+  loadProdutos();
 }
-
-function atualizarQtdIngrediente(idx, valor) {
-  ingredientes[idx].quantidade = parseFloat(valor) || 0;
-  calcularCusto();
-}
-
-function removerIngrediente(idx) {
-  ingredientes.splice(idx, 1);
-  renderIngredientes();
-  calcularCusto();
-}
-
-function calcularCusto() {
-  const total = ingredientes.reduce((s, ing) => s + ((ing.custoUnit || 0) * (ing.quantidade || 0)), 0);
-  document.getElementById('custoTotal').textContent = moeda(total);
-  return total;
-}
-
-async function salvarFicha() {
-  const id = document.getElementById('f-id').value;
-  const nome = document.getElementById('f-nome').value.trim();
-  const categoria = document.getElementById('f-categoria').value;
-  const rendimento = parseInt(document.getElementById('f-rendimento').value) || 1;
-  const precoVenda = parseFloat(document.getElementById('f-preco-venda').value) || 0;
-  const preparo = document.getElementById('f-preparo').value.trim();
-  const custoTotal = calcularCusto();
-  const margem = precoVenda > 0 ? ((precoVenda - custoTotal) / precoVenda * 100) : 0;
-
-  if (!nome) { alert('Informe o nome do produto!'); return; }
-
-  const data = { nome, categoria, rendimento, precoVenda, preparo, ingredientes, custoTotal, margem,
-    atualizadoEm: firebase.firestore.FieldValue.serverTimestamp() };
-
-  if (id) await db.collection('fichas').doc(id).update(data);
-  else await db.collection('fichas').add({...data, criadoEm: firebase.firestore.FieldValue.serverTimestamp()});
-
-  fecharModal('modalFicha');
-  carregarFichas();
-}
-
-async function carregarFichas() {
-  const tbody = document.getElementById('tabelaFichas');
-  tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Carregando...</td></tr>';
-
-  const snap = await db.collection('fichas').orderBy('nome').get();
-  const fichas = snap.docs.map(d => ({id:d.id,...d.data()}));
-
-  if (!fichas.length) {
-    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhuma ficha técnica cadastrada</td></tr>'; return;
-  }
-
-  tbody.innerHTML = fichas.map(f => {
-    const margem = f.margem || 0;
-    const marginBadge = margem >= 60
-      ? `<span class="badge badge-green">${margem.toFixed(1)}%</span>`
-      : margem >= 40
-        ? `<span class="badge badge-yellow">${margem.toFixed(1)}%</span>`
-        : `<span class="badge badge-red">${margem.toFixed(1)}%</span>`;
-
+async function loadProdutos() {
+  const tb   = document.getElementById('tbProdutos');
+  const fn   = document.getElementById('fpNome').value.toLowerCase();
+  const fc   = document.getElementById('fpCat').value;
+  let lista  = prodCache;
+  if (fn) lista = lista.filter(p=>p.nome.toLowerCase().includes(fn));
+  if (fc) lista = lista.filter(p=>p.categoria===fc);
+  if (!lista.length) { tb.innerHTML='<tr><td colspan="6" class="empty">Nenhum produto</td></tr>'; return; }
+  tb.innerHTML = lista.map(p=>{
+    const preco = p.categoria==='Pizza'
+      ? `Int: ${R(p.precoInteira)}${p.temMeia?` / Meia: ${R(p.precoMeia)}`:''}`
+      : R(p.preco);
     return `<tr>
-      <td><strong>${f.nome}</strong></td>
-      <td>${f.categoria}</td>
-      <td>${f.rendimento} porções</td>
-      <td>${moeda(f.custoTotal)}</td>
-      <td><strong style="color:#27ae60;">${moeda(f.precoVenda)}</strong></td>
-      <td>${marginBadge}</td>
+      <td><b>${p.nome}</b></td><td>${p.categoria}</td>
+      <td>${p.categoria==='Pizza'?`${p.temInteira?'Inteira ':''}${p.temMeia?'Meia':''}`:'-'}</td>
+      <td>${preco}</td>
+      <td><span class="badge bg-green">${p.ingredientes?.length||0} ing.</span></td>
       <td>
-        <button class="btn btn-sm" style="background:#2980b9;color:#fff;" onclick="verFicha('${f.id}')">👁️</button>
-        <button class="btn btn-red btn-sm" onclick='editarFicha(${JSON.stringify(f)})'>✏️</button>
-        <button class="btn btn-danger btn-sm" onclick="excluir('fichas','${f.id}',carregarFichas)">🗑️</button>
+        <button class="btn btn-blue btn-sm" onclick='openProduto(${JSON.stringify(p)})'>✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="del('produtos','${p.id}',async()=>{await loadProdCache();loadProdutos()})">🗑</button>
       </td>
     </tr>`;
   }).join('');
 }
 
-function editarFicha(ficha) { abrirModalFicha(ficha); }
-
-async function verFicha(id) {
-  const doc = await db.collection('fichas').doc(id).get();
-  const f = doc.data();
-  document.getElementById('fd-nome').textContent = f.nome;
-  document.getElementById('fd-conteudo').innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-      <div><strong>Categoria:</strong> ${f.categoria}</div>
-      <div><strong>Rendimento:</strong> ${f.rendimento} porções</div>
-      <div><strong>Custo Total:</strong> ${moeda(f.custoTotal)}</div>
-      <div><strong>Preço Venda:</strong> ${moeda(f.precoVenda)}</div>
-      <div><strong>Margem:</strong> ${(f.margem||0).toFixed(1)}%</div>
-    </div>
-    <h3 style="color:#e74c3c;margin-bottom:10px;font-size:0.9rem;">🧂 Ingredientes</h3>
-    <table style="margin-bottom:16px;">
-      <thead><tr><th>Ingrediente</th><th>Qtd</th><th>Un</th><th>Custo Unit.</th><th>Total</th></tr></thead>
-      <tbody>
-        ${(f.ingredientes||[]).map(i => `
-          <tr>
-            <td>${i.nome}</td>
-            <td>${i.quantidade}</td>
-            <td>${i.unidade}</td>
-            <td>${moeda(i.custoUnit)}</td>
-            <td>${moeda(i.custoUnit * i.quantidade)}</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-    ${f.preparo ? `<h3 style="color:#e74c3c;margin-bottom:8px;font-size:0.9rem;">📝 Modo de Preparo</h3><p style="color:#ccc;font-size:0.85rem;line-height:1.6;">${f.preparo}</p>` : ''}
-  `;
-  abrirModal('modalFichaDetalhe');
+// ── ESTOQUE ────────────────────────────────────────
+function calcFin() {
+  const i = parseFloat(document.getElementById('eIni').value)||0;
+  const u = parseFloat(document.getElementById('eUsa').value)||0;
+  document.getElementById('eFin').value = Math.max(0,i-u).toFixed(2);
 }
-
-// ===== UTILS =====
-function formatarData(ds) {
-  if (!ds) return '-';
-  const [y,m,d] = ds.split('-');
-  return `${d}/${m}/${y}`;
+function openEstoque() {
+  document.getElementById('eData').value = today();
+  document.getElementById('eIni').value = document.getElementById('eUsa').value = document.getElementById('eFin').value = '';
+  document.getElementById('eIns').innerHTML = insCache.map(i=>`<option value="${i.id}">${i.nome} (${i.unidade})</option>`).join('');
+  openModal('mEstoque');
 }
-
-async function excluir(colecao, id, callback) {
-  if (!confirm('Deseja excluir este registro?')) return;
-  await db.collection(colecao).doc(id).delete();
-  callback();
-}
-
-// Fechar modal clicando fora
-document.querySelectorAll('.modal-overlay').forEach(overlay => {
-  overlay.addEventListener('click', e => {
-    if (e.target === overlay) overlay.classList.remove('open');
+async function saveEstoque() {
+  const data = document.getElementById('eData').value;
+  const iid  = document.getElementById('eIns').value;
+  const ins  = insCache.find(i=>i.id===iid);
+  const ini  = parseFloat(document.getElementById('eIni').value)||0;
+  const usa  = parseFloat(document.getElementById('eUsa').value)||0;
+  const fin  = parseFloat(document.getElementById('eFin').value)||0;
+  if (!data||!iid) { alert('Preencha todos os campos!'); return; }
+  await db.collection('estoque').add({
+    data, insumoId:iid, insumoNome:ins?.nome||'', unidade:ins?.unidade||'',
+    estoqueMin:ins?.estoqueMin||0, inicial:ini, usada:usa, final:fin,
+    criadoEm: firebase.firestore.FieldValue.serverTimestamp()
   });
+  closeModal('mEstoque');
+  loadEstoque();
+}
+async function loadEstoque() {
+  const tb = document.getElementById('tbEstoque');
+  tb.innerHTML = '<tr><td colspan="8" class="empty">Carregando...</td></tr>';
+  const fd = document.getElementById('feData').value;
+  const fn = document.getElementById('feNome').value.toLowerCase();
+  const s  = await db.collection('estoque').orderBy('data','desc').limit(100).get();
+  let rows = s.docs.map(d=>({id:d.id,...d.data()}));
+  if (fd) rows = rows.filter(r=>r.data===fd);
+  if (fn) rows = rows.filter(r=>r.insumoNome?.toLowerCase().includes(fn));
+  if (!rows.length) { tb.innerHTML='<tr><td colspan="8" class="empty">Nenhum registro</td></tr>'; return; }
+  tb.innerHTML = rows.map(r=>{
+    const low = r.final<=(r.estoqueMin||0);
+    const badge = r.final<=0
+      ? '<span class="badge bg-red">Zerado</span>'
+      : low ? '<span class="badge bg-yellow">Baixo</span>'
+             : '<span class="badge bg-green">OK</span>';
+    return `<tr>
+      <td><b>${r.insumoNome}</b></td><td>${br(r.data)}</td>
+      <td>${r.inicial}</td><td>${r.usada}</td><td><b>${r.final}</b></td>
+      <td>${r.unidade}</td><td>${badge}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="del('estoque','${r.id}',loadEstoque)">🗑</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── INSUMOS ────────────────────────────────────────
+function openInsumo(ins=null) {
+  document.getElementById('iId').value    = ins?.id||'';
+  document.getElementById('iNome').value  = ins?.nome||'';
+  document.getElementById('iCat').value   = ins?.categoria||'Farinha';
+  document.getElementById('iUn').value    = ins?.unidade||'kg';
+  document.getElementById('iMin').value   = ins?.estoqueMin||'';
+  document.getElementById('iPreco').value = ins?.preco||'';
+  document.getElementById('iForn').value  = ins?.fornecedor||'';
+  openModal('mInsumo');
+}
+async function saveInsumo() {
+  const id   = document.getElementById('iId').value;
+  const nome = document.getElementById('iNome').value.trim();
+  if (!nome) { alert('Informe o nome!'); return; }
+  const data = {
+    nome,
+    categoria:  document.getElementById('iCat').value,
+    unidade:    document.getElementById('iUn').value,
+    estoqueMin: parseFloat(document.getElementById('iMin').value)||0,
+    preco:      parseFloat(document.getElementById('iPreco').value)||0,
+    fornecedor: document.getElementById('iForn').value.trim(),
+    atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+  };
+  if (id) await db.collection('insumos').doc(id).update(data);
+  else    await db.collection('insumos').add({...data, criadoEm:firebase.firestore.FieldValue.serverTimestamp()});
+  closeModal('mInsumo');
+  await loadInsCache();
+  loadInsumos(false);
+}
+async function loadInsumos(silent=false) {
+  await loadInsCache();
+  if (silent) return;
+  const tb = document.getElementById('tbInsumos');
+  const fn = document.getElementById('fiNome').value.toLowerCase();
+  const fc = document.getElementById('fiCat').value;
+  let lista = insCache;
+  if (fn) lista = lista.filter(i=>i.nome.toLowerCase().includes(fn));
+  if (fc) lista = lista.filter(i=>i.categoria===fc);
+  if (!lista.length) { tb.innerHTML='<tr><td colspan="7" class="empty">Nenhum insumo</td></tr>'; return; }
+  tb.innerHTML = lista.map(i=>`<tr>
+    <td><b>${i.nome}</b></td><td>${i.categoria}</td><td>${i.unidade}</td>
+    <td>${i.estoqueMin} ${i.unidade}</td>
+    <td style="color:#1a6b3a;font-weight:700">${R(i.preco)}</td>
+    <td>${i.fornecedor||'-'}</td>
+    <td>
+      <button class="btn btn-blue btn-sm" onclick='openInsumo(${JSON.stringify(i)})'>✏️</button>
+      <button class="btn btn-danger btn-sm" onclick="del('insumos','${i.id}',()=>loadInsumos(false))">🗑</button>
+    </td>
+  </tr>`).join('');
+}
+
+// ── PREÇOS ─────────────────────────────────────────
+async function fillSelectPrecos() {
+  const sel = document.getElementById('fprIns');
+  sel.innerHTML = '<option value="">Todos</option>' +
+    insCache.map(i=>`<option value="${i.id}">${i.nome}</option>`).join('');
+}
+function openPreco() {
+  document.getElementById('prData').value = today();
+  document.getElementById('prNovo').value = document.getElementById('prForn').value = '';
+  const sel = document.getElementById('prIns');
+  sel.innerHTML = insCache.map(i=>`<option value="${i.id}" data-preco="${i.preco}">${i.nome}</option>`).join('');
+  onInsPrecoChange();
+  openModal('mPreco');
+}
+function onInsPrecoChange() {
+  const opt = document.getElementById('prIns').options[document.getElementById('prIns').selectedIndex];
+  document.getElementById('prAnt').value = opt?.dataset.preco||0;
+}
+async function savePreco() {
+  const iid  = document.getElementById('prIns').value;
+  const data = document.getElementById('prData').value;
+  const ant  = parseFloat(document.getElementById('prAnt').value)||0;
+  const novo = parseFloat(document.getElementById('prNovo').value)||0;
+  const forn = document.getElementById('prForn').value.trim();
+  const nome = document.getElementById('prIns').options[document.getElementById('prIns').selectedIndex]?.text;
+  if (!iid||!data||!novo) { alert('Preencha os campos!'); return; }
+  await db.collection('historicoPrecos').add({
+    insumoId:iid, insumoNome:nome, data,
+    precoAnterior:ant, precoNovo:novo, fornecedor:forn,
+    criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+  });
+  await db.collection('insumos').doc(iid).update({preco:novo});
+  await loadInsCache();
+  closeModal('mPreco');
+  loadPrecos();
+}
+async function loadPrecos() {
+  const tb  = document.getElementById('tbPrecos');
+  tb.innerHTML = '<tr><td colspan="7" class="empty">Carregando...</td></tr>';
+  const fi  = document.getElementById('fprIns').value;
+  const fm  = document.getElementById('fprMes').value;
+  const s   = await db.collection('historicoPrecos').orderBy('data','desc').limit(80).get();
+  let rows  = s.docs.map(d=>({id:d.id,...d.data()}));
+  if (fi) rows = rows.filter(r=>r.insumoId===fi);
+  if (fm) rows = rows.filter(r=>r.data?.startsWith(fm));
+  if (!rows.length) { tb.innerHTML='<tr><td colspan="7" class="empty">Nenhum registro</td></tr>'; return; }
+  tb.innerHTML = rows.map(r=>{
+    const v = r.precoAnterior>0 ? ((r.precoNovo-r.precoAnterior)/r.precoAnterior*100) : 0;
+    const badge = v>0 ? `<span class="badge bg-red">▲ ${v.toFixed(1)}%</span>`
+                 : v<0 ? `<span class="badge bg-green">▼ ${Math.abs(v).toFixed(1)}%</span>`
+                       : `<span class="badge bg-yellow">0%</span>`;
+    return `<tr>
+      <td><b>${r.insumoNome}</b></td><td>${br(r.data)}</td>
+      <td>${R(r.precoAnterior)}</td>
+      <td style="color:#1a6b3a;font-weight:700">${R(r.precoNovo)}</td>
+      <td>${badge}</td><td>${r.fornecedor||'-'}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="del('historicoPrecos','${r.id}',loadPrecos)">🗑</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── FICHAS ─────────────────────────────────────────
+async function loadFichas() {
+  const tb = document.getElementById('tbFichas');
+  tb.innerHTML = '<tr><td colspan="7" class="empty">Carregando...</td></tr>';
+  const s    = await db.collection('produtos').orderBy('nome').get();
+  const list = s.docs.map(d=>({id:d.id,...d.data()})).filter(p=>p.ingredientes?.length>0);
+  if (!list.length) { tb.innerHTML='<tr><td colspan="7" class="empty">Nenhuma ficha. Cadastre produtos com ingredientes.</td></tr>'; return; }
+  tb.innerHTML = list.map(p=>{
+    const custo = (p.ingredientes||[]).reduce((a,i)=>a+(i.custoUnit||0)*(i.quantidade||0),0);
+    const preco = p.categoria==='Pizza' ? (p.precoInteira||0) : (p.preco||0);
+    const mg    = preco>0 ? ((preco-custo)/preco*100) : 0;
+    const badge = mg>=60 ? `<span class="badge bg-green">${mg.toFixed(1)}%</span>`
+                 : mg>=35 ? `<span class="badge bg-yellow">${mg.toFixed(1)}%</span>`
+                          : `<span class="badge bg-red">${mg.toFixed(1)}%</span>`;
+    return `<tr>
+      <td><b>${p.nome}</b></td><td>${p.categoria}</td>
+      <td>${p.ingredientes.length} ing.</td>
+      <td>${R(custo)}</td>
+      <td style="color:#1a6b3a;font-weight:700">${R(preco)}</td>
+      <td>${badge}</td>
+      <td><button class="btn btn-blue btn-sm" onclick="verFicha('${p.id}')">👁</button></td>
+    </tr>`;
+  }).join('');
+}
+async function verFicha(id) {
+  const doc  = await db.collection('produtos').doc(id).get();
+  const p    = doc.data();
+  const custo= (p.ingredientes||[]).reduce((a,i)=>a+(i.custoUnit||0)*(i.quantidade||0),0);
+  const preco= p.categoria==='Pizza'?(p.precoInteira||0):(p.preco||0);
+  const mg   = preco>0?((preco-custo)/preco*100):0;
+  document.getElementById('fdNome').textContent = p.nome;
+  document.getElementById('fdBody').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;background:#f8f8f8;padding:10px;border-radius:8px;font-size:.83rem">
+      <div><b>Categoria:</b> ${p.categoria}</div>
+      <div><b>Custo:</b> ${R(custo)}</div>
+      <div><b>Preço:</b> ${R(preco)}</div>
+      <div><b>Margem:</b> ${mg.toFixed(1)}%</div>
+    </div>
+    <table>
+      <thead><tr><th>Ingrediente</th><th>Qtd</th><th>Un</th><th>Custo/Un</th><th>Total</th></tr></thead>
+      <tbody>${(p.ingredientes||[]).map(i=>`<tr>
+        <td>${i.nome}</td><td>${i.quantidade}</td><td>${i.unidade}</td>
+        <td>${R(i.custoUnit)}</td><td>${R(i.custoUnit*i.quantidade)}</td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+  openModal('mFicha');
+}
+
+// ── CONTAS ─────────────────────────────────────────
+function statusConta(venc, pago) {
+  if (pago) return 'Pago';
+  const h = new Date(); h.setHours(0,0,0,0);
+  return new Date(venc+'T00:00:00') < h ? 'Vencido' : 'Pendente';
+}
+function openConta(c=null) {
+  document.getElementById('cId').value    = c?.id||'';
+  document.getElementById('cDesc').value  = c?.descricao||'';
+  document.getElementById('cCat').value   = c?.categoria||'Energia';
+  document.getElementById('cReceb').value = c?.recebedor||'';
+  document.getElementById('cValor').value = c?.valor||'';
+  document.getElementById('cVenc').value  = c?.vencimento||'';
+  document.getElementById('cAgend').value = c?.agendamento||'';
+  document.getElementById('cPag').value   = c?.dataPagamento||'';
+  document.getElementById('cForma').value = c?.formaPagamento||'';
+  document.getElementById('cObs').value   = c?.observacao||'';
+  openModal('mConta');
+}
+async function saveConta() {
+  const id   = document.getElementById('cId').value;
+  const desc = document.getElementById('cDesc').value.trim();
+  const receb= document.getElementById('cReceb').value.trim();
+  const val  = parseFloat(document.getElementById('cValor').value)||0;
+  const venc = document.getElementById('cVenc').value;
+  if (!desc||!receb||!val||!venc) { alert('Preencha os campos obrigatórios!'); return; }
+  const pago = document.getElementById('cPag').value;
+  const data = {
+    descricao:desc, categoria:document.getElementById('cCat').value,
+    recebedor:receb, valor:val, vencimento:venc,
+    agendamento:document.getElementById('cAgend').value,
+    dataPagamento:pago, formaPagamento:document.getElementById('cForma').value,
+    observacao:document.getElementById('cObs').value.trim(),
+    status:statusConta(venc,pago),
+    atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+  };
+  if (id) await db.collection('contas').doc(id).update(data);
+  else    await db.collection('contas').add({...data, criadoEm:firebase.firestore.FieldValue.serverTimestamp()});
+  closeModal('mConta');
+  loadContas();
+}
+async function pagarConta(id) {
+  const dt = prompt('Data do pagamento (AAAA-MM-DD):', today());
+  if (!dt) return;
+  const fm = prompt('Forma de pagamento:', 'PIX');
+  await db.collection('contas').doc(id).update({
+    dataPagamento:dt, formaPagamento:fm||'',
+    status:'Pago', atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()
+  });
+  loadContas();
+}
+async function loadContas() {
+  const tb  = document.getElementById('tbContas');
+  tb.innerHTML = '<tr><td colspan="9" class="empty">Carregando...</td></tr>';
+  const fs  = document.getElementById('fcStatus').value;
+  const fm  = document.getElementById('fcMes').value;
+  const fc  = document.getElementById('fcCat').value;
+  const s   = await db.collection('contas').orderBy('vencimento','desc').get();
+  let rows  = s.docs.map(d=>({id:d.id,...d.data()}))
+               .map(r=>({...r, status:statusConta(r.vencimento,r.dataPagamento)}));
+  if (fs) rows = rows.filter(r=>r.status===fs);
+  if (fm) rows = rows.filter(r=>r.vencimento?.startsWith(fm));
+  if (fc) rows = rows.filter(r=>r.categoria===fc);
+  const tp  = rows.filter(r=>r.status!=='Pago').reduce((a,r)=>a+(r.valor||0),0);
+  document.getElementById('totContas').textContent = R(tp);
+  if (!rows.length) { tb.innerHTML='<tr><td colspan="9" class="empty">Nenhuma conta</td></tr>'; return; }
+  tb.innerHTML = rows.map(r=>{
+    const badge = r.status==='Pago'
+      ? '<span class="badge bg-green">Pago</span>'
+      : r.status==='Vencido'
+        ? '<span class="badge bg-red">Vencido</span>'
+        : '<span class="badge bg-yellow">Pendente</span>';
+    return `<tr>
+      <td><b>${r.descricao}</b></td><td>${r.categoria}</td><td>${r.recebedor}</td>
+      <td style="font-weight:700">${R(r.valor)}</td>
+      <td>${br(r.vencimento)}</td>
+      <td>${r.dataPagamento?br(r.dataPagamento):'-'}</td>
+      <td>${r.formaPagamento||'-'}</td>
+      <td>${badge}</td>
+      <td style="display:flex;gap:3px;flex-wrap:wrap">
+        ${r.status!=='Pago'?`<button class="btn btn-green btn-sm" onclick="pagarConta('${r.id}')">✅</button>`:''}
+        <button class="btn btn-blue btn-sm" onclick='openConta(${JSON.stringify(r)})'>✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="del('contas','${r.id}',loadContas)">🗑</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── FECHAR MODAL CLICANDO FORA ─────────────────────
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click', e=>{ if(e.target===o) o.classList.remove('open'); });
 });
 </script>
 </body>
