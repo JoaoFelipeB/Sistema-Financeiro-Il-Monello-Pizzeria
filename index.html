@@ -10,7 +10,6 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',sans-serif;background:#f5f5f5;color:#222;font-size:14px}
-
 #loginScreen{display:flex;align-items:center;justify-content:center;height:100vh;background:#fff}
 .login-box{background:#fff;padding:36px;border-radius:12px;width:320px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,.1)}
 .login-box h1{color:#c0392b;font-size:1.4rem;margin-bottom:4px}
@@ -19,7 +18,6 @@ body{font-family:'Segoe UI',sans-serif;background:#f5f5f5;color:#222;font-size:1
 .login-box button{width:100%;padding:11px;background:#c0392b;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.95rem}
 .login-box button:hover{background:#a93226}
 #loginError{color:red;font-size:.78rem;margin-top:8px}
-
 #app{display:none}
 .sidebar{position:fixed;top:0;left:0;width:195px;height:100vh;background:#1a6b3a;display:flex;flex-direction:column;z-index:100;transition:transform .25s}
 .sidebar .logo{padding:14px;border-bottom:1px solid rgba(255,255,255,.15);text-align:center}
@@ -31,27 +29,22 @@ body{font-family:'Segoe UI',sans-serif;background:#f5f5f5;color:#222;font-size:1
 .nav-link.active{background:rgba(255,255,255,.18);color:#fff;border-left-color:#fff}
 .sidebar .logout{padding:12px}
 .sidebar .logout button{width:100%;padding:9px;background:#c0392b;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.8rem}
-
 .main{margin-left:195px;padding:18px;min-height:100vh}
 .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
 .topbar h1{font-size:1.15rem;color:#c0392b;font-weight:700}
 .menu-btn{display:none;background:none;border:none;font-size:1.4rem;cursor:pointer}
-
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:18px}
 .card{background:#fff;border-radius:8px;padding:14px;border-top:3px solid #c0392b;box-shadow:0 1px 5px rgba(0,0,0,.07)}
 .card h3{font-size:.68rem;color:#888;text-transform:uppercase;margin-bottom:5px}
 .card .val{font-size:1.35rem;font-weight:700}
 .card .sub{font-size:.68rem;color:#aaa;margin-top:2px}
-
 .section{background:#fff;border-radius:8px;padding:16px;margin-bottom:16px;box-shadow:0 1px 5px rgba(0,0,0,.07)}
 .sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
 .sh h2{font-size:.92rem;color:#1a6b3a;font-weight:700}
-
 table{width:100%;border-collapse:collapse;font-size:.8rem}
 th{background:#f8f8f8;color:#555;padding:8px 7px;text-align:left;border-bottom:2px solid #eee;font-size:.72rem;text-transform:uppercase}
 td{padding:8px 7px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
 tr:hover td{background:#fafafa}
-
 .btn{padding:7px 14px;border:none;border-radius:7px;cursor:pointer;font-size:.8rem;font-weight:600}
 .btn-red{background:#c0392b;color:#fff}.btn-red:hover{background:#a93226}
 .btn-green{background:#1a6b3a;color:#fff}.btn-green:hover{background:#145c30}
@@ -59,7 +52,7 @@ tr:hover td{background:#fafafa}
 .btn-blue{background:#2980b9;color:#fff}
 .btn-danger{background:#e74c3c;color:#fff}
 .btn-sm{padding:4px 9px;font-size:.73rem}
-
+.btn-orange{background:#e67e22;color:#fff}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center}
 .modal-overlay.open{display:flex}
 .modal{background:#fff;border-radius:10px;padding:22px;width:92%;max-width:460px;max-height:93vh;overflow-y:auto;box-shadow:0 6px 28px rgba(0,0,0,.14)}
@@ -68,34 +61,30 @@ tr:hover td{background:#fafafa}
 .fg label{display:block;font-size:.76rem;color:#555;margin-bottom:3px;font-weight:600}
 .fg input,.fg select,.fg textarea{width:100%;padding:8px 9px;border:1px solid #ddd;border-radius:7px;color:#222;font-size:.85rem;background:#fff}
 .fg input:focus,.fg select:focus{outline:none;border-color:#1a6b3a}
-.fg textarea{resize:vertical;min-height:60px}
 .ma{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
-
 .badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:.7rem;font-weight:600}
 .bg-green{background:#d4efdf;color:#1a6b3a}
 .bg-red{background:#fadbd8;color:#c0392b}
 .bg-yellow{background:#fef9e7;color:#b7950b}
 .bg-blue{background:#d6eaf8;color:#1a5276}
-
+.bg-orange{background:#fde8d8;color:#c0392b}
 .page{display:none}
 .page.active{display:block}
-
 .filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
 .filters input,.filters select{padding:7px 9px;border:1px solid #ddd;border-radius:7px;font-size:.8rem;background:#fff}
-
 .toggle-grp{display:flex;border:1px solid #ddd;border-radius:7px;overflow:hidden;width:fit-content}
 .toggle-grp button{padding:7px 18px;border:none;background:#fff;cursor:pointer;font-size:.8rem;font-weight:600;transition:background .15s}
 .toggle-grp button.on{background:#c0392b;color:#fff}
-
 .ing-row{display:flex;gap:5px;align-items:center;margin-bottom:5px}
 .ing-row select{flex:2;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:.78rem}
 .ing-row input{flex:1;min-width:55px;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:.78rem}
 .ing-row span{min-width:22px;font-size:.72rem;color:#888}
-
 .empty{text-align:center;color:#bbb;padding:28px;font-size:.83rem}
 .ovl{display:none;position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:90}
 .ovl.open{display:block}
-
+.ifood-tag{background:#ea1d2c;color:#fff;padding:2px 6px;border-radius:4px;font-size:.68rem;font-weight:700}
+.prog-bar{background:#eee;border-radius:4px;height:8px;margin-top:6px}
+.prog-bar div{background:#1a6b3a;border-radius:4px;height:8px;transition:width .3s}
 @media(max-width:768px){
   .sidebar{transform:translateX(-100%)}
   .sidebar.open{transform:translateX(0)}
@@ -123,15 +112,15 @@ tr:hover td{background:#fafafa}
   <div class="ovl" id="ovl" onclick="closeSidebar()"></div>
   <div class="sidebar" id="sidebar">
     <div class="logo"><h2>🍕 Pizzaria</h2><p>Sistema de Gestão</p></div>
-    <nav>
-      <div class="nav-link" onclick="go('dashboard')">📊 Dashboard</div>
-      <div class="nav-link" onclick="go('vendas')">💰 Vendas</div>
-      <div class="nav-link" onclick="go('produtos')">🍕 Produtos</div>
-      <div class="nav-link" onclick="go('estoque')">📦 Estoque</div>
-      <div class="nav-link" onclick="go('insumos')">🧂 Insumos</div>
-      <div class="nav-link" onclick="go('precos')">🏷️ Preços</div>
-      <div class="nav-link" onclick="go('fichas')">📋 Fichas Técnicas</div>
-      <div class="nav-link" onclick="go('contas')">💳 Contas a Pagar</div>
+    <nav id="sideNav">
+      <div class="nav-link" data-page="dashboard" onclick="go('dashboard')">📊 Dashboard</div>
+      <div class="nav-link" data-page="vendas"    onclick="go('vendas')">💰 Vendas</div>
+      <div class="nav-link" data-page="produtos"  onclick="go('produtos')">🍕 Produtos</div>
+      <div class="nav-link" data-page="estoque"   onclick="go('estoque')">📦 Estoque</div>
+      <div class="nav-link" data-page="insumos"   onclick="go('insumos')">🧂 Insumos</div>
+      <div class="nav-link" data-page="precos"    onclick="go('precos')">🏷️ Preços</div>
+      <div class="nav-link" data-page="fichas"    onclick="go('fichas')">📋 Fichas Técnicas</div>
+      <div class="nav-link" data-page="contas"    onclick="go('contas')">💳 Contas a Pagar</div>
     </nav>
     <div class="logout"><button onclick="logout()">🚪 Sair</button></div>
   </div>
@@ -150,6 +139,7 @@ tr:hover td{background:#fafafa}
         <div class="card"><h3>📅 Este Mês</h3><div class="val" id="dMes">R$ 0</div><div class="sub" id="dMesQ">0 pedidos</div></div>
         <div class="card"><h3>💳 Pend.</h3><div class="val" id="dContas">R$ 0</div><div class="sub" id="dContasQ">0 contas</div></div>
         <div class="card"><h3>🎯 Ticket Médio</h3><div class="val" id="dTicket">R$ 0</div><div class="sub">este mês</div></div>
+        <div class="card"><h3>📱 iFood (mês)</h3><div class="val" id="dIfood">R$ 0</div><div class="sub" id="dIfoodT">taxa: R$ 0</div></div>
       </div>
       <div class="section"><div class="sh"><h2>⚠️ Alertas de Estoque</h2></div><div id="aEst"><div class="empty">Carregando...</div></div></div>
       <div class="section"><div class="sh"><h2>📅 Contas Vencendo (7 dias)</h2></div><div id="aCont"><div class="empty">Carregando...</div></div></div>
@@ -168,12 +158,23 @@ tr:hover td{background:#fafafa}
             <option value="07">Julho</option><option value="08">Agosto</option><option value="09">Setembro</option>
             <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
           </select>
+          <select id="fvCanal" onchange="loadVendas()">
+            <option value="">Todos os canais</option>
+            <option value="iFood">iFood</option>
+            <option value="Balcão">Balcão</option>
+            <option value="WhatsApp">WhatsApp</option>
+            <option value="Telefone">Telefone</option>
+          </select>
         </div>
         <div style="overflow-x:auto">
-          <table><thead><tr><th>Data</th><th>Produto</th><th>Tipo</th><th>Qtd</th><th>Unit.</th><th>Total</th><th>Obs</th><th></th></tr></thead>
-          <tbody id="tbVendas"><tr><td colspan="8" class="empty">Carregando...</td></tr></tbody></table>
+          <table><thead><tr><th>Data</th><th>Produto</th><th>Tipo</th><th>Qtd</th><th>Unit.</th><th>Canal</th><th>Taxa</th><th>Líquido</th><th>Total</th><th></th></tr></thead>
+          <tbody id="tbVendas"><tr><td colspan="10" class="empty">Carregando...</td></tr></tbody></table>
         </div>
-        <div style="text-align:right;margin-top:10px;font-weight:700">Total: <span id="totVendas" style="color:#c0392b">R$ 0,00</span></div>
+        <div style="text-align:right;margin-top:10px;font-weight:700;display:flex;gap:16px;justify-content:flex-end;flex-wrap:wrap">
+          <span>Total Bruto: <span id="totVendasBruto" style="color:#c0392b">R$ 0,00</span></span>
+          <span>Taxa iFood: <span id="totIfoodTaxa" style="color:#e67e22">R$ 0,00</span></span>
+          <span>Total Líquido: <span id="totVendasLiq" style="color:#1a6b3a">R$ 0,00</span></span>
+        </div>
       </div>
     </div>
 
@@ -212,12 +213,28 @@ tr:hover td{background:#fafafa}
     <!-- INSUMOS -->
     <div class="page" id="pg-insumos">
       <div class="section">
-        <div class="sh"><h2>🧂 Insumos</h2><button class="btn btn-red" onclick="openInsumo()">+ Novo</button></div>
+        <div class="sh">
+          <h2>🧂 Insumos</h2>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <label class="btn btn-green" style="cursor:pointer;margin:0">
+              📥 Importar CSV
+              <input type="file" accept=".csv" style="display:none" onchange="importarInsumos(event)"/>
+            </label>
+            <button class="btn btn-red" onclick="openInsumo()">+ Novo</button>
+          </div>
+        </div>
+        <!-- Progress bar importação -->
+        <div id="importProgress" style="display:none;margin-bottom:12px">
+          <div style="font-size:.78rem;color:#555;margin-bottom:4px">Importando... <span id="importCount">0</span> insumos</div>
+          <div class="prog-bar"><div id="importBar" style="width:0%"></div></div>
+        </div>
         <div class="filters">
           <input type="text" id="fiNome" placeholder="Buscar..." oninput="loadInsumos(false)"/>
           <select id="fiCat" onchange="loadInsumos(false)">
-            <option value="">Todas</option><option>Farinha</option><option>Laticínio</option><option>Carne</option>
-            <option>Vegetal</option><option>Tempero</option><option>Bebida</option><option>Outro</option>
+            <option value="">Todas</option>
+            <option>Farinha</option><option>Laticínio</option><option>Proteina</option>
+            <option>Vegetal</option><option>Tempero</option><option>Bebida</option>
+            <option>Molho</option><option>Doce</option><option>Mercearia</option><option>Outro</option>
           </select>
         </div>
         <div style="overflow-x:auto">
@@ -283,6 +300,17 @@ tr:hover td{background:#fafafa}
   <div class="modal">
     <h2>💰 Nova Venda</h2>
     <div class="fg"><label>Data *</label><input type="date" id="vData"/></div>
+    <div class="fg"><label>Canal de Venda *</label>
+      <select id="vCanal" onchange="onCanalChange()">
+        <option value="Balcão">Balcão</option>
+        <option value="WhatsApp">WhatsApp</option>
+        <option value="Telefone">Telefone</option>
+        <option value="iFood">📱 iFood (taxa 23%)</option>
+      </select>
+    </div>
+    <div class="fg" id="vIfoodInfo" style="display:none;background:#fde8d8;padding:8px;border-radius:6px;font-size:.78rem;color:#c0392b">
+      ⚠️ Venda via iFood — será aplicado custo de <b>23%</b> sobre o valor total.
+    </div>
     <div class="fg"><label>Produto *</label>
       <select id="vProd" onchange="onProdChange()"><option value="">Selecione...</option></select>
     </div>
@@ -294,8 +322,13 @@ tr:hover td{background:#fafafa}
       </div>
       <input type="hidden" id="vTipo" value="Inteira"/>
     </div>
-    <div class="fg"><label>Quantidade *</label><input type="number" id="vQtd" min="1" value="1"/></div>
-    <div class="fg"><label>Valor Unitário (R$) *</label><input type="number" id="vValor" step="0.01" placeholder="0,00"/></div>
+    <div class="fg"><label>Quantidade *</label><input type="number" id="vQtd" min="1" value="1" oninput="calcPreviewVenda()"/></div>
+    <div class="fg"><label>Valor Unitário (R$) *</label><input type="number" id="vValor" step="0.01" placeholder="0,00" oninput="calcPreviewVenda()"/></div>
+    <div id="vPreview" style="display:none;background:#f8f8f8;border-radius:6px;padding:10px;margin-bottom:8px;font-size:.8rem">
+      <div style="display:flex;justify-content:space-between"><span>Total Bruto:</span><span id="pvBruto" style="font-weight:700">R$ 0,00</span></div>
+      <div style="display:flex;justify-content:space-between;color:#e67e22" id="pvTaxaRow"><span>Taxa iFood (23%):</span><span id="pvTaxa">- R$ 0,00</span></div>
+      <div style="display:flex;justify-content:space-between;color:#1a6b3a;font-weight:700;border-top:1px solid #ddd;margin-top:6px;padding-top:6px"><span>Valor Líquido:</span><span id="pvLiq">R$ 0,00</span></div>
+    </div>
     <div class="fg"><label>Observação</label><input type="text" id="vObs" placeholder="Opcional"/></div>
     <div class="ma">
       <button class="btn btn-gray" onclick="closeModal('mVenda')">Cancelar</button>
@@ -363,8 +396,11 @@ tr:hover td{background:#fafafa}
     <input type="hidden" id="iId"/>
     <div class="fg"><label>Nome *</label><input type="text" id="iNome" placeholder="Ex: Mussarela"/></div>
     <div class="fg"><label>Categoria *</label>
-      <select id="iCat"><option>Farinha</option><option>Laticínio</option><option>Carne</option>
-      <option>Vegetal</option><option>Tempero</option><option>Bebida</option><option>Outro</option></select>
+      <select id="iCat">
+        <option>Farinha</option><option>Laticínio</option><option>Proteina</option>
+        <option>Vegetal</option><option>Tempero</option><option>Bebida</option>
+        <option>Molho</option><option>Doce</option><option>Mercearia</option><option>Outro</option>
+      </select>
     </div>
     <div class="fg"><label>Unidade *</label>
       <select id="iUn"><option>kg</option><option>g</option><option>L</option><option>ml</option><option>un</option><option>cx</option><option>pct</option></select>
@@ -395,7 +431,7 @@ tr:hover td{background:#fafafa}
   </div>
 </div>
 
-<!-- MODAL FICHA DETALHE -->
+<!-- MODAL FICHA -->
 <div class="modal-overlay" id="mFicha">
   <div class="modal" style="max-width:520px">
     <h2>📋 <span id="fdNome"></span></h2>
@@ -432,6 +468,7 @@ tr:hover td{background:#fafafa}
 </div>
 
 <script>
+// ── FIREBASE ───────────────────────────────────────
 const fbConfig = {
   apiKey:"AIzaSyAM8DJcX7sQoMDZP5LiAEz91Z5ivgSKX_I",
   authDomain:"ilmonello-pizzaria-f757c.firebaseapp.com",
@@ -443,15 +480,48 @@ const fbConfig = {
 firebase.initializeApp(fbConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
+db.settings({experimentalForceLongPolling: false});
 
 // ── CACHE ──────────────────────────────────────────
 let insCache  = [];
 let prodCache = [];
 let ingsTemp  = [];
 
+const IFOOD_TAXA = 0.23;
+
+// ── HELPERS ────────────────────────────────────────
+const R  = v => 'R$\u00a0' + Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const ymd = d => d instanceof Date ? d.toISOString().split('T')[0] : d;
+const br  = s => { if(!s) return '-'; const [y,m,dd]=s.split('-'); return `${dd}/${m}/${y}`; };
+const today = () => ymd(new Date());
+
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function limpaStr(s) {
+  // corrige encoding quebrado e espaços extras
+  return (s||'').trim()
+    .replace(/R\$\s*/g,'')
+    .replace(/\s+/g,' ')
+    .replace(/["""]/g,'');
+}
+
+function parsePreco(s) {
+  // "R$ 39,00" → 39.00 | "39.00" → 39.00
+  return parseFloat(limpaStr(s).replace(',','.')) || 0;
+}
+
+async function delDoc(col, id, cb) {
+  if(!confirm('Excluir este registro?')) return;
+  try {
+    await db.collection(col).doc(id).delete();
+    cb();
+  } catch(e) { alert('Erro ao excluir: ' + e.message); }
+}
+
 // ── AUTH ───────────────────────────────────────────
 auth.onAuthStateChanged(u => {
-  if (u) {
+  if(u) {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     boot();
@@ -460,14 +530,21 @@ auth.onAuthStateChanged(u => {
     document.getElementById('app').style.display = 'none';
   }
 });
+
 function login() {
-  const e = document.getElementById('em').value;
+  const e = document.getElementById('em').value.trim();
   const s = document.getElementById('pw').value;
-  document.getElementById('loginError').textContent = '';
-  auth.signInWithEmailAndPassword(e, s)
-    .catch(() => document.getElementById('loginError').textContent = 'E-mail ou senha inválidos.');
+  const err = document.getElementById('loginError');
+  err.textContent = '';
+  if(!e||!s){ err.textContent='Preencha e-mail e senha.'; return; }
+  auth.signInWithEmailAndPassword(e,s)
+    .catch(ex => {
+      err.textContent = ex.code === 'auth/invalid-credential'
+        ? 'E-mail ou senha inválidos.'
+        : ex.message;
+    });
 }
-function logout() { auth.signOut(); }
+function logout() { if(confirm('Deseja sair?')) auth.signOut(); }
 
 // ── BOOT ───────────────────────────────────────────
 async function boot() {
@@ -476,34 +553,26 @@ async function boot() {
     d.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});
   document.getElementById('fvData').value = ymd(d);
   document.getElementById('feData').value = ymd(d);
-
-  await Promise.all([ loadInsCache(), loadProdCache() ]);
+  await Promise.all([loadInsCache(), loadProdCache()]);
   go('dashboard');
 }
 
 // ── NAVEGAÇÃO ──────────────────────────────────────
 function go(page) {
-  // remove active de todos
   document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-
-  // ativa o link correto
-  const links = document.querySelectorAll('.nav-link');
-  const pages = ['dashboard','vendas','produtos','estoque','insumos','precos','fichas','contas'];
-  const idx   = pages.indexOf(page);
-  if (idx >= 0) links[idx].classList.add('active');
-
+  const link = document.querySelector(`.nav-link[data-page="${page}"]`);
+  if(link) link.classList.add('active');
   const pg = document.getElementById('pg-' + page);
-  if (pg) pg.classList.add('active');
-
-  const titles = {dashboard:'Dashboard',vendas:'Vendas',produtos:'Produtos',
-    estoque:'Estoque',insumos:'Insumos',precos:'Histórico de Preços',
-    fichas:'Fichas Técnicas',contas:'Contas a Pagar'};
-  document.getElementById('pgTitle').textContent = titles[page] || page;
-
+  if(pg) pg.classList.add('active');
+  const titles = {
+    dashboard:'Dashboard', vendas:'Vendas', produtos:'Produtos',
+    estoque:'Estoque', insumos:'Insumos', precos:'Histórico de Preços',
+    fichas:'Fichas Técnicas', contas:'Contas a Pagar'
+  };
+  document.getElementById('pgTitle').textContent = titles[page]||page;
   closeSidebar();
-
-  ({
+  const fns = {
     dashboard: loadDashboard,
     vendas:    loadVendas,
     produtos:  loadProdutos,
@@ -512,97 +581,274 @@ function go(page) {
     precos:    () => { fillSelectPrecos(); loadPrecos(); },
     fichas:    loadFichas,
     contas:    loadContas
-  })[page]?.();
+  };
+  fns[page]?.();
 }
 
 function openSidebar()  { document.getElementById('sidebar').classList.add('open');  document.getElementById('ovl').classList.add('open'); }
 function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('ovl').classList.remove('open'); }
 
-// ── HELPERS ────────────────────────────────────────
-const R   = v => 'R$\u00a0' + Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-function ymd(d) { return d instanceof Date ? d.toISOString().split('T')[0] : d; }
-function br(s)  { if (!s) return '-'; const [y,m,dd]=s.split('-'); return `${dd}/${m}/${y}`; }
-function today(){ return ymd(new Date()); }
-function openModal(id)  { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-async function del(col, id, cb) {
-  if (!confirm('Excluir este registro?')) return;
-  await db.collection(col).doc(id).delete();
-  cb();
-}
-
 // ── CACHE ──────────────────────────────────────────
 async function loadInsCache() {
-  const s = await db.collection('insumos').orderBy('nome').get();
-  insCache = s.docs.map(d => ({id:d.id,...d.data()}));
+  try {
+    const s = await db.collection('insumos').orderBy('nome').get();
+    insCache = s.docs.map(d=>({id:d.id,...d.data()}));
+  } catch(e) { console.warn('loadInsCache:', e.message); }
 }
 async function loadProdCache() {
-  const s = await db.collection('produtos').orderBy('nome').get();
-  prodCache = s.docs.map(d => ({id:d.id,...d.data()}));
+  try {
+    const s = await db.collection('produtos').orderBy('nome').get();
+    prodCache = s.docs.map(d=>({id:d.id,...d.data()}));
+  } catch(e) { console.warn('loadProdCache:', e.message); }
+}
+
+// ── IMPORTAR CSV INSUMOS ───────────────────────────
+async function importarInsumos(event) {
+  const file = event.target.files[0];
+  if(!file) return;
+
+  const progressDiv = document.getElementById('importProgress');
+  const countEl     = document.getElementById('importCount');
+  const barEl       = document.getElementById('importBar');
+  progressDiv.style.display = 'block';
+
+  try {
+    // Lê como ArrayBuffer para tratar encoding
+    const buf  = await file.arrayBuffer();
+    const dec  = new TextDecoder('utf-8');
+    let text   = dec.decode(buf);
+
+    // Remove BOM se existir
+    text = text.replace(/^\uFEFF/,'');
+
+    const lines = text.trim().split(/\r?\n/);
+    if(lines.length < 2){ alert('CSV vazio!'); return; }
+
+    // Detecta separador (ponto-e-vírgula ou vírgula)
+    const sep = lines[0].includes(';') ? ';' : ',';
+
+    const header = lines[0].split(sep).map(h=>h.trim().toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'') // remove acentos do header
+    );
+
+    // ── Mapeamento inteligente das colunas ──────────
+    const findCol = (...keys) => {
+      for(const k of keys){
+        const i = header.indexOf(k);
+        if(i !== -1) return i;
+      }
+      return -1;
+    };
+
+    const col = {
+      nome:       findCol('nome','name','produto'),
+      categoria:  findCol('categoria','category','cat'),
+      unidade:    findCol('unidade','unidade de medida','un','unit'),
+      estoqueMin: findCol('estoquemin','estoque min','estoque_min','minimo','min'),
+      preco:      findCol('preco','preco atual','price','valor'),
+      fornecedor: findCol('fornecedor','supplier','forn')
+    };
+
+    if(col.nome === -1){ alert('Coluna "nome" não encontrada no CSV!'); return; }
+
+    // ── Analisa o CSV para ver a ordem real dos campos ──
+    // No CSV enviado a ordem é: nome;categoria;unidade;estoqueMin;preco;fornecedor
+    // MAS os valores estão como: Mussarela;Laticínio; R$ 39,00 ; KG ;4;PJFrios
+    // Ou seja: col[2]=preco, col[3]=unidade, col[4]=estoqueMin no CSV real
+    // Vamos detectar isso automaticamente verificando se col[2] parece preço
+
+    const dataRows = lines.slice(1).filter(l => l.trim());
+    let total = dataRows.length;
+    let count = 0;
+    const BATCH_SIZE = 400;
+    let batch = db.batch();
+    let batchCount = 0;
+
+    for(let i = 0; i < dataRows.length; i++){
+      const raw  = dataRows[i].split(sep).map(v => v.trim().replace(/^["']|["']$/g,''));
+      if(!raw[0]) continue;
+
+      // Extrai cada campo com fallback inteligente
+      const getNome   = () => limpaStr(raw[col.nome] || '');
+      const getCat    = () => {
+        const v = limpaStr(raw[col.categoria] || '');
+        // Corrige acentos comuns que ficam quebrados
+        return v.replace('Latic\u00f3nio','Laticínio')
+                .replace('Latic','Laticínio')
+                .replace('Prote','Proteina') || 'Outro';
+      };
+
+      // Detecta automaticamente qual coluna é preço (contém "R$" ou vírgula decimal)
+      let precoVal = 0, unVal = 'kg', minVal = 0;
+
+      if(col.preco !== -1 && col.unidade !== -1) {
+        precoVal = parsePreco(raw[col.preco]);
+        unVal    = limpaStr(raw[col.unidade]).toLowerCase() || 'kg';
+        minVal   = parseFloat(limpaStr(raw[col.estoqueMin])) || 0;
+      } else {
+        // Detecta posição do preço varrendo os campos
+        for(let c=1; c<raw.length; c++){
+          if(raw[c].includes('R$') || (raw[c].includes(',') && raw[c].match(/\d/))) {
+            precoVal = parsePreco(raw[c]);
+            // unidade provavelmente é o próximo campo com texto
+            for(let u=c+1; u<raw.length; u++){
+              const uv = limpaStr(raw[u]);
+              if(uv && !uv.match(/^\d+\.?\d*$/) && !uv.includes('R$')){
+                unVal = uv.toLowerCase(); break;
+              } else if(uv.match(/^\d+\.?\d*$/)) {
+                minVal = parseFloat(uv)||0;
+              }
+            }
+            break;
+          }
+        }
+      }
+
+      const nome = getNome();
+      if(!nome) continue;
+
+      // Normaliza unidade
+      const unNorm = unVal.replace('KG','kg').replace('Kg','kg')
+                          .replace('UN','un').replace('Un','un')
+                          .replace('LT','L').replace('Lt','L') || 'kg';
+
+      const ref = db.collection('insumos').doc();
+      batch.set(ref, {
+        nome,
+        categoria:  getCat(),
+        unidade:    unNorm,
+        estoqueMin: minVal,
+        preco:      precoVal,
+        fornecedor: col.fornecedor !== -1 ? limpaStr(raw[col.fornecedor]) : '',
+        criadoEm:  firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      batchCount++;
+      count++;
+
+      // Atualiza progress
+      countEl.textContent = count;
+      barEl.style.width   = Math.round((count/total)*100) + '%';
+
+      if(batchCount >= BATCH_SIZE){
+        await batch.commit();
+        batch = db.batch();
+        batchCount = 0;
+      }
+    }
+
+    if(batchCount > 0) await batch.commit();
+
+    progressDiv.style.display = 'none';
+    event.target.value = '';
+    alert(`✅ ${count} insumos importados com sucesso!`);
+    await loadInsCache();
+    loadInsumos(false);
+
+  } catch(e) {
+    progressDiv.style.display = 'none';
+    event.target.value = '';
+    console.error(e);
+    alert('Erro ao importar: ' + e.message);
+  }
 }
 
 // ── DASHBOARD ──────────────────────────────────────
 async function loadDashboard() {
-  const now    = new Date();
-  const mes    = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  const dHoje  = ymd(now);
+  try {
+    const now = new Date();
+    const mes = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    const dHj = ymd(now);
 
-  const [vs, is, es, cs] = await Promise.all([
-    db.collection('vendas').get(),
-    db.collection('insumos').get(),
-    db.collection('estoque').orderBy('data','desc').get(),
-    db.collection('contas').get()
-  ]);
+    const [vs, is, es, cs] = await Promise.all([
+      db.collection('vendas').get(),
+      db.collection('insumos').get(),
+      db.collection('estoque').orderBy('data','desc').limit(200).get(),
+      db.collection('contas').get()
+    ]);
 
-  const vd   = vs.docs.map(d=>({id:d.id,...d.data()}));
-  const vh   = vd.filter(v=>v.data===dHoje);
-  const vm   = vd.filter(v=>v.data?.startsWith(mes));
-  const tH   = vh.reduce((a,v)=>a+(v.total||0),0);
-  const tM   = vm.reduce((a,v)=>a+(v.total||0),0);
+    const vd  = vs.docs.map(d=>({id:d.id,...d.data()}));
+    const vh  = vd.filter(v=>v.data===dHj);
+    const vm  = vd.filter(v=>v.data?.startsWith(mes));
+    const tH  = vh.reduce((a,v)=>a+(v.total||0),0);
+    const tM  = vm.reduce((a,v)=>a+(v.total||0),0);
+    const ifd = vm.filter(v=>v.canal==='iFood');
+    const tIfd= ifd.reduce((a,v)=>a+(v.total||0),0);
+    const tTxa= ifd.reduce((a,v)=>a+(v.taxa||0),0);
 
-  document.getElementById('dHoje').textContent   = R(tH);
-  document.getElementById('dHojeQ').textContent  = `${vh.length} pedidos`;
-  document.getElementById('dMes').textContent    = R(tM);
-  document.getElementById('dMesQ').textContent   = `${vm.length} pedidos`;
-  document.getElementById('dTicket').textContent = R(vm.length ? tM/vm.length : 0);
+    document.getElementById('dHoje').textContent   = R(tH);
+    document.getElementById('dHojeQ').textContent  = `${vh.length} pedidos`;
+    document.getElementById('dMes').textContent    = R(tM);
+    document.getElementById('dMesQ').textContent   = `${vm.length} pedidos`;
+    document.getElementById('dTicket').textContent = R(vm.length ? tM/vm.length : 0);
+    document.getElementById('dIfood').textContent  = R(tIfd);
+    document.getElementById('dIfoodT').textContent = `taxa: ${R(tTxa)}`;
 
-  // Estoque alertas
-  const ins  = is.docs.map(d=>({id:d.id,...d.data()}));
-  const ultE = {};
-  es.docs.forEach(d=>{ const x=d.data(); if(!ultE[x.insumoId]) ultE[x.insumoId]=x; });
-  const alEst = ins.filter(i=>{ const u=ultE[i.id]; return u && u.final<=(i.estoqueMin||0); });
-  document.getElementById('aEst').innerHTML = alEst.length
-    ? alEst.map(i=>{ const u=ultE[i.id]; const low=u.final<=0;
-        return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0f0">
-          <span>${i.nome}</span>
-          <span>${u.final} ${i.unidade} <span class="badge ${low?'bg-red':'bg-yellow'}">${low?'Zerado':'Baixo'}</span></span>
-        </div>`; }).join('')
-    : '<div class="empty">✅ Sem alertas</div>';
+    // Alertas estoque
+    const ins  = is.docs.map(d=>({id:d.id,...d.data()}));
+    const ultE = {};
+    es.docs.forEach(d=>{ const x=d.data(); if(!ultE[x.insumoId]) ultE[x.insumoId]=x; });
+    const alEst = ins.filter(i=>{ const u=ultE[i.id]; return u && u.final<=(i.estoqueMin||0); });
+    document.getElementById('aEst').innerHTML = alEst.length
+      ? alEst.map(i=>{ const u=ultE[i.id]; const low=u.final<=0;
+          return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0f0">
+            <span>${i.nome}</span>
+            <span>${u.final} ${i.unidade} <span class="badge ${low?'bg-red':'bg-yellow'}">${low?'Zerado':'Baixo'}</span></span>
+          </div>`; }).join('')
+      : '<div class="empty">✅ Sem alertas de estoque</div>';
 
-  // Contas
-  const contas = cs.docs.map(d=>({id:d.id,...d.data()}));
-  const pend   = contas.filter(c=>statusConta(c.vencimento,c.dataPagamento)!=='Pago');
-  const tPend  = pend.reduce((a,c)=>a+(c.valor||0),0);
-  document.getElementById('dContas').textContent  = R(tPend);
-  document.getElementById('dContasQ').textContent = `${pend.length} contas`;
+    // Contas
+    const contas = cs.docs.map(d=>({id:d.id,...d.data()}));
+    const pend   = contas.filter(c=>statusConta(c.vencimento,c.dataPagamento)!=='Pago');
+    document.getElementById('dContas').textContent  = R(pend.reduce((a,c)=>a+(c.valor||0),0));
+    document.getElementById('dContasQ').textContent = `${pend.length} contas`;
+    const d7   = new Date(); d7.setDate(d7.getDate()+7);
+    const prox = pend.filter(c=>c.vencimento&&c.vencimento<=ymd(d7)).sort((a,b)=>a.vencimento>b.vencimento?1:-1);
+    document.getElementById('aCont').innerHTML = prox.length
+      ? prox.map(c=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0f0">
+          <span>${c.descricao} — <small style="color:#888">${c.recebedor}</small></span>
+          <span>${R(c.valor)} <span class="badge bg-yellow">Vence ${br(c.vencimento)}</span></span>
+        </div>`).join('')
+      : '<div class="empty">✅ Nenhuma conta vencendo em breve</div>';
 
-  const d7   = new Date(); d7.setDate(d7.getDate()+7);
-  const prox = pend.filter(c=>c.vencimento&&c.vencimento<=ymd(d7)).sort((a,b)=>a.vencimento>b.vencimento?1:-1);
-  document.getElementById('aCont').innerHTML = prox.length
-    ? prox.map(c=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0f0">
-        <span>${c.descricao} — <small style="color:#888">${c.recebedor}</small></span>
-        <span>${R(c.valor)} <span class="badge bg-yellow">Vence ${br(c.vencimento)}</span></span>
-      </div>`).join('')
-    : '<div class="empty">✅ Nenhuma conta vencendo em breve</div>';
+  } catch(e){ console.error('dashboard:', e); }
 }
 
 // ── VENDAS ─────────────────────────────────────────
+function onCanalChange() {
+  const ifood = document.getElementById('vCanal').value === 'iFood';
+  document.getElementById('vIfoodInfo').style.display = ifood ? 'block' : 'none';
+  calcPreviewVenda();
+}
+
+function calcPreviewVenda() {
+  const qtd   = parseFloat(document.getElementById('vQtd').value)||0;
+  const val   = parseFloat(document.getElementById('vValor').value)||0;
+  const canal = document.getElementById('vCanal').value;
+  const bruto = qtd * val;
+  const taxa  = canal === 'iFood' ? bruto * IFOOD_TAXA : 0;
+  const liq   = bruto - taxa;
+  const prev  = document.getElementById('vPreview');
+  if(bruto > 0){
+    prev.style.display = 'block';
+    document.getElementById('pvBruto').textContent = R(bruto);
+    document.getElementById('pvTaxaRow').style.display = canal==='iFood'?'flex':'none';
+    document.getElementById('pvTaxa').textContent  = '- ' + R(taxa);
+    document.getElementById('pvLiq').textContent   = R(liq);
+  } else {
+    prev.style.display = 'none';
+  }
+}
+
 function openVenda() {
-  document.getElementById('vData').value  = today();
-  document.getElementById('vQtd').value   = 1;
-  document.getElementById('vValor').value = '';
-  document.getElementById('vObs').value   = '';
-  document.getElementById('vTipo').value  = 'Inteira';
+  document.getElementById('vData').value   = today();
+  document.getElementById('vCanal').value  = 'Balcão';
+  document.getElementById('vQtd').value    = 1;
+  document.getElementById('vValor').value  = '';
+  document.getElementById('vObs').value    = '';
+  document.getElementById('vTipo').value   = 'Inteira';
+  document.getElementById('vIfoodInfo').style.display = 'none';
+  document.getElementById('vPreview').style.display   = 'none';
   document.getElementById('btnInteira').classList.add('on');
   document.getElementById('btnMeia').classList.remove('on');
 
@@ -612,73 +858,111 @@ function openVenda() {
   document.getElementById('vTipoGrp').style.display = 'none';
   openModal('mVenda');
 }
+
 function setTipo(t) {
   document.getElementById('vTipo').value = t;
   document.getElementById('btnInteira').classList.toggle('on', t==='Inteira');
   document.getElementById('btnMeia').classList.toggle('on',    t==='Meia');
   onProdChange();
 }
+
 function onProdChange() {
   const pid  = document.getElementById('vProd').value;
   const prod = prodCache.find(p=>p.id===pid);
-  if (!prod) return;
+  if(!prod) return;
   const pizza = prod.categoria === 'Pizza';
   document.getElementById('vTipoGrp').style.display = pizza ? 'block' : 'none';
   const tipo = document.getElementById('vTipo').value;
   document.getElementById('vValor').value = pizza
     ? (tipo==='Meia' ? (prod.precoMeia||'') : (prod.precoInteira||''))
     : (prod.preco||'');
+  calcPreviewVenda();
 }
+
 async function saveVenda() {
   const data  = document.getElementById('vData').value;
   const pid   = document.getElementById('vProd').value;
-  const pNome = document.getElementById('vProd').options[document.getElementById('vProd').selectedIndex]?.text || '';
+  const canal = document.getElementById('vCanal').value;
+  const sel   = document.getElementById('vProd');
+  const pNome = sel.options[sel.selectedIndex]?.text.replace(/ 🍕| 🥤/g,'') || '';
   const tipo  = document.getElementById('vTipo').value;
   const qtd   = parseFloat(document.getElementById('vQtd').value)||0;
   const val   = parseFloat(document.getElementById('vValor').value)||0;
   const obs   = document.getElementById('vObs').value.trim();
-  if (!data||!pid||!qtd||!val) { alert('Preencha todos os campos obrigatórios!'); return; }
-  const prod = prodCache.find(p=>p.id===pid);
-  await db.collection('vendas').add({
-    data, produtoId:pid, produto:pNome.replace(/ 🍕| 🥤/g,''),
-    tipo: prod?.categoria==='Pizza' ? tipo : '-',
-    quantidade:qtd, valorUnitario:val, total:qtd*val, observacao:obs,
-    criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-  });
-  closeModal('mVenda');
-  loadVendas();
+
+  if(!data||!pid||!qtd||!val){ alert('Preencha todos os campos obrigatórios!'); return; }
+
+  const prod  = prodCache.find(p=>p.id===pid);
+  const bruto = qtd * val;
+  const taxa  = canal==='iFood' ? +(bruto * IFOOD_TAXA).toFixed(2) : 0;
+  const liq   = +(bruto - taxa).toFixed(2);
+
+  try {
+    await db.collection('vendas').add({
+      data,
+      produtoId:  pid,
+      produto:    pNome,
+      tipo:       prod?.categoria==='Pizza' ? tipo : '-',
+      quantidade: qtd,
+      valorUnitario: val,
+      total:      bruto,
+      canal,
+      taxa,
+      liquido:    liq,
+      observacao: obs,
+      criadoEm:  firebase.firestore.FieldValue.serverTimestamp()
+    });
+    closeModal('mVenda');
+    loadVendas();
+  } catch(e){ alert('Erro ao salvar: ' + e.message); }
 }
+
 async function loadVendas() {
   const tb = document.getElementById('tbVendas');
-  tb.innerHTML = '<tr><td colspan="8" class="empty">Carregando...</td></tr>';
-  const fd = document.getElementById('fvData').value;
-  const fm = document.getElementById('fvMes').value;
-  const s  = await db.collection('vendas').orderBy('data','desc').get();
-  let rows = s.docs.map(d=>({id:d.id,...d.data()}));
-  if (fd)      rows = rows.filter(r=>r.data===fd);
-  else if (fm) rows = rows.filter(r=>r.data?.split('-')[1]===fm);
-  const tot = rows.reduce((a,r)=>a+(r.total||0),0);
-  document.getElementById('totVendas').textContent = R(tot);
-  if (!rows.length) { tb.innerHTML='<tr><td colspan="8" class="empty">Nenhuma venda</td></tr>'; return; }
-  tb.innerHTML = rows.map(r=>`<tr>
-    <td>${br(r.data)}</td><td><b>${r.produto}</b></td><td>${r.tipo||'-'}</td>
-    <td>${r.quantidade}</td><td>${R(r.valorUnitario)}</td>
-    <td style="color:#1a6b3a;font-weight:700">${R(r.total)}</td>
-    <td>${r.observacao||'-'}</td>
-    <td><button class="btn btn-danger btn-sm" onclick="del('vendas','${r.id}',loadVendas)">🗑</button></td>
-  </tr>`).join('');
+  tb.innerHTML = '<tr><td colspan="10" class="empty">Carregando...</td></tr>';
+  try {
+    const fd = document.getElementById('fvData').value;
+    const fm = document.getElementById('fvMes').value;
+    const fc = document.getElementById('fvCanal').value;
+    const s  = await db.collection('vendas').orderBy('data','desc').get();
+    let rows = s.docs.map(d=>({id:d.id,...d.data()}));
+    if(fd)      rows = rows.filter(r=>r.data===fd);
+    else if(fm) rows = rows.filter(r=>r.data?.split('-')[1]===fm);
+    if(fc)      rows = rows.filter(r=>r.canal===fc);
+
+    const tBruto = rows.reduce((a,r)=>a+(r.total||0),0);
+    const tTaxa  = rows.reduce((a,r)=>a+(r.taxa||0),0);
+    const tLiq   = rows.reduce((a,r)=>a+(r.liquido||r.total||0),0);
+    document.getElementById('totVendasBruto').textContent = R(tBruto);
+    document.getElementById('totIfoodTaxa').textContent   = R(tTaxa);
+    document.getElementById('totVendasLiq').textContent   = R(tLiq);
+
+    if(!rows.length){ tb.innerHTML='<tr><td colspan="10" class="empty">Nenhuma venda encontrada</td></tr>'; return; }
+    tb.innerHTML = rows.map(r=>{
+      const ifood = r.canal==='iFood';
+      return `<tr>
+        <td>${br(r.data)}</td>
+        <td><b>${r.produto}</b></td>
+        <td>${r.tipo||'-'}</td>
+        <td>${r.quantidade}</td>
+        <td>${R(r.valorUnitario)}</td>
+        <td>${ifood?'<span class="ifood-tag">iFood</span>':r.canal||'Balcão'}</td>
+        <td style="color:#e67e22">${ifood?R(r.taxa):'-'}</td>
+        <td style="color:#1a6b3a;font-weight:700">${R(r.liquido||r.total)}</td>
+        <td style="font-weight:700">${R(r.total)}</td>
+        <td><button class="btn btn-danger btn-sm" onclick="delDoc('vendas','${r.id}',loadVendas)">🗑</button></td>
+      </tr>`;
+    }).join('');
+  } catch(e){ tb.innerHTML=`<tr><td colspan="10" class="empty">Erro: ${e.message}</td></tr>`; }
 }
 
 // ── PRODUTOS ───────────────────────────────────────
 function onCatChange() {
   const c = document.getElementById('pCat').value;
-  document.getElementById('pPizzaOpts').style.display  = c==='Pizza'  ? 'block' : 'none';
-  document.getElementById('pOutroOpts').style.display  = c!=='Pizza'  ? 'block' : 'none';
+  document.getElementById('pPizzaOpts').style.display = c==='Pizza'?'block':'none';
+  document.getElementById('pOutroOpts').style.display = c!=='Pizza'?'block':'none';
 }
-function addIng() {
-  ingsTemp.push({insumoId:'',nome:'',quantidade:0,unidade:'',custoUnit:0});
-  renderIngs();
-}
+function addIng() { ingsTemp.push({insumoId:'',nome:'',quantidade:0,unidade:'',custoUnit:0}); renderIngs(); }
 function renderIngs() {
   document.getElementById('pIngs').innerHTML = ingsTemp.map((g,i)=>`
     <div class="ing-row">
@@ -694,54 +978,55 @@ function renderIngs() {
 }
 function selIng(i, id) {
   const ins = insCache.find(x=>x.id===id);
-  if (ins) ingsTemp[i] = {...ingsTemp[i], insumoId:ins.id, nome:ins.nome, unidade:ins.unidade, custoUnit:ins.preco||0};
+  if(ins) ingsTemp[i] = {...ingsTemp[i], insumoId:ins.id, nome:ins.nome, unidade:ins.unidade, custoUnit:ins.preco||0};
   renderIngs();
 }
 function openProduto(p=null) {
-  document.getElementById('pId').value       = p?.id||'';
-  document.getElementById('pNome').value     = p?.nome||'';
-  document.getElementById('pCat').value      = p?.categoria||'Pizza';
-  document.getElementById('pPrecoInt').value = p?.precoInteira||'';
-  document.getElementById('pPrecoMeia').value= p?.precoMeia||'';
-  document.getElementById('pPreco').value    = p?.preco||'';
+  document.getElementById('pId').value        = p?.id||'';
+  document.getElementById('pNome').value      = p?.nome||'';
+  document.getElementById('pCat').value       = p?.categoria||'Pizza';
+  document.getElementById('pPrecoInt').value  = p?.precoInteira||'';
+  document.getElementById('pPrecoMeia').value = p?.precoMeia||'';
+  document.getElementById('pPreco').value     = p?.preco||'';
   document.getElementById('pTemInteira').checked = p?.temInteira!==false;
   document.getElementById('pTemMeia').checked    = p?.temMeia||false;
   ingsTemp = p?.ingredientes ? JSON.parse(JSON.stringify(p.ingredientes)) : [];
-  onCatChange();
-  renderIngs();
+  onCatChange(); renderIngs();
   openModal('mProduto');
 }
 async function saveProduto() {
   const id   = document.getElementById('pId').value;
   const nome = document.getElementById('pNome').value.trim();
   const cat  = document.getElementById('pCat').value;
-  if (!nome) { alert('Informe o nome!'); return; }
+  if(!nome){ alert('Informe o nome!'); return; }
   const data = {
     nome, categoria:cat, ingredientes:ingsTemp,
     atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
   };
-  if (cat==='Pizza') {
-    data.temInteira  = document.getElementById('pTemInteira').checked;
-    data.temMeia     = document.getElementById('pTemMeia').checked;
-    data.precoInteira= parseFloat(document.getElementById('pPrecoInt').value)||0;
-    data.precoMeia   = parseFloat(document.getElementById('pPrecoMeia').value)||0;
+  if(cat==='Pizza'){
+    data.temInteira   = document.getElementById('pTemInteira').checked;
+    data.temMeia      = document.getElementById('pTemMeia').checked;
+    data.precoInteira = parseFloat(document.getElementById('pPrecoInt').value)||0;
+    data.precoMeia    = parseFloat(document.getElementById('pPrecoMeia').value)||0;
   } else {
     data.preco = parseFloat(document.getElementById('pPreco').value)||0;
   }
-  if (id) await db.collection('produtos').doc(id).update(data);
-  else    await db.collection('produtos').add({...data, criadoEm:firebase.firestore.FieldValue.serverTimestamp()});
-  closeModal('mProduto');
-  await loadProdCache();
-  loadProdutos();
+  try {
+    if(id) await db.collection('produtos').doc(id).update(data);
+    else   await db.collection('produtos').add({...data, criadoEm:firebase.firestore.FieldValue.serverTimestamp()});
+    closeModal('mProduto');
+    await loadProdCache();
+    loadProdutos();
+  } catch(e){ alert('Erro ao salvar: ' + e.message); }
 }
 async function loadProdutos() {
-  const tb   = document.getElementById('tbProdutos');
-  const fn   = document.getElementById('fpNome').value.toLowerCase();
-  const fc   = document.getElementById('fpCat').value;
-  let lista  = prodCache;
-  if (fn) lista = lista.filter(p=>p.nome.toLowerCase().includes(fn));
-  if (fc) lista = lista.filter(p=>p.categoria===fc);
-  if (!lista.length) { tb.innerHTML='<tr><td colspan="6" class="empty">Nenhum produto</td></tr>'; return; }
+  const tb  = document.getElementById('tbProdutos');
+  const fn  = document.getElementById('fpNome').value.toLowerCase();
+  const fc  = document.getElementById('fpCat').value;
+  let lista = [...prodCache];
+  if(fn) lista = lista.filter(p=>p.nome.toLowerCase().includes(fn));
+  if(fc) lista = lista.filter(p=>p.categoria===fc);
+  if(!lista.length){ tb.innerHTML='<tr><td colspan="6" class="empty">Nenhum produto cadastrado</td></tr>'; return; }
   tb.innerHTML = lista.map(p=>{
     const preco = p.categoria==='Pizza'
       ? `Int: ${R(p.precoInteira)}${p.temMeia?` / Meia: ${R(p.precoMeia)}`:''}`
@@ -753,7 +1038,7 @@ async function loadProdutos() {
       <td><span class="badge bg-green">${p.ingredientes?.length||0} ing.</span></td>
       <td>
         <button class="btn btn-blue btn-sm" onclick='openProduto(${JSON.stringify(p)})'>✏️</button>
-        <button class="btn btn-danger btn-sm" onclick="del('produtos','${p.id}',async()=>{await loadProdCache();loadProdutos()})">🗑</button>
+        <button class="btn btn-danger btn-sm" onclick="delDoc('produtos','${p.id}',async()=>{await loadProdCache();loadProdutos()})">🗑</button>
       </td>
     </tr>`;
   }).join('');
@@ -767,7 +1052,7 @@ function calcFin() {
 }
 function openEstoque() {
   document.getElementById('eData').value = today();
-  document.getElementById('eIni').value = document.getElementById('eUsa').value = document.getElementById('eFin').value = '';
+  ['eIni','eUsa','eFin'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('eIns').innerHTML = insCache.map(i=>`<option value="${i.id}">${i.nome} (${i.unidade})</option>`).join('');
   openModal('mEstoque');
 }
@@ -778,45 +1063,49 @@ async function saveEstoque() {
   const ini  = parseFloat(document.getElementById('eIni').value)||0;
   const usa  = parseFloat(document.getElementById('eUsa').value)||0;
   const fin  = parseFloat(document.getElementById('eFin').value)||0;
-  if (!data||!iid) { alert('Preencha todos os campos!'); return; }
-  await db.collection('estoque').add({
-    data, insumoId:iid, insumoNome:ins?.nome||'', unidade:ins?.unidade||'',
-    estoqueMin:ins?.estoqueMin||0, inicial:ini, usada:usa, final:fin,
-    criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-  });
-  closeModal('mEstoque');
-  loadEstoque();
+  if(!data||!iid){ alert('Preencha todos os campos!'); return; }
+  try {
+    await db.collection('estoque').add({
+      data, insumoId:iid, insumoNome:ins?.nome||'', unidade:ins?.unidade||'',
+      estoqueMin:ins?.estoqueMin||0, inicial:ini, usada:usa, final:fin,
+      criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    closeModal('mEstoque');
+    loadEstoque();
+  } catch(e){ alert('Erro ao salvar: ' + e.message); }
 }
 async function loadEstoque() {
   const tb = document.getElementById('tbEstoque');
   tb.innerHTML = '<tr><td colspan="8" class="empty">Carregando...</td></tr>';
-  const fd = document.getElementById('feData').value;
-  const fn = document.getElementById('feNome').value.toLowerCase();
-  const s  = await db.collection('estoque').orderBy('data','desc').limit(100).get();
-  let rows = s.docs.map(d=>({id:d.id,...d.data()}));
-  if (fd) rows = rows.filter(r=>r.data===fd);
-  if (fn) rows = rows.filter(r=>r.insumoNome?.toLowerCase().includes(fn));
-  if (!rows.length) { tb.innerHTML='<tr><td colspan="8" class="empty">Nenhum registro</td></tr>'; return; }
-  tb.innerHTML = rows.map(r=>{
-    const low = r.final<=(r.estoqueMin||0);
-    const badge = r.final<=0
-      ? '<span class="badge bg-red">Zerado</span>'
-      : low ? '<span class="badge bg-yellow">Baixo</span>'
-             : '<span class="badge bg-green">OK</span>';
-    return `<tr>
-      <td><b>${r.insumoNome}</b></td><td>${br(r.data)}</td>
-      <td>${r.inicial}</td><td>${r.usada}</td><td><b>${r.final}</b></td>
-      <td>${r.unidade}</td><td>${badge}</td>
-      <td><button class="btn btn-danger btn-sm" onclick="del('estoque','${r.id}',loadEstoque)">🗑</button></td>
-    </tr>`;
-  }).join('');
+  try {
+    const fd = document.getElementById('feData').value;
+    const fn = document.getElementById('feNome').value.toLowerCase();
+    const s  = await db.collection('estoque').orderBy('data','desc').limit(100).get();
+    let rows = s.docs.map(d=>({id:d.id,...d.data()}));
+    if(fd) rows = rows.filter(r=>r.data===fd);
+    if(fn) rows = rows.filter(r=>r.insumoNome?.toLowerCase().includes(fn));
+    if(!rows.length){ tb.innerHTML='<tr><td colspan="8" class="empty">Nenhum registro</td></tr>'; return; }
+    tb.innerHTML = rows.map(r=>{
+      const low = r.final<=(r.estoqueMin||0);
+      const badge = r.final<=0
+        ? '<span class="badge bg-red">Zerado</span>'
+        : low ? '<span class="badge bg-yellow">Baixo</span>'
+               : '<span class="badge bg-green">OK</span>';
+      return `<tr>
+        <td><b>${r.insumoNome}</b></td><td>${br(r.data)}</td>
+        <td>${r.inicial}</td><td>${r.usada}</td><td><b>${r.final}</b></td>
+        <td>${r.unidade}</td><td>${badge}</td>
+        <td><button class="btn btn-danger btn-sm" onclick="delDoc('estoque','${r.id}',loadEstoque)">🗑</button></td>
+      </tr>`;
+    }).join('');
+  } catch(e){ tb.innerHTML=`<tr><td colspan="8" class="empty">Erro: ${e.message}</td></tr>`; }
 }
 
 // ── INSUMOS ────────────────────────────────────────
 function openInsumo(ins=null) {
   document.getElementById('iId').value    = ins?.id||'';
   document.getElementById('iNome').value  = ins?.nome||'';
-  document.getElementById('iCat').value   = ins?.categoria||'Farinha';
+  document.getElementById('iCat').value   = ins?.categoria||'Outro';
   document.getElementById('iUn').value    = ins?.unidade||'kg';
   document.getElementById('iMin').value   = ins?.estoqueMin||'';
   document.getElementById('iPreco').value = ins?.preco||'';
@@ -826,7 +1115,7 @@ function openInsumo(ins=null) {
 async function saveInsumo() {
   const id   = document.getElementById('iId').value;
   const nome = document.getElementById('iNome').value.trim();
-  if (!nome) { alert('Informe o nome!'); return; }
+  if(!nome){ alert('Informe o nome!'); return; }
   const data = {
     nome,
     categoria:  document.getElementById('iCat').value,
@@ -836,22 +1125,24 @@ async function saveInsumo() {
     fornecedor: document.getElementById('iForn').value.trim(),
     atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
   };
-  if (id) await db.collection('insumos').doc(id).update(data);
-  else    await db.collection('insumos').add({...data, criadoEm:firebase.firestore.FieldValue.serverTimestamp()});
-  closeModal('mInsumo');
-  await loadInsCache();
-  loadInsumos(false);
+  try {
+    if(id) await db.collection('insumos').doc(id).update(data);
+    else   await db.collection('insumos').add({...data, criadoEm:firebase.firestore.FieldValue.serverTimestamp()});
+    closeModal('mInsumo');
+    await loadInsCache();
+    loadInsumos(false);
+  } catch(e){ alert('Erro ao salvar: ' + e.message); }
 }
 async function loadInsumos(silent=false) {
   await loadInsCache();
-  if (silent) return;
+  if(silent) return;
   const tb = document.getElementById('tbInsumos');
   const fn = document.getElementById('fiNome').value.toLowerCase();
   const fc = document.getElementById('fiCat').value;
-  let lista = insCache;
-  if (fn) lista = lista.filter(i=>i.nome.toLowerCase().includes(fn));
-  if (fc) lista = lista.filter(i=>i.categoria===fc);
-  if (!lista.length) { tb.innerHTML='<tr><td colspan="7" class="empty">Nenhum insumo</td></tr>'; return; }
+  let lista = [...insCache];
+  if(fn) lista = lista.filter(i=>i.nome.toLowerCase().includes(fn));
+  if(fc) lista = lista.filter(i=>i.categoria===fc);
+  if(!lista.length){ tb.innerHTML='<tr><td colspan="7" class="empty">Nenhum insumo cadastrado</td></tr>'; return; }
   tb.innerHTML = lista.map(i=>`<tr>
     <td><b>${i.nome}</b></td><td>${i.categoria}</td><td>${i.unidade}</td>
     <td>${i.estoqueMin} ${i.unidade}</td>
@@ -859,22 +1150,20 @@ async function loadInsumos(silent=false) {
     <td>${i.fornecedor||'-'}</td>
     <td>
       <button class="btn btn-blue btn-sm" onclick='openInsumo(${JSON.stringify(i)})'>✏️</button>
-      <button class="btn btn-danger btn-sm" onclick="del('insumos','${i.id}',()=>loadInsumos(false))">🗑</button>
+      <button class="btn btn-danger btn-sm" onclick="delDoc('insumos','${i.id}',()=>loadInsumos(false))">🗑</button>
     </td>
   </tr>`).join('');
 }
 
 // ── PREÇOS ─────────────────────────────────────────
 async function fillSelectPrecos() {
-  const sel = document.getElementById('fprIns');
-  sel.innerHTML = '<option value="">Todos</option>' +
+  document.getElementById('fprIns').innerHTML = '<option value="">Todos</option>' +
     insCache.map(i=>`<option value="${i.id}">${i.nome}</option>`).join('');
 }
 function openPreco() {
   document.getElementById('prData').value = today();
   document.getElementById('prNovo').value = document.getElementById('prForn').value = '';
-  const sel = document.getElementById('prIns');
-  sel.innerHTML = insCache.map(i=>`<option value="${i.id}" data-preco="${i.preco}">${i.nome}</option>`).join('');
+  document.getElementById('prIns').innerHTML = insCache.map(i=>`<option value="${i.id}" data-preco="${i.preco}">${i.nome}</option>`).join('');
   onInsPrecoChange();
   openModal('mPreco');
 }
@@ -889,93 +1178,97 @@ async function savePreco() {
   const novo = parseFloat(document.getElementById('prNovo').value)||0;
   const forn = document.getElementById('prForn').value.trim();
   const nome = document.getElementById('prIns').options[document.getElementById('prIns').selectedIndex]?.text;
-  if (!iid||!data||!novo) { alert('Preencha os campos!'); return; }
-  await db.collection('historicoPrecos').add({
-    insumoId:iid, insumoNome:nome, data,
-    precoAnterior:ant, precoNovo:novo, fornecedor:forn,
-    criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-  });
-  await db.collection('insumos').doc(iid).update({preco:novo});
-  await loadInsCache();
-  closeModal('mPreco');
-  loadPrecos();
+  if(!iid||!data||!novo){ alert('Preencha os campos obrigatórios!'); return; }
+  try {
+    await db.collection('historicoPrecos').add({
+      insumoId:iid, insumoNome:nome, data,
+      precoAnterior:ant, precoNovo:novo, fornecedor:forn,
+      criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    await db.collection('insumos').doc(iid).update({preco:novo});
+    await loadInsCache();
+    closeModal('mPreco');
+    loadPrecos();
+  } catch(e){ alert('Erro ao salvar: ' + e.message); }
 }
 async function loadPrecos() {
-  const tb  = document.getElementById('tbPrecos');
+  const tb = document.getElementById('tbPrecos');
   tb.innerHTML = '<tr><td colspan="7" class="empty">Carregando...</td></tr>';
-  const fi  = document.getElementById('fprIns').value;
-  const fm  = document.getElementById('fprMes').value;
-  const s   = await db.collection('historicoPrecos').orderBy('data','desc').limit(80).get();
-  let rows  = s.docs.map(d=>({id:d.id,...d.data()}));
-  if (fi) rows = rows.filter(r=>r.insumoId===fi);
-  if (fm) rows = rows.filter(r=>r.data?.startsWith(fm));
-  if (!rows.length) { tb.innerHTML='<tr><td colspan="7" class="empty">Nenhum registro</td></tr>'; return; }
-  tb.innerHTML = rows.map(r=>{
-    const v = r.precoAnterior>0 ? ((r.precoNovo-r.precoAnterior)/r.precoAnterior*100) : 0;
-    const badge = v>0 ? `<span class="badge bg-red">▲ ${v.toFixed(1)}%</span>`
-                 : v<0 ? `<span class="badge bg-green">▼ ${Math.abs(v).toFixed(1)}%</span>`
-                       : `<span class="badge bg-yellow">0%</span>`;
-    return `<tr>
-      <td><b>${r.insumoNome}</b></td><td>${br(r.data)}</td>
-      <td>${R(r.precoAnterior)}</td>
-      <td style="color:#1a6b3a;font-weight:700">${R(r.precoNovo)}</td>
-      <td>${badge}</td><td>${r.fornecedor||'-'}</td>
-      <td><button class="btn btn-danger btn-sm" onclick="del('historicoPrecos','${r.id}',loadPrecos)">🗑</button></td>
-    </tr>`;
-  }).join('');
+  try {
+    const fi = document.getElementById('fprIns').value;
+    const fm = document.getElementById('fprMes').value;
+    const s  = await db.collection('historicoPrecos').orderBy('data','desc').limit(80).get();
+    let rows = s.docs.map(d=>({id:d.id,...d.data()}));
+    if(fi) rows = rows.filter(r=>r.insumoId===fi);
+    if(fm) rows = rows.filter(r=>r.data?.startsWith(fm));
+    if(!rows.length){ tb.innerHTML='<tr><td colspan="7" class="empty">Nenhum registro</td></tr>'; return; }
+    tb.innerHTML = rows.map(r=>{
+      const v = r.precoAnterior>0 ? ((r.precoNovo-r.precoAnterior)/r.precoAnterior*100) : 0;
+      const badge = v>0 ? `<span class="badge bg-red">▲ ${v.toFixed(1)}%</span>`
+                   : v<0 ? `<span class="badge bg-green">▼ ${Math.abs(v).toFixed(1)}%</span>`
+                         : `<span class="badge bg-yellow">0%</span>`;
+      return `<tr>
+        <td><b>${r.insumoNome}</b></td><td>${br(r.data)}</td>
+        <td>${R(r.precoAnterior)}</td>
+        <td style="color:#1a6b3a;font-weight:700">${R(r.precoNovo)}</td>
+        <td>${badge}</td><td>${r.fornecedor||'-'}</td>
+        <td><button class="btn btn-danger btn-sm" onclick="delDoc('historicoPrecos','${r.id}',loadPrecos)">🗑</button></td>
+      </tr>`;
+    }).join('');
+  } catch(e){ tb.innerHTML=`<tr><td colspan="7" class="empty">Erro: ${e.message}</td></tr>`; }
 }
 
 // ── FICHAS ─────────────────────────────────────────
 async function loadFichas() {
   const tb = document.getElementById('tbFichas');
   tb.innerHTML = '<tr><td colspan="7" class="empty">Carregando...</td></tr>';
-  const s    = await db.collection('produtos').orderBy('nome').get();
-  const list = s.docs.map(d=>({id:d.id,...d.data()})).filter(p=>p.ingredientes?.length>0);
-  if (!list.length) { tb.innerHTML='<tr><td colspan="7" class="empty">Nenhuma ficha. Cadastre produtos com ingredientes.</td></tr>'; return; }
-  tb.innerHTML = list.map(p=>{
-    const custo = (p.ingredientes||[]).reduce((a,i)=>a+(i.custoUnit||0)*(i.quantidade||0),0);
-    const preco = p.categoria==='Pizza' ? (p.precoInteira||0) : (p.preco||0);
-    const mg    = preco>0 ? ((preco-custo)/preco*100) : 0;
-    const badge = mg>=60 ? `<span class="badge bg-green">${mg.toFixed(1)}%</span>`
-                 : mg>=35 ? `<span class="badge bg-yellow">${mg.toFixed(1)}%</span>`
-                          : `<span class="badge bg-red">${mg.toFixed(1)}%</span>`;
-    return `<tr>
-      <td><b>${p.nome}</b></td><td>${p.categoria}</td>
-      <td>${p.ingredientes.length} ing.</td>
-      <td>${R(custo)}</td>
-      <td style="color:#1a6b3a;font-weight:700">${R(preco)}</td>
-      <td>${badge}</td>
-      <td><button class="btn btn-blue btn-sm" onclick="verFicha('${p.id}')">👁</button></td>
-    </tr>`;
-  }).join('');
+  try {
+    const s    = await db.collection('produtos').orderBy('nome').get();
+    const list = s.docs.map(d=>({id:d.id,...d.data()})).filter(p=>p.ingredientes?.length>0);
+    if(!list.length){ tb.innerHTML='<tr><td colspan="7" class="empty">Nenhuma ficha. Cadastre produtos com ingredientes.</td></tr>'; return; }
+    tb.innerHTML = list.map(p=>{
+      const custo = (p.ingredientes||[]).reduce((a,i)=>a+(i.custoUnit||0)*(i.quantidade||0),0);
+      const preco = p.categoria==='Pizza'?(p.precoInteira||0):(p.preco||0);
+      const mg    = preco>0?((preco-custo)/preco*100):0;
+      const badge = mg>=60?`<span class="badge bg-green">${mg.toFixed(1)}%</span>`
+                   :mg>=35?`<span class="badge bg-yellow">${mg.toFixed(1)}%</span>`
+                           :`<span class="badge bg-red">${mg.toFixed(1)}%</span>`;
+      return `<tr>
+        <td><b>${p.nome}</b></td><td>${p.categoria}</td>
+        <td>${p.ingredientes.length} ing.</td>
+        <td>${R(custo)}</td>
+        <td style="color:#1a6b3a;font-weight:700">${R(preco)}</td>
+        <td>${badge}</td>
+        <td><button class="btn btn-blue btn-sm" onclick="verFicha('${p.id}')">👁</button></td>
+      </tr>`;
+    }).join('');
+  } catch(e){ tb.innerHTML=`<tr><td colspan="7" class="empty">Erro: ${e.message}</td></tr>`; }
 }
 async function verFicha(id) {
-  const doc  = await db.collection('produtos').doc(id).get();
-  const p    = doc.data();
-  const custo= (p.ingredientes||[]).reduce((a,i)=>a+(i.custoUnit||0)*(i.quantidade||0),0);
-  const preco= p.categoria==='Pizza'?(p.precoInteira||0):(p.preco||0);
-  const mg   = preco>0?((preco-custo)/preco*100):0;
-  document.getElementById('fdNome').textContent = p.nome;
-  document.getElementById('fdBody').innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;background:#f8f8f8;padding:10px;border-radius:8px;font-size:.83rem">
-      <div><b>Categoria:</b> ${p.categoria}</div>
-      <div><b>Custo:</b> ${R(custo)}</div>
-      <div><b>Preço:</b> ${R(preco)}</div>
-      <div><b>Margem:</b> ${mg.toFixed(1)}%</div>
-    </div>
-    <table>
-      <thead><tr><th>Ingrediente</th><th>Qtd</th><th>Un</th><th>Custo/Un</th><th>Total</th></tr></thead>
+  try {
+    const doc  = await db.collection('produtos').doc(id).get();
+    const p    = doc.data();
+    const custo= (p.ingredientes||[]).reduce((a,i)=>a+(i.custoUnit||0)*(i.quantidade||0),0);
+    const preco= p.categoria==='Pizza'?(p.precoInteira||0):(p.preco||0);
+    const mg   = preco>0?((preco-custo)/preco*100):0;
+    document.getElementById('fdNome').textContent = p.nome;
+    document.getElementById('fdBody').innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;background:#f8f8f8;padding:10px;border-radius:8px;font-size:.83rem">
+        <div><b>Categoria:</b> ${p.categoria}</div><div><b>Custo:</b> ${R(custo)}</div>
+        <div><b>Preço:</b> ${R(preco)}</div><div><b>Margem:</b> ${mg.toFixed(1)}%</div>
+      </div>
+      <table><thead><tr><th>Ingrediente</th><th>Qtd</th><th>Un</th><th>Custo/Un</th><th>Total</th></tr></thead>
       <tbody>${(p.ingredientes||[]).map(i=>`<tr>
         <td>${i.nome}</td><td>${i.quantidade}</td><td>${i.unidade}</td>
         <td>${R(i.custoUnit)}</td><td>${R(i.custoUnit*i.quantidade)}</td>
-      </tr>`).join('')}</tbody>
-    </table>`;
-  openModal('mFicha');
+      </tr>`).join('')}</tbody></table>`;
+    openModal('mFicha');
+  } catch(e){ alert('Erro: ' + e.message); }
 }
 
 // ── CONTAS ─────────────────────────────────────────
 function statusConta(venc, pago) {
-  if (pago) return 'Pago';
+  if(pago) return 'Pago';
   const h = new Date(); h.setHours(0,0,0,0);
   return new Date(venc+'T00:00:00') < h ? 'Vencido' : 'Pendente';
 }
@@ -993,14 +1286,14 @@ function openConta(c=null) {
   openModal('mConta');
 }
 async function saveConta() {
-  const id   = document.getElementById('cId').value;
-  const desc = document.getElementById('cDesc').value.trim();
-  const receb= document.getElementById('cReceb').value.trim();
-  const val  = parseFloat(document.getElementById('cValor').value)||0;
-  const venc = document.getElementById('cVenc').value;
-  if (!desc||!receb||!val||!venc) { alert('Preencha os campos obrigatórios!'); return; }
-  const pago = document.getElementById('cPag').value;
-  const data = {
+  const id    = document.getElementById('cId').value;
+  const desc  = document.getElementById('cDesc').value.trim();
+  const receb = document.getElementById('cReceb').value.trim();
+  const val   = parseFloat(document.getElementById('cValor').value)||0;
+  const venc  = document.getElementById('cVenc').value;
+  if(!desc||!receb||!val||!venc){ alert('Preencha os campos obrigatórios!'); return; }
+  const pago  = document.getElementById('cPag').value;
+  const data  = {
     descricao:desc, categoria:document.getElementById('cCat').value,
     recebedor:receb, valor:val, vencimento:venc,
     agendamento:document.getElementById('cAgend').value,
@@ -1009,56 +1302,62 @@ async function saveConta() {
     status:statusConta(venc,pago),
     atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
   };
-  if (id) await db.collection('contas').doc(id).update(data);
-  else    await db.collection('contas').add({...data, criadoEm:firebase.firestore.FieldValue.serverTimestamp()});
-  closeModal('mConta');
-  loadContas();
+  try {
+    if(id) await db.collection('contas').doc(id).update(data);
+    else   await db.collection('contas').add({...data, criadoEm:firebase.firestore.FieldValue.serverTimestamp()});
+    closeModal('mConta');
+    loadContas();
+  } catch(e){ alert('Erro ao salvar: ' + e.message); }
 }
 async function pagarConta(id) {
   const dt = prompt('Data do pagamento (AAAA-MM-DD):', today());
-  if (!dt) return;
+  if(!dt) return;
   const fm = prompt('Forma de pagamento:', 'PIX');
-  await db.collection('contas').doc(id).update({
-    dataPagamento:dt, formaPagamento:fm||'',
-    status:'Pago', atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()
-  });
-  loadContas();
+  try {
+    await db.collection('contas').doc(id).update({
+      dataPagamento:dt, formaPagamento:fm||'',
+      status:'Pago', atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()
+    });
+    loadContas();
+  } catch(e){ alert('Erro: ' + e.message); }
 }
 async function loadContas() {
-  const tb  = document.getElementById('tbContas');
+  const tb = document.getElementById('tbContas');
   tb.innerHTML = '<tr><td colspan="9" class="empty">Carregando...</td></tr>';
-  const fs  = document.getElementById('fcStatus').value;
-  const fm  = document.getElementById('fcMes').value;
-  const fc  = document.getElementById('fcCat').value;
-  const s   = await db.collection('contas').orderBy('vencimento','desc').get();
-  let rows  = s.docs.map(d=>({id:d.id,...d.data()}))
-               .map(r=>({...r, status:statusConta(r.vencimento,r.dataPagamento)}));
-  if (fs) rows = rows.filter(r=>r.status===fs);
-  if (fm) rows = rows.filter(r=>r.vencimento?.startsWith(fm));
-  if (fc) rows = rows.filter(r=>r.categoria===fc);
-  const tp  = rows.filter(r=>r.status!=='Pago').reduce((a,r)=>a+(r.valor||0),0);
-  document.getElementById('totContas').textContent = R(tp);
-  if (!rows.length) { tb.innerHTML='<tr><td colspan="9" class="empty">Nenhuma conta</td></tr>'; return; }
-  tb.innerHTML = rows.map(r=>{
-    const badge = r.status==='Pago'
-      ? '<span class="badge bg-green">Pago</span>'
-      : r.status==='Vencido'
-        ? '<span class="badge bg-red">Vencido</span>'
-        : '<span class="badge bg-yellow">Pendente</span>';
-    return `<tr>
-      <td><b>${r.descricao}</b></td><td>${r.categoria}</td><td>${r.recebedor}</td>
-      <td style="font-weight:700">${R(r.valor)}</td>
-      <td>${br(r.vencimento)}</td>
-      <td>${r.dataPagamento?br(r.dataPagamento):'-'}</td>
-      <td>${r.formaPagamento||'-'}</td>
-      <td>${badge}</td>
-      <td style="display:flex;gap:3px;flex-wrap:wrap">
-        ${r.status!=='Pago'?`<button class="btn btn-green btn-sm" onclick="pagarConta('${r.id}')">✅</button>`:''}
-        <button class="btn btn-blue btn-sm" onclick='openConta(${JSON.stringify(r)})'>✏️</button>
-        <button class="btn btn-danger btn-sm" onclick="del('contas','${r.id}',loadContas)">🗑</button>
-      </td>
-    </tr>`;
-  }).join('');
+  try {
+    const fs = document.getElementById('fcStatus').value;
+    const fm = document.getElementById('fcMes').value;
+    const fc = document.getElementById('fcCat').value;
+    const s  = await db.collection('contas').orderBy('vencimento','desc').get();
+    let rows = s.docs.map(d=>({id:d.id,...d.data()}))
+                     .map(r=>({...r, status:statusConta(r.vencimento,r.dataPagamento)}));
+    if(fs) rows = rows.filter(r=>r.status===fs);
+    if(fm) rows = rows.filter(r=>r.vencimento?.startsWith(fm));
+    if(fc) rows = rows.filter(r=>r.categoria===fc);
+    const tp = rows.filter(r=>r.status!=='Pago').reduce((a,r)=>a+(r.valor||0),0);
+    document.getElementById('totContas').textContent = R(tp);
+    if(!rows.length){ tb.innerHTML='<tr><td colspan="9" class="empty">Nenhuma conta</td></tr>'; return; }
+    tb.innerHTML = rows.map(r=>{
+      const badge = r.status==='Pago'
+        ? '<span class="badge bg-green">Pago</span>'
+        : r.status==='Vencido'
+          ? '<span class="badge bg-red">Vencido</span>'
+          : '<span class="badge bg-yellow">Pendente</span>';
+      return `<tr>
+        <td><b>${r.descricao}</b></td><td>${r.categoria}</td><td>${r.recebedor}</td>
+        <td style="font-weight:700">${R(r.valor)}</td>
+        <td>${br(r.vencimento)}</td>
+        <td>${r.dataPagamento?br(r.dataPagamento):'-'}</td>
+        <td>${r.formaPagamento||'-'}</td>
+        <td>${badge}</td>
+        <td style="display:flex;gap:3px;flex-wrap:wrap">
+          ${r.status!=='Pago'?`<button class="btn btn-green btn-sm" onclick="pagarConta('${r.id}')">✅</button>`:''}
+          <button class="btn btn-blue btn-sm" onclick='openConta(${JSON.stringify(r).replace(/'/g,"&#39;")})'>✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="delDoc('contas','${r.id}',loadContas)">🗑</button>
+        </td>
+      </tr>`;
+    }).join('');
+  } catch(e){ tb.innerHTML=`<tr><td colspan="9" class="empty">Erro: ${e.message}</td></tr>`; }
 }
 
 // ── FECHAR MODAL CLICANDO FORA ─────────────────────
